@@ -33,6 +33,8 @@ class JwtValidationFilter (
         println("CLAIMS") // TODO delete this
         println(claims) // TODO delete this
 
+        // TODO not sure if expired tokens are handled here
+
         chain.doFilter(req, res)
     }
 
