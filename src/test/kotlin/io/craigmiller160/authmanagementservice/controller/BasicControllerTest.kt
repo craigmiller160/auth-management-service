@@ -1,7 +1,8 @@
 package io.craigmiller160.authmanagementservice.controller
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.craigmiller160.authmanagementservice.dto.ClientList
+import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.service.BasicService
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -61,11 +61,10 @@ class BasicControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/basic/users"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray)
                 .andDo { result ->
-                    val value: List<User> = objectMapper.readValue(result.response.contentAsString, objectMapper.typeFactory.constructCollectionType(List::class.java, User::class.java))
-                    assertEquals(1, value.size)
-                    assertEquals(user, value[0])
+                    val userList = objectMapper.readValue(result.response.contentAsString, UserList::class.java)
+                    assertEquals(1, userList.users.size)
+                    assertEquals(user.copy(password = ""), userList.users[0])
                 }
     }
 
@@ -77,11 +76,10 @@ class BasicControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/basic/clients"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray)
                 .andDo { result ->
-                    val value: List<Client> = objectMapper.readValue(result.response.contentAsString, objectMapper.typeFactory.constructCollectionType(List::class.java, Client::class.java))
-                    assertEquals(1, value.size)
-                    assertEquals(client, value[0])
+                    val clientList = objectMapper.readValue(result.response.contentAsString, ClientList::class.java)
+                    assertEquals(1, clientList.clients.size)
+                    assertEquals(client, clientList.clients[0])
                 }
     }
 
