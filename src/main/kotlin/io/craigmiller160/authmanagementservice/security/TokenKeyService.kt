@@ -9,14 +9,10 @@ class TokenKeyService (
         private val authServerClient: AuthServerClient
 ) {
 
-    // TODO need to crash the whole app if it fails
-
     @PostConstruct
     fun loadKey() {
         val jwk = authServerClient.getJwk()
         val key = jwk.n
-        println("KEY") // TODO delete this
-        println(key) // TODO delete this
     }
 
 }
