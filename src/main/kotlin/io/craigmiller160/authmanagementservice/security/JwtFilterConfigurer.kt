@@ -23,7 +23,7 @@ class JwtFilterConfigurer (
     }
 
     override fun configure(http: HttpSecurity?) {
-        http?.addFilterBefore(JwtValidationFilter(authServerConfig, jwkSet), UsernamePasswordAuthenticationFilter::class.java)
+        http?.addFilterBefore(JwtValidationFilter(jwkSet), UsernamePasswordAuthenticationFilter::class.java)
     }
 
 }

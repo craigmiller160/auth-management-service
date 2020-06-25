@@ -1,25 +1,17 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.JWSAlgorithm
-import com.nimbusds.jose.crypto.RSASSAVerifier
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
-import com.nimbusds.jose.jwk.source.RemoteJWKSet
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
-import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
-import io.craigmiller160.authmanagementservice.config.AuthServerConfig
 import org.springframework.web.filter.OncePerRequestFilter
-import java.net.URL
-import java.security.interfaces.RSAPublicKey
-import javax.annotation.PostConstruct
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-        private val authServerConfig: AuthServerConfig,
         private val jwkSet: JWKSet
 ) : OncePerRequestFilter() {
 
