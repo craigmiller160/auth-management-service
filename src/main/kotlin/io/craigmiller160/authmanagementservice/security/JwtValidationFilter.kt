@@ -24,6 +24,7 @@ class JwtValidationFilter (
 
     // TODO make this more configurable to switch between header and cookie
     // TODO need to validate that the token is for this app
+    // TODO need to handle exceptions better here
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
         val token = getToken(req)
