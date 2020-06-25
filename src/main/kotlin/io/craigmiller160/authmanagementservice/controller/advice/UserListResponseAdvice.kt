@@ -2,7 +2,6 @@ package io.craigmiller160.authmanagementservice.controller.advice
 
 import io.craigmiller160.authmanagementservice.controller.BasicController
 import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.entity.User
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
