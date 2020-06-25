@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.config
 
+import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -13,7 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy
         prePostEnabled = true,
         securedEnabled = true
 )
-class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+class WebSecurityConfig (
+        private val jwtFilterConfigurer: JwtFilterConfigurer
+) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
         http?.let {
@@ -24,6 +27,8 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                     .and()
                     .authorizeRequests()
                     .anyRequest().fullyAuthenticated()
+                    .and()
+                    .apply(jwtFilterConfigurer)
         }
     }
 
