@@ -12,19 +12,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 
 @SpringBootApplication
-class AuthManagementServiceApplication {
-
-	// TODO delete this
-	@Autowired
-	private lateinit var authServerClient: AuthServerClient
-
-	// TODO delete this
-	@PostConstruct
-	fun test() {
-		authServerClient.getJwk()
-	}
-
-}
+class AuthManagementServiceApplication
 
 private const val TRUST_STORE_TYPE = "JKS"
 private const val TRUST_STORE_PATH = "truststore.jks"
