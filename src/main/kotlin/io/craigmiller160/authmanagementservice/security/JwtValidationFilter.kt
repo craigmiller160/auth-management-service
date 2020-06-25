@@ -7,6 +7,7 @@ import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
+import io.craigmiller160.authmanagementservice.config.AuthServerConfig
 import org.springframework.web.filter.OncePerRequestFilter
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-//        private val tokenKeyService: TokenKeyService // TODO maybe get rid of this and keep the key self-contained in here
+        private val authServerConfig: AuthServerConfig
 ) : OncePerRequestFilter() {
 
     // TODO make this more configurable to switch between header and cookie
@@ -24,7 +25,7 @@ class JwtValidationFilter (
         val token = getToken(req)
 
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
-        val keySource = RemoteJWKSet<SecurityContext>(URL("https://localhost:7003/jwk"))
+        val keySource = RemoteJWKSet<SecurityContext>(URL("${authServerConfig.host}${authServerConfig.jwkPath}"))
         val expectedAlg = JWSAlgorithm.RS256
         val keySelector = JWSVerificationKeySelector(expectedAlg, keySource)
         jwtProcessor.jwsKeySelector = keySelector
