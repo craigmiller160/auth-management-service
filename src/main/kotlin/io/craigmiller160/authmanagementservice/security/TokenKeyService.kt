@@ -12,6 +12,8 @@ class TokenKeyService (
         private val authServerClient: AuthServerClient // TODO remove this
 ) {
 
+    // TODO delete this whole class
+
     lateinit var jwk: JWK
 
     @PostConstruct
