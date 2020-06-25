@@ -11,6 +11,8 @@ class AuthServerClient (
         private val authServerConfig: AuthServerConfig
 ) {
 
+    // TODO if unused, get rid of this.
+
     fun getJwk(): Jwk {
         try {
             val response = restTemplate.getForEntity("${authServerConfig.host}${authServerConfig.jwkPath}", JwkList::class.java)
