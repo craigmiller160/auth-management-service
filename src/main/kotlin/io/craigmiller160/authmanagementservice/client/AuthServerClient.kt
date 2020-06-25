@@ -11,6 +11,7 @@ class AuthServerClient (
 
     fun getJwk() {
         val jwkList = restTemplate.getForEntity("https://localhost:7003/jwk", JwkList::class.java)
+        println("JWK List") // TODO delete this
         println(jwkList) // TODO delete this
     }
 
