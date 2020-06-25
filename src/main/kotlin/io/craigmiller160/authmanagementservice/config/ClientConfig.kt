@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-class ClientConfig {
+class ClientConfig (
+        private val authServerConfig: AuthServerConfig
+) {
 
     @Bean
     fun restTemplate(): RestTemplate {
@@ -16,7 +18,7 @@ class ClientConfig {
 
     @Bean
     fun authServerClient(restTemplate: RestTemplate): AuthServerClient {
-        return AuthServerClient(restTemplate)
+        return AuthServerClient(restTemplate, authServerConfig)
     }
 
 }

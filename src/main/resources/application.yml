@@ -24,3 +24,8 @@ spring:
     url: jdbc:postgresql://localhost:30001/oauth2_server
     username: user
     password: password
+
+authmanageservice:
+  authserver:
+    host: https://localhost:7003
+    jwk-path: /jwk
