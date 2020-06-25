@@ -1,5 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
+import io.craigmiller160.authmanagementservice.dto.ClientList
+import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.service.BasicService
@@ -14,13 +16,13 @@ class BasicController (
 ) {
 
     @GetMapping("/users")
-    fun getUsers(): List<User> {
-        return basicService.getUsers()
+    fun getUsers(): UserList {
+        return UserList(basicService.getUsers())
     }
 
     @GetMapping("/clients")
-    fun getClients(): List<Client> {
-        return basicService.getClients()
+    fun getClients(): ClientList {
+        return ClientList(basicService.getClients())
     }
 
 }
