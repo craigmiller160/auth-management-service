@@ -1,12 +1,15 @@
 package io.craigmiller160.authmanagementservice.security
 
+import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
+import com.nimbusds.jose.proc.BadJOSEException
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
+import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -14,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.filter.OncePerRequestFilter
+import java.lang.RuntimeException
+import java.text.ParseException
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -40,7 +45,16 @@ class JwtValidationFilter (
         val keySelector = JWSVerificationKeySelector(expectedAlg, keySource)
         jwtProcessor.jwsKeySelector = keySelector
 
-        return jwtProcessor.process(token, null)
+        try {
+            return jwtProcessor.process(token, null)
+        } catch (ex: Exception) {
+            when(ex) {
+                is ParseException, is JOSEException, is BadJOSEException ->
+                    throw InvalidTokenException("Token validation failed", ex)
+                is RuntimeException -> throw ex
+                else -> throw RuntimeException(ex)
+            }
+        }
     }
 
     private fun createAuthentication(claims: JWTClaimsSet): Authentication {
@@ -54,7 +68,7 @@ class JwtValidationFilter (
     }
 
     private fun getToken(req: HttpServletRequest): String {
-        val token = req.getHeader("Authorization")
+        val token = req.getHeader("Authorization") ?: throw InvalidTokenException("No token present")
         return token.replace("Bearer ", "")
     }
 
