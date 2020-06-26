@@ -11,16 +11,4 @@ class AuthServerClient (
         private val authServerConfig: AuthServerConfig
 ) {
 
-    // TODO if unused, get rid of this.
-
-    fun getJwk(): Jwk {
-        try {
-            val response = restTemplate.getForEntity("${authServerConfig.host}${authServerConfig.jwkPath}", JwkList::class.java)
-            val jwkList: JwkList = response.body ?: throw Exception("")
-            return jwkList.keys[0]
-        } catch (ex: Exception) {
-            throw JwkLoadException("Error loading JWK", ex)
-        }
-    }
-
 }
