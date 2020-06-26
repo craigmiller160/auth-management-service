@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.config
 
+import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -15,7 +16,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
         securedEnabled = true
 )
 class WebSecurityConfig (
-        private val jwtFilterConfigurer: JwtFilterConfigurer
+        private val jwtFilterConfigurer: JwtFilterConfigurer,
+        private val authEntryPoint: AuthEntryPoint
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
@@ -29,6 +31,8 @@ class WebSecurityConfig (
                     .anyRequest().fullyAuthenticated()
                     .and()
                     .apply(jwtFilterConfigurer)
+                    .and()
+                    .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         }
     }
 
