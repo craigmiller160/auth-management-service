@@ -10,6 +10,8 @@ import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -27,14 +29,21 @@ class JwtValidationFilter (
         private val jwkSet: JWKSet
 ) : OncePerRequestFilter() {
 
+    private val log: Logger = LoggerFactory.getLogger(javaClass)
+
     // TODO make this more configurable to switch between header and cookie
     // TODO need to validate that the token is for this app
-    // TODO need to handle exceptions better here
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
-        val token = getToken(req)
-        val claims = validateToken(token)
-        SecurityContextHolder.getContext().authentication = createAuthentication(claims)
+        try {
+            val token = getToken(req)
+            val claims = validateToken(token)
+            SecurityContextHolder.getContext().authentication = createAuthentication(claims)
+        } catch (ex: InvalidTokenException) {
+            log.error("Error authenticating token", ex)
+            SecurityContextHolder.clearContext()
+        }
+
         chain.doFilter(req, res)
     }
 
