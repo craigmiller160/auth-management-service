@@ -39,4 +39,9 @@ class JwtValidationFilterTest {
         TODO("Finish this")
     }
 
+    @Test
+    fun test_doFilterInternal_notBearer() {
+        TODO("Finish this")
+    }
+
 }
