@@ -3,6 +3,8 @@ package io.craigmiller160.authmanagementservice.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.craigmiller160.authmanagementservice.config.AuthServerConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
+import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
+import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
@@ -30,7 +32,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     JwtFilterConfigurer::class,
     BasicController::class,
     WebSecurityConfig::class,
-    AuthEntryPoint::class
+    AuthEntryPoint::class,
+    UserListResponseAdvice::class,
+    ClientListResponseAdvice::class
 ])
 class BasicControllerTest {
 

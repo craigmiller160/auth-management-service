@@ -33,7 +33,10 @@ object JwtUtils {
         val header = JWSHeader.Builder(JWSAlgorithm.RS256)
                 .build()
 
-        val claims = JWTClaimsSet.Builder().build()
+        val claims = JWTClaimsSet.Builder()
+                .subject("username")
+                .claim("roles", listOf<String>())
+                .build()
         return SignedJWT(header, claims)
     }
 
