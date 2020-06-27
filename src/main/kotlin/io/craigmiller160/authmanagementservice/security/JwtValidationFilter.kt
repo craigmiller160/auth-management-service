@@ -2,7 +2,6 @@ package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSAlgorithm
-import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.proc.BadJOSEException
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
@@ -10,7 +9,7 @@ import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
-import io.craigmiller160.authmanagementservice.config.AuthServerConfig
+import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,7 +18,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.filter.OncePerRequestFilter
 import java.lang.RuntimeException
 import java.text.ParseException
@@ -28,13 +26,12 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-        private val authServerConfig: AuthServerConfig
+        private val OAuthConfig: OAuthConfig
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
     // TODO make this more configurable to switch between header and cookie
-    // TODO need to validate that the token is for this app
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
         try {
@@ -51,15 +48,15 @@ class JwtValidationFilter (
 
     private fun validateToken(token: String): JWTClaimsSet {
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
-        val keySource = ImmutableJWKSet<SecurityContext>(authServerConfig.jwkSet)
+        val keySource = ImmutableJWKSet<SecurityContext>(OAuthConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
         val keySelector = JWSVerificationKeySelector(expectedAlg, keySource)
         jwtProcessor.jwsKeySelector = keySelector
 
         val claimsVerifier = DefaultJWTClaimsVerifier<SecurityContext>(
                 JWTClaimsSet.Builder()
-                        .claim("clientKey", authServerConfig.clientKey)
-                        .claim("clientName", authServerConfig.clientName)
+                        .claim("clientKey", OAuthConfig.clientKey)
+                        .claim("clientName", OAuthConfig.clientName)
                         .build(),
                 setOf("sub", "exp", "iat", "jti")
         )

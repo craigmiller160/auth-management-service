@@ -1,7 +1,7 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
-import io.craigmiller160.authmanagementservice.config.AuthServerConfig
+import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse
 @ExtendWith(MockitoExtension::class)
 class JwtValidationFilterTest {
 
-    private lateinit var authServerConfig: AuthServerConfig
+    private lateinit var OAuthConfig: OAuthConfig
     private lateinit var jwkSet: JWKSet
     private lateinit var jwtValidationFilter: JwtValidationFilter
     private lateinit var keyPair: KeyPair
@@ -41,16 +41,16 @@ class JwtValidationFilterTest {
     fun setup() {
         keyPair = JwtUtils.createKeyPair()
         jwkSet = JwtUtils.createJwkSet(keyPair)
-        authServerConfig = AuthServerConfig(
+        OAuthConfig = OAuthConfig(
                 clientKey = JwtUtils.CLIENT_KEY,
                 clientName = JwtUtils.CLIENT_NAME
         )
-        authServerConfig.jwkSet = jwkSet
+        OAuthConfig.jwkSet = jwkSet
 
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(authServerConfig)
+        jwtValidationFilter = JwtValidationFilter(OAuthConfig)
     }
 
     @AfterEach
@@ -91,7 +91,7 @@ class JwtValidationFilterTest {
 
     @Test
     fun test_doFilterInternal_wrongClient() {
-        authServerConfig.clientKey = "ABCDEFG"
+        OAuthConfig.clientKey = "ABCDEFG"
         `when`(req.getHeader("Authorization"))
                 .thenReturn("Bearer $token")
 

@@ -1,7 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.craigmiller160.authmanagementservice.config.AuthServerConfig
+import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
 import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
@@ -42,7 +42,7 @@ class BasicControllerTest {
     private lateinit var basicService: BasicService
 
     @MockBean
-    private lateinit var authServerConfig: AuthServerConfig
+    private lateinit var OAuthConfig: OAuthConfig
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -61,7 +61,7 @@ class BasicControllerTest {
     fun setup() {
         val keyPair = JwtUtils.createKeyPair()
         val jwkSet = JwtUtils.createJwkSet(keyPair)
-        `when`(authServerConfig.jwkSet)
+        `when`(OAuthConfig.jwkSet)
                 .thenReturn(jwkSet)
 
         val jwt = JwtUtils.createJwt()

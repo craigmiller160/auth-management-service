@@ -8,8 +8,8 @@ import javax.annotation.PostConstruct
 
 @Configuration
 @ConfigurationProperties(prefix = "authmanageservice.authserver")
-data class AuthServerConfig (
-        var host: String = "",
+data class OAuthConfig (
+        var authServerHost: String = "",
         var jwkPath: String = "",
         var clientName: String = "",
         var clientKey: String = "",
@@ -20,7 +20,7 @@ data class AuthServerConfig (
 
     @PostConstruct
     fun loadJWKSet() {
-        jwkSet = JWKSet.load(URL("$host$jwkPath"))
+        jwkSet = JWKSet.load(URL("$authServerHost$jwkPath"))
     }
 
 }

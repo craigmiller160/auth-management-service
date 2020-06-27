@@ -26,8 +26,8 @@ spring:
     password: password
 
 authmanageservice:
-  authserver:
-    host: https://localhost:7003
+  oauth2:
+    auth-server-host: https://localhost:7003
     jwk-path: /jwk
     client-name: auth-management-service
     client-key: a4cc4fef-564e-44c1-82af-45572f124c1a

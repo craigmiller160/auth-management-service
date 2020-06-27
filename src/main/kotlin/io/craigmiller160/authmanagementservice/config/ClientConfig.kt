@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate
 
 @Configuration
 class ClientConfig (
-        private val authServerConfig: AuthServerConfig
+        private val OAuthConfig: OAuthConfig
 ) {
 
     @Bean
@@ -18,7 +18,7 @@ class ClientConfig (
 
     @Bean
     fun authServerClient(restTemplate: RestTemplate): AuthServerClient {
-        return AuthServerClient(restTemplate, authServerConfig)
+        return AuthServerClient(restTemplate, OAuthConfig)
     }
 
 }
