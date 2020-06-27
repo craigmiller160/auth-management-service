@@ -13,6 +13,9 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Date
 
 object JwtUtils {
 
@@ -34,12 +37,16 @@ object JwtUtils {
         return JWKSet(builder.build())
     }
 
-    fun createJwt(): SignedJWT {
+    fun createJwt(expMinutes: Long = 100): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.RS256)
                 .build()
 
+        val exp = LocalDateTime.now().plusMinutes(expMinutes)
+        val expDate = Date.from(exp.atZone(ZoneId.systemDefault()).toInstant())
+
         val claims = JWTClaimsSet.Builder()
                 .subject(USERNAME)
+                .expirationTime(expDate)
                 .claim(ROLES_CLAIM, listOf(ROLE_1, ROLE_2))
                 .build()
         return SignedJWT(header, claims)

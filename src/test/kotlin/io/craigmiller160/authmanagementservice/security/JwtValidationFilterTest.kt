@@ -81,8 +81,19 @@ class JwtValidationFilterTest {
     }
 
     @Test
-    fun test_doFilterInternal_expired() {
+    fun test_doFilterInternal_wrongClient() {
         TODO("Finish this")
+    }
+
+    @Test
+    fun test_doFilterInternal_expired() {
+        val jwt = JwtUtils.createJwt(-20)
+        val token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
+        `when`(req.getHeader("Authorization"))
+                .thenReturn("Bearer $token")
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        assertNull(SecurityContextHolder.getContext().authentication)
     }
 
     @Test
