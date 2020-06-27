@@ -4,6 +4,7 @@ import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,26 +24,9 @@ class BasicServiceTest {
     @InjectMocks
     private lateinit var basicService: BasicService
 
-    private val user = User(
-            id = 0,
-            email = "craig@gmail.com",
-            firstName = "Craig",
-            lastName = "Miller",
-            password = "password"
-    )
+    private val user = TestData.createUser()
 
-    private val client = Client(
-            id = 0,
-            name = "Client",
-            clientKey = "Key",
-            clientSecret = "Secret",
-            enabled = true,
-            allowClientCredentials = false,
-            allowPassword = false,
-            allowAuthCode = false,
-            accessTokenTimeoutSecs = 0,
-            refreshTokenTimeoutSecs = 0
-    )
+    private val client = TestData.createClient()
 
     @Test
     fun test_getUsers() {

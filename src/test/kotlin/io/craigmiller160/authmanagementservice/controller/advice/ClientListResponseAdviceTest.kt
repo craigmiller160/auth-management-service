@@ -4,6 +4,7 @@ import io.craigmiller160.authmanagementservice.controller.BasicController
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,20 +31,7 @@ class ClientListResponseAdviceTest {
     private lateinit var mediaType: MediaType
 
     private val clientResponseAdvice = ClientListResponseAdvice()
-    private val clientList = ClientList(listOf(
-            Client(
-                    id = 0,
-                    name = "Client",
-                    clientKey = "Key",
-                    clientSecret = "Secret",
-                    enabled = true,
-                    allowClientCredentials = false,
-                    allowPassword = false,
-                    allowAuthCode = false,
-                    accessTokenTimeoutSecs = 0,
-                    refreshTokenTimeoutSecs = 0
-            )
-    ))
+    private val clientList = TestData.createClientList()
 
     @Test
     fun test_supports() {

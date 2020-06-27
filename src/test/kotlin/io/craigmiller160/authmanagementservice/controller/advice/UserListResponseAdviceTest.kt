@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.controller.advice
 import io.craigmiller160.authmanagementservice.controller.BasicController
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.User
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -33,15 +34,7 @@ class UserListResponseAdviceTest {
     private lateinit var mediaType: MediaType
 
     private val userListResponseAdvice = UserListResponseAdvice()
-    private val userList = UserList(listOf(
-            User(
-                    id = 0,
-                    email = "craig@gmail.com",
-                    firstName = "Craig",
-                    lastName = "Miller",
-                    password = "password"
-            )
-    ))
+    private val userList = TestData.createUserList()
 
     @Test
     fun test_supports() {
