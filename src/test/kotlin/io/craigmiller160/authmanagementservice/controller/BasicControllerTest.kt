@@ -28,7 +28,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     JwtFilterConfigurer::class,
     AuthServerConfig::class
 ])
-@TestPropertySource(locations = ["/application.yml"])
+@TestPropertySource(properties = [
+    "authmanageservice.authserver.host=https://localhost:7003",
+    "authmanageservice.authserver.jwk-path=/jwk"
+])
 class BasicControllerTest {
 
     @MockBean
