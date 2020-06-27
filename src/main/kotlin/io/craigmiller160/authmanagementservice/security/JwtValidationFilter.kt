@@ -106,11 +106,14 @@ class JwtValidationFilter (
     }
 
     private fun getBearerToken(req: HttpServletRequest): String? {
-        val token = req.getHeader("Authorization") ?: throw InvalidTokenException("No token present")
-        if (!token.startsWith("Bearer ")) {
-            throw InvalidTokenException("Not bearer token")
+        val token = req.getHeader("Authorization")
+        return token?.let {
+            if (!it.startsWith("Bearer ")) {
+                throw InvalidTokenException("Not bearer token")
+            }
+            it.replace("Bearer ", "")
         }
-        return token.replace("Bearer ", "")
+
     }
 
 

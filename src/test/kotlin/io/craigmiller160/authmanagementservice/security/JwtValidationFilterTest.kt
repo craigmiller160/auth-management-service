@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import java.security.KeyPair
 import javax.servlet.FilterChain
+import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -29,6 +30,7 @@ class JwtValidationFilterTest {
     private lateinit var jwtValidationFilter: JwtValidationFilter
     private lateinit var keyPair: KeyPair
     private lateinit var token: String
+    private val cookieName = "cookie"
 
     @Mock
     private lateinit var req: HttpServletRequest
@@ -45,7 +47,8 @@ class JwtValidationFilterTest {
                 clientKey = JwtUtils.CLIENT_KEY,
                 clientName = JwtUtils.CLIENT_NAME,
                 acceptBearerToken = true,
-                acceptCookie = true
+                acceptCookie = true,
+                cookieName = cookieName
         )
         oAuthConfig.jwkSet = jwkSet
 
@@ -76,12 +79,23 @@ class JwtValidationFilterTest {
 
     @Test
     fun test_doFilterInternal_noToken() {
-        TODO("Finish this")
+        jwtValidationFilter.doFilter(req, res, chain)
+        assertNull(SecurityContextHolder.getContext().authentication)
     }
 
     @Test
     fun test_doFilterInternal_cookie() {
-        TODO("Finish this")
+        val cookie = Cookie(cookieName, token)
+        `when`(req.cookies)
+                .thenReturn(arrayOf(cookie))
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        val authentication = SecurityContextHolder.getContext().authentication
+        assertNotNull(authentication)
+        val principal = authentication.principal as UserDetails
+        assertEquals(JwtUtils.USERNAME, principal.username)
+        assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
+        assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
     }
 
     @Test
