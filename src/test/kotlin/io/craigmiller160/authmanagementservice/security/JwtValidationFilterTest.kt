@@ -19,8 +19,8 @@ class JwtValidationFilterTest {
 
     @BeforeEach
     fun setup() {
-        val (keyPair, jwkSet) = JwtUtils.createKeyPairAndJwkSet()
-        this.keyPair = keyPair
+        keyPair = JwtUtils.createKeyPair()
+        jwkSet = JwtUtils.createJwkSet(keyPair)
 
         jwtValidationFilter = JwtValidationFilter(jwkSet)
     }

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.craigmiller160.authmanagementservice.config.AuthServerConfig
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
@@ -49,12 +47,17 @@ class BasicControllerTest {
 
     private val user = TestData.createUser()
     private val client = TestData.createClient()
+    private lateinit var accessToken: String
 
     @BeforeEach
     fun setup() {
-        val (keyPair, jwkSet) = JwtUtils.createKeyPairAndJwkSet()
+        val keyPair = JwtUtils.createKeyPair()
+        val jwkSet = JwtUtils.createJwkSet(keyPair)
         `when`(authServerConfig.jwkSet)
                 .thenReturn(jwkSet)
+
+        val jwt = JwtUtils.createJwt()
+        accessToken = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
     }
 
     @AfterEach
@@ -67,7 +70,10 @@ class BasicControllerTest {
         `when`(basicService.getUsers())
                 .thenReturn(listOf(user))
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/basic/users"))
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/users")
+                        .header("Authorization", "Bearer $accessToken")
+        )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andDo { result ->
