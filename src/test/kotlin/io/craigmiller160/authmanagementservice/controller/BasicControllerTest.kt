@@ -8,6 +8,7 @@ import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
+import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -51,7 +52,9 @@ class BasicControllerTest {
 
     @BeforeEach
     fun setup() {
-
+        val (keyPair, jwkSet) = JwtUtils.createKeyPairAndJwkSet()
+        `when`(authServerConfig.jwkSet)
+                .thenReturn(jwkSet)
     }
 
     @AfterEach
