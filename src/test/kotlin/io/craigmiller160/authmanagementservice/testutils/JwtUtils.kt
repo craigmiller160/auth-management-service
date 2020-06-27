@@ -16,6 +16,11 @@ import java.security.interfaces.RSAPublicKey
 
 object JwtUtils {
 
+    const val ROLE_1 = "ROLE_1"
+    const val ROLE_2 = "ROLE_2"
+    const val USERNAME = "username"
+    const val ROLES_CLAIM = "roles"
+
     fun createKeyPair(): KeyPair {
         val keyPairGen = KeyPairGenerator.getInstance("RSA")
         return keyPairGen.genKeyPair()
@@ -34,8 +39,8 @@ object JwtUtils {
                 .build()
 
         val claims = JWTClaimsSet.Builder()
-                .subject("username")
-                .claim("roles", listOf<String>())
+                .subject(USERNAME)
+                .claim(ROLES_CLAIM, listOf(ROLE_1, ROLE_2))
                 .build()
         return SignedJWT(header, claims)
     }
