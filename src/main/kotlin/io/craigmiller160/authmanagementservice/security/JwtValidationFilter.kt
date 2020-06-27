@@ -8,6 +8,7 @@ import com.nimbusds.jose.proc.BadJOSEException
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.config.AuthServerConfig
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
@@ -54,6 +55,15 @@ class JwtValidationFilter (
         val expectedAlg = JWSAlgorithm.RS256
         val keySelector = JWSVerificationKeySelector(expectedAlg, keySource)
         jwtProcessor.jwsKeySelector = keySelector
+
+        val claimsVerifier = DefaultJWTClaimsVerifier<SecurityContext>(
+                JWTClaimsSet.Builder()
+                        .claim("clientKey", authServerConfig.clientKey)
+                        .claim("clientName", authServerConfig.clientName)
+                        .build(),
+                setOf("sub", "exp", "iat", "jti")
+        )
+        jwtProcessor.jwtClaimsSetVerifier = claimsVerifier
 
         try {
             return jwtProcessor.process(token, null)

@@ -13,9 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import java.security.KeyPair
@@ -26,7 +24,7 @@ import javax.servlet.http.HttpServletResponse
 @ExtendWith(MockitoExtension::class)
 class JwtValidationFilterTest {
 
-    private val authServerConfig = AuthServerConfig()
+    private lateinit var authServerConfig: AuthServerConfig
     private lateinit var jwkSet: JWKSet
     private lateinit var jwtValidationFilter: JwtValidationFilter
     private lateinit var keyPair: KeyPair
@@ -43,6 +41,10 @@ class JwtValidationFilterTest {
     fun setup() {
         keyPair = JwtUtils.createKeyPair()
         jwkSet = JwtUtils.createJwkSet(keyPair)
+        authServerConfig = AuthServerConfig(
+                clientKey = JwtUtils.CLIENT_KEY,
+                clientName = JwtUtils.CLIENT_NAME
+        )
         authServerConfig.jwkSet = jwkSet
 
         val jwt = JwtUtils.createJwt()
@@ -89,7 +91,12 @@ class JwtValidationFilterTest {
 
     @Test
     fun test_doFilterInternal_wrongClient() {
-        TODO("Finish this")
+        authServerConfig.clientKey = "ABCDEFG"
+        `when`(req.getHeader("Authorization"))
+                .thenReturn("Bearer $token")
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        assertNull(SecurityContextHolder.getContext().authentication)
     }
 
     @Test

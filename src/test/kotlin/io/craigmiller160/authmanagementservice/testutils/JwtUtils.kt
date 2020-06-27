@@ -23,6 +23,8 @@ object JwtUtils {
     const val ROLE_2 = "ROLE_2"
     const val USERNAME = "username"
     const val ROLES_CLAIM = "roles"
+    const val CLIENT_KEY = "clientKey"
+    const val CLIENT_NAME = "clientName"
 
     fun createKeyPair(): KeyPair {
         val keyPairGen = KeyPairGenerator.getInstance("RSA")
@@ -45,9 +47,13 @@ object JwtUtils {
         val expDate = Date.from(exp.atZone(ZoneId.systemDefault()).toInstant())
 
         val claims = JWTClaimsSet.Builder()
+                .jwtID("JWTID")
+                .issueTime(Date())
                 .subject(USERNAME)
                 .expirationTime(expDate)
                 .claim(ROLES_CLAIM, listOf(ROLE_1, ROLE_2))
+                .claim("clientKey", CLIENT_KEY)
+                .claim("clientName", CLIENT_NAME)
                 .build()
         return SignedJWT(header, claims)
     }
