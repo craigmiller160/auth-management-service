@@ -36,10 +36,8 @@ class JwtValidationFilter (
     // TODO need to validate that the token is for this app
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
-        println("INSIDE FILTER") // TODO delete this
         try {
             val token = getToken(req)
-            println("TOKEN $token") // TODO delete this
             val claims = validateToken(token)
             SecurityContextHolder.getContext().authentication = createAuthentication(claims)
         } catch (ex: InvalidTokenException) {

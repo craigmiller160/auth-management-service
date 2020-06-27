@@ -13,7 +13,6 @@ class JwtFilterConfigurer (
 ) : SecurityConfigurerAdapter<DefaultSecurityFilterChain,HttpSecurity>() {
 
     override fun configure(http: HttpSecurity?) {
-        println("CONFIGURING FILTER") // TODO delete this
         http?.addFilterBefore(JwtValidationFilter(authServerConfig), UsernamePasswordAuthenticationFilter::class.java)
     }
 

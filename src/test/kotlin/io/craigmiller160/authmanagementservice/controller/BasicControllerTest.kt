@@ -77,6 +77,7 @@ class BasicControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/basic/users")
                         .header("Authorization", "Bearer $accessToken")
+                        .secure(true)
         )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk)
