@@ -13,7 +13,10 @@ data class OAuthConfig (
         var jwkPath: String = "",
         var clientName: String = "",
         var clientKey: String = "",
-        var clientSecret: String = ""
+        var clientSecret: String = "",
+        var acceptBearerToken: Boolean = false,
+        var acceptCookie: Boolean = false,
+        var cookieName: String = ""
 ) {
 
     lateinit var jwkSet: JWKSet
