@@ -10,7 +10,10 @@ import javax.annotation.PostConstruct
 @ConfigurationProperties(prefix = "authmanageservice.authserver")
 data class AuthServerConfig (
         var host: String = "",
-        var jwkPath: String = ""
+        var jwkPath: String = "",
+        var clientName: String = "",
+        var clientKey: String = "",
+        var clientSecret: String = ""
 ) {
 
     lateinit var jwkSet: JWKSet
