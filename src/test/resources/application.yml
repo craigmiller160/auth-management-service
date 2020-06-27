@@ -1,4 +1,4 @@
 authmanagerservice:
   authserver:
-    host: my-host
+    host: https://localhost:7003
     jwk-path: /jwk

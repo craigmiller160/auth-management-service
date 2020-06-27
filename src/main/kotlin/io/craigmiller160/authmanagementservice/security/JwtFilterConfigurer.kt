@@ -19,6 +19,7 @@ class JwtFilterConfigurer (
 
     @PostConstruct
     fun loadJWKSet() {
+        println(authServerConfig) // TODO delete this
         jwkSet = JWKSet.load(URL("${authServerConfig.host}${authServerConfig.jwkPath}"))
     }
 
