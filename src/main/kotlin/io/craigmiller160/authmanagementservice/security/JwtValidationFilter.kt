@@ -9,6 +9,7 @@ import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
+import io.craigmiller160.authmanagementservice.config.AuthServerConfig
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-        private val jwkSet: JWKSet
+        private val authServerConfig: AuthServerConfig
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -35,8 +36,10 @@ class JwtValidationFilter (
     // TODO need to validate that the token is for this app
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
+        println("INSIDE FILTER") // TODO delete this
         try {
             val token = getToken(req)
+            println("TOKEN $token") // TODO delete this
             val claims = validateToken(token)
             SecurityContextHolder.getContext().authentication = createAuthentication(claims)
         } catch (ex: InvalidTokenException) {
@@ -49,7 +52,7 @@ class JwtValidationFilter (
 
     private fun validateToken(token: String): JWTClaimsSet {
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
-        val keySource = ImmutableJWKSet<SecurityContext>(jwkSet)
+        val keySource = ImmutableJWKSet<SecurityContext>(authServerConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
         val keySelector = JWSVerificationKeySelector(expectedAlg, keySource)
         jwtProcessor.jwsKeySelector = keySelector

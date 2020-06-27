@@ -22,7 +22,7 @@ class JwtValidationFilterTest {
         keyPair = JwtUtils.createKeyPair()
         jwkSet = JwtUtils.createJwkSet(keyPair)
 
-        jwtValidationFilter = JwtValidationFilter(jwkSet)
+//        jwtValidationFilter = JwtValidationFilter(jwkSet)
     }
 
     @AfterEach
