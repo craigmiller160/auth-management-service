@@ -1,8 +1,17 @@
 package io.craigmiller160.authmanagementservice.controller.advice
 
+import io.craigmiller160.authmanagementservice.controller.BasicController
+import io.craigmiller160.authmanagementservice.dto.UserList
+import io.craigmiller160.authmanagementservice.entity.User
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
+import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
@@ -15,8 +24,7 @@ class UserListResponseAdviceTest {
 
     @Mock
     private lateinit var method: MethodParameter
-    @Mock
-    private lateinit var clazz: Class<out HttpMessageConverter<*>>
+    private val clazz: Class<out HttpMessageConverter<*>> = HttpMessageConverter::class.java
     @Mock
     private lateinit var req: ServerHttpRequest
     @Mock
@@ -25,30 +33,60 @@ class UserListResponseAdviceTest {
     private lateinit var mediaType: MediaType
 
     private val userListResponseAdvice = UserListResponseAdvice()
+    private val userList = UserList(listOf(
+            User(
+                    id = 0,
+                    email = "craig@gmail.com",
+                    firstName = "Craig",
+                    lastName = "Miller",
+                    password = "password"
+            )
+    ))
 
     @Test
     fun test_supports() {
-        TODO("Finish this")
+        `when`(method.containingClass)
+                .thenReturn(BasicController::class.java)
+        `when`(method.parameterType)
+                .thenReturn(UserList::class.java)
+
+        val result = userListResponseAdvice.supports(method, clazz)
+        assertTrue(result)
     }
 
     @Test
     fun test_supports_wrongController() {
-        TODO("Finish this")
+        `when`(method.containingClass)
+                .thenReturn(String::class.java)
+
+        val result = userListResponseAdvice.supports(method, clazz)
+        assertFalse(result)
     }
 
     @Test
     fun test_supports_wrongParamType() {
-        TODO("Finish this")
+        `when`(method.containingClass)
+                .thenReturn(BasicController::class.java)
+        `when`(method.parameterType)
+                .thenReturn(String::class.java)
+
+        val result = userListResponseAdvice.supports(method, clazz)
+        assertFalse(result)
     }
 
     @Test
     fun test_beforeBodyWrite() {
-        TODO("Finish this")
+        val result = userListResponseAdvice.beforeBodyWrite(userList, method, mediaType, clazz, req, res)
+        assertNotNull(result)
+        assertNotNull(result?.users)
+        assertEquals(1, result?.users?.size)
+        assertEquals(userList.users[0].copy(password = ""), result?.users?.getOrNull(0))
     }
 
     @Test
     fun test_beforeBodyWrite_noUserList() {
-        TODO("Finish this")
+        val result = userListResponseAdvice.beforeBodyWrite(null, method, mediaType, clazz, req, res)
+        assertNull(result)
     }
 
 }
