@@ -77,7 +77,14 @@ class JwtValidationFilterTest {
 
     @Test
     fun test_doFilterInternal_badSignature() {
-        TODO("Finish this")
+        val keyPair = JwtUtils.createKeyPair()
+        val jwt = JwtUtils.createJwt()
+        val token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
+        `when`(req.getHeader("Authorization"))
+                .thenReturn("Bearer $token")
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        assertNull(SecurityContextHolder.getContext().authentication)
     }
 
     @Test
