@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-        private val OAuthConfig: OAuthConfig
+        private val oAuthConfig: OAuthConfig
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -48,15 +48,15 @@ class JwtValidationFilter (
 
     private fun validateToken(token: String): JWTClaimsSet {
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
-        val keySource = ImmutableJWKSet<SecurityContext>(OAuthConfig.jwkSet)
+        val keySource = ImmutableJWKSet<SecurityContext>(oAuthConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
         val keySelector = JWSVerificationKeySelector(expectedAlg, keySource)
         jwtProcessor.jwsKeySelector = keySelector
 
         val claimsVerifier = DefaultJWTClaimsVerifier<SecurityContext>(
                 JWTClaimsSet.Builder()
-                        .claim("clientKey", OAuthConfig.clientKey)
-                        .claim("clientName", OAuthConfig.clientName)
+                        .claim("clientKey", oAuthConfig.clientKey)
+                        .claim("clientName", oAuthConfig.clientName)
                         .build(),
                 setOf("sub", "exp", "iat", "jti")
         )
@@ -85,6 +85,27 @@ class JwtValidationFilter (
     }
 
     private fun getToken(req: HttpServletRequest): String {
+        var token: String? = null
+        if (oAuthConfig.acceptBearerToken) {
+            token = getBearerToken(req)
+        }
+
+        if (token == null && oAuthConfig.acceptCookie) {
+            token = getCookieToken(req)
+        }
+
+        if (token == null) {
+            throw InvalidTokenException("Token not found")
+        }
+
+        return token
+    }
+
+    private fun getCookieToken(req: HttpServletRequest): String? {
+        return req.cookies.find { cookie -> cookie.name == oAuthConfig.cookieName }?.value
+    }
+
+    private fun getBearerToken(req: HttpServletRequest): String? {
         val token = req.getHeader("Authorization") ?: throw InvalidTokenException("No token present")
         if (!token.startsWith("Bearer ")) {
             throw InvalidTokenException("Not bearer token")

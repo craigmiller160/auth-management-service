@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse
 @ExtendWith(MockitoExtension::class)
 class JwtValidationFilterTest {
 
-    private lateinit var OAuthConfig: OAuthConfig
+    private lateinit var oAuthConfig: OAuthConfig
     private lateinit var jwkSet: JWKSet
     private lateinit var jwtValidationFilter: JwtValidationFilter
     private lateinit var keyPair: KeyPair
@@ -41,16 +41,16 @@ class JwtValidationFilterTest {
     fun setup() {
         keyPair = JwtUtils.createKeyPair()
         jwkSet = JwtUtils.createJwkSet(keyPair)
-        OAuthConfig = OAuthConfig(
+        oAuthConfig = OAuthConfig(
                 clientKey = JwtUtils.CLIENT_KEY,
                 clientName = JwtUtils.CLIENT_NAME
         )
-        OAuthConfig.jwkSet = jwkSet
+        oAuthConfig.jwkSet = jwkSet
 
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(OAuthConfig)
+        jwtValidationFilter = JwtValidationFilter(oAuthConfig)
     }
 
     @AfterEach
@@ -73,6 +73,11 @@ class JwtValidationFilterTest {
     }
 
     @Test
+    fun test_doFilterInternal_noToken() {
+        TODO("Finish this")
+    }
+
+    @Test
     fun test_doFilterInternal_cookie() {
         TODO("Finish this")
     }
@@ -91,7 +96,7 @@ class JwtValidationFilterTest {
 
     @Test
     fun test_doFilterInternal_wrongClient() {
-        OAuthConfig.clientKey = "ABCDEFG"
+        oAuthConfig.clientKey = "ABCDEFG"
         `when`(req.getHeader("Authorization"))
                 .thenReturn("Bearer $token")
 

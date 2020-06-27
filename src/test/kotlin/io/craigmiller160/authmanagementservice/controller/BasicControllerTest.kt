@@ -42,7 +42,7 @@ class BasicControllerTest {
     private lateinit var basicService: BasicService
 
     @MockBean
-    private lateinit var OAuthConfig: OAuthConfig
+    private lateinit var oAuthConfig: OAuthConfig
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -61,7 +61,7 @@ class BasicControllerTest {
     fun setup() {
         val keyPair = JwtUtils.createKeyPair()
         val jwkSet = JwtUtils.createJwkSet(keyPair)
-        `when`(OAuthConfig.jwkSet)
+        `when`(oAuthConfig.jwkSet)
                 .thenReturn(jwkSet)
 
         val jwt = JwtUtils.createJwt()
