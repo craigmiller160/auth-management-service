@@ -43,7 +43,9 @@ class JwtValidationFilterTest {
         jwkSet = JwtUtils.createJwkSet(keyPair)
         oAuthConfig = OAuthConfig(
                 clientKey = JwtUtils.CLIENT_KEY,
-                clientName = JwtUtils.CLIENT_NAME
+                clientName = JwtUtils.CLIENT_NAME,
+                acceptBearerToken = true,
+                acceptCookie = true
         )
         oAuthConfig.jwkSet = jwkSet
 
@@ -59,7 +61,7 @@ class JwtValidationFilterTest {
     }
 
     @Test
-    fun test_doFilterInternal_authHeader() {
+    fun test_doFilterInternal_validBearerToken() {
         `when`(req.getHeader("Authorization"))
                 .thenReturn("Bearer $token")
 
