@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @WebMvcTest
 @ContextConfiguration(classes = [
     JwtFilterConfigurer::class,
-    AuthServerConfig::class
+    BasicController::class
 ])
 @TestPropertySource(properties = [
     "authmanageservice.authserver.host=https://localhost:7003",
@@ -34,6 +34,9 @@ class BasicControllerTest {
 
     @MockBean
     private lateinit var basicService: BasicService
+
+    @MockBean
+    private lateinit var authServerConfig: AuthServerConfig
 
     @Autowired
     private lateinit var mockMvc: MockMvc
