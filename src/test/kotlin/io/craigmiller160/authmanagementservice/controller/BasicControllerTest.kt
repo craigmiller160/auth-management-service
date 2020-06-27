@@ -94,7 +94,12 @@ class BasicControllerTest {
 
     @Test
     fun test_getUsers_unauthorized() {
-        TODO("Finish this")
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/users")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
     @Test
@@ -102,19 +107,28 @@ class BasicControllerTest {
         `when`(basicService.getClients())
                 .thenReturn(listOf(client))
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/basic/clients"))
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/clients")
+                        .header("Authorization", "Bearer $accessToken")
+                        .secure(true)
+        )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andDo { result ->
                     val clientList = objectMapper.readValue(result.response.contentAsString, ClientList::class.java)
                     assertEquals(1, clientList.clients.size)
-                    assertEquals(client, clientList.clients[0])
+                    assertEquals(client.copy(clientSecret = ""), clientList.clients[0])
                 }
     }
 
     @Test
     fun test_getClients_unauthorized() {
-        TODO("Finish this")
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/clients")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
 }
