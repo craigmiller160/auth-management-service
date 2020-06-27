@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -25,10 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @ContextConfiguration(classes = [
     JwtFilterConfigurer::class,
     BasicController::class
-])
-@TestPropertySource(properties = [
-    "authmanageservice.authserver.host=https://localhost:7003",
-    "authmanageservice.authserver.jwk-path=/jwk"
 ])
 class BasicControllerTest {
 
@@ -84,6 +79,11 @@ class BasicControllerTest {
     }
 
     @Test
+    fun test_getUsers_unauthorized() {
+        TODO("Finish this")
+    }
+
+    @Test
     fun test_getClients() {
         `when`(basicService.getClients())
                 .thenReturn(listOf(client))
@@ -96,6 +96,11 @@ class BasicControllerTest {
                     assertEquals(1, clientList.clients.size)
                     assertEquals(client, clientList.clients[0])
                 }
+    }
+
+    @Test
+    fun test_getClients_unauthorized() {
+        TODO("Finish this")
     }
 
 }
