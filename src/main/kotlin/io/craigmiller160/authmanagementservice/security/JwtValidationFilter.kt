@@ -19,7 +19,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.web.filter.OncePerRequestFilter
-import java.lang.RuntimeException
 import java.text.ParseException
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -30,8 +29,6 @@ class JwtValidationFilter (
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
-
-    // TODO make this more configurable to switch between header and cookie
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
         try {
@@ -102,7 +99,7 @@ class JwtValidationFilter (
     }
 
     private fun getCookieToken(req: HttpServletRequest): String? {
-        return req.cookies.find { cookie -> cookie.name == oAuthConfig.cookieName }?.value
+        return req.cookies?.find { cookie -> cookie.name == oAuthConfig.cookieName }?.value
     }
 
     private fun getBearerToken(req: HttpServletRequest): String? {

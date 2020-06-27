@@ -63,6 +63,12 @@ class BasicControllerTest {
         val jwkSet = JwtUtils.createJwkSet(keyPair)
         `when`(oAuthConfig.jwkSet)
                 .thenReturn(jwkSet)
+        `when`(oAuthConfig.acceptBearerToken)
+                .thenReturn(true)
+        `when`(oAuthConfig.clientKey)
+                .thenReturn(JwtUtils.CLIENT_KEY)
+        `when`(oAuthConfig.clientName)
+                .thenReturn(JwtUtils.CLIENT_NAME)
 
         val jwt = JwtUtils.createJwt()
         accessToken = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
