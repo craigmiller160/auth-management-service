@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct
 data class OAuthConfig (
         var authServerHost: String = "",
         var jwkPath: String = "",
+        var authCodeLoginPath: String = "",
+        var authCodeRedirectUri: String = "",
         var clientName: String = "",
         var clientKey: String = "",
         var clientSecret: String = "",
