@@ -28,7 +28,8 @@ class WebSecurityConfig (
                     .requiresChannel().anyRequest().requiresSecure()
                     .and()
                     .authorizeRequests()
-                    .anyRequest().fullyAuthenticated()
+//                    .anyRequest().fullyAuthenticated()
+                    .anyRequest().permitAll() // TODO revert this
                     .and()
                     .apply(jwtFilterConfigurer)
                     .and()
