@@ -30,8 +30,8 @@ class WebSecurityConfig (
                     .authorizeRequests()
 //                    .anyRequest().fullyAuthenticated()
                     .anyRequest().permitAll() // TODO revert this
-                    .and()
-                    .apply(jwtFilterConfigurer)
+//                    .and()
+//                    .apply(jwtFilterConfigurer) // TODO restore this
                     .and()
                     .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         }

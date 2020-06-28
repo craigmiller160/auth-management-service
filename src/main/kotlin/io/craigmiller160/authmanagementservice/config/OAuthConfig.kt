@@ -7,7 +7,7 @@ import java.net.URL
 import javax.annotation.PostConstruct
 
 @Configuration
-@ConfigurationProperties(prefix = "authmanageservice.authserver")
+@ConfigurationProperties(prefix = "authmanageservice.oauth2")
 data class OAuthConfig (
         var authServerHost: String = "",
         var jwkPath: String = "",
