@@ -1,11 +1,13 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import org.springframework.stereotype.Service
 
 @Service
 class AuthCodeService (
-        private val oAuthConfig: OAuthConfig
+        private val oAuthConfig: OAuthConfig,
+        private val authServerClient: AuthServerClient
 ) {
 
     fun getAuthCodeLoginUrl(): String {
@@ -17,7 +19,8 @@ class AuthCodeService (
         return "$host$loginPath?response_type=code&client_id=$clientKey&redirect_uri=$redirectUri"
     }
 
-    fun code() {
+    fun code(code: String) {
+        authServerClient.authCodeLogin(code)
         TODO("Finish this")
     }
 

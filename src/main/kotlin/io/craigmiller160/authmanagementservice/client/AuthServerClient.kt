@@ -8,4 +8,8 @@ class AuthServerClient (
         private val OAuthConfig: OAuthConfig
 ) {
 
+    fun authCodeLogin(code: String) {
+        TODO("Finish this")
+    }
+
 }
