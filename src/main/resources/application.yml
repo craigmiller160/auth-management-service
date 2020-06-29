@@ -29,6 +29,7 @@ authmanageservice:
   oauth2:
     auth-server-host: https://localhost:7003
     jwk-path: /jwk
+    token-path: /oauth/token
     auth-code-login-path: /ui/login.html
     auth-code-redirect-uri: https://localhost:3000/api/authcode/code
     client-name: auth-management-service
