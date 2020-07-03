@@ -8,7 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "management_refresh_tokens")
-data class ManagementRefreshTokens (
+data class ManagementRefreshToken (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
