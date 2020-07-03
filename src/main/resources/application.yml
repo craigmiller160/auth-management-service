@@ -42,4 +42,5 @@ authmanageservice:
 
 logging:
   level:
+    io.craigmiller160.authmanagementservice: DEBUG
     org.apache.http: DEBUG # TODO change this
