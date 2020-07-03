@@ -20,8 +20,7 @@ class AuthCodeService (
     }
 
     fun code(code: String) {
-        authServerClient.authCodeLogin(code)
-        TODO("Finish this")
+        val tokens = authServerClient.authCodeLogin(code)
     }
 
 }

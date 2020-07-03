@@ -22,6 +22,7 @@ class AuthCodeController (
 
     @GetMapping("/code")
     fun code(@RequestParam("code") code: String) {
+        println("CODE: $code") // TODO delete this
         TODO("Finish this")
     }
 
