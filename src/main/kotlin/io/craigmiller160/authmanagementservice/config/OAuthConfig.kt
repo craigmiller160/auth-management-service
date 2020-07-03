@@ -19,7 +19,8 @@ data class OAuthConfig (
         var clientSecret: String = "",
         var acceptBearerToken: Boolean = false,
         var acceptCookie: Boolean = false,
-        var cookieName: String = ""
+        var cookieName: String = "",
+        var postAuthRedirect: String = ""
 ) {
 
     lateinit var jwkSet: JWKSet

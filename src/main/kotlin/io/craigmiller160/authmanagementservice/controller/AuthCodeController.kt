@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.service.AuthCodeService
+import org.springframework.http.ResponseCookie
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -21,9 +22,11 @@ class AuthCodeController (
     }
 
     @GetMapping("/code")
-    fun code(@RequestParam("code") code: String) {
-        println("CODE: $code") // TODO delete this
-        TODO("Finish this")
+    fun code(@RequestParam("code") code: String, res: HttpServletResponse) {
+        val (cookie, postAuthRedirect) = authCodeService.code(code)
+        res.status = 302
+        res.addHeader("Location", postAuthRedirect)
+        res.addHeader("Set-Cookie", cookie.toString())
     }
 
 }

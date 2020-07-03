@@ -4,6 +4,7 @@ import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
+import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,11 +23,19 @@ class AuthCodeService (
         return "$host$loginPath?response_type=code&client_id=$clientKey&redirect_uri=$redirectUri"
     }
 
-    fun code(code: String): String {
+    fun code(code: String): Pair<ResponseCookie,String> {
         val tokens = authServerClient.authCodeLogin(code)
         val manageRefreshToken = ManagementRefreshToken(0, tokens.tokenId, tokens.refreshToken)
         manageRefreshTokenRepo.save(manageRefreshToken)
-        return tokens.accessToken
+        val cookie = ResponseCookie
+                .from(oAuthConfig.cookieName, tokens.accessToken)
+                .path("/")
+                .secure(true)
+                .httpOnly(true)
+                .maxAge(24 * 60 * 60) // TODO work on this
+                .sameSite("strict")
+                .build()
+        return Pair(cookie, oAuthConfig.postAuthRedirect)
     }
 
 }

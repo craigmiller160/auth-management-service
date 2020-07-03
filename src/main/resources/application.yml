@@ -38,3 +38,4 @@ authmanageservice:
     accept-bearer-token: true
     accept-cookie: true
     cookie-name: auth-management-token
+    post-auth-redirect: https://localhost:3000
