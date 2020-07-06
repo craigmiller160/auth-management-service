@@ -9,10 +9,10 @@ import javax.transaction.Transactional
 @Repository
 interface ManagementRefreshTokenRepository : JpaRepository<ManagementRefreshToken,Long> {
 
-    fun findByTokenId(tokenId: String): ManagementRefreshToken? // TODO add to unit tests
+    fun findByTokenId(tokenId: String): ManagementRefreshToken?
 
     @Transactional
     @Modifying
-    fun removeByTokenId(tokenId: String): Int // TODO add to unit tests
+    fun removeByTokenId(tokenId: String): Int
 
 }

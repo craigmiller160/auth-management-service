@@ -28,7 +28,6 @@ data class OAuthConfig (
 
     @PostConstruct
     fun loadJWKSet() {
-        // TODO add lazy loading or retry behavior
         jwkSet = JWKSet.load(URL("$authServerHost$jwkPath"))
     }
 
