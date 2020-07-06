@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -62,6 +64,8 @@ class JwtValidationFilterTest {
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
         jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient)
+        `when`(req.requestURI)
+                .thenReturn("/something")
     }
 
     @AfterEach
@@ -81,12 +85,16 @@ class JwtValidationFilterTest {
         assertEquals(JwtUtils.USERNAME, principal.username)
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
     fun test_doFilterInternal_noToken() {
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -102,6 +110,17 @@ class JwtValidationFilterTest {
         assertEquals(JwtUtils.USERNAME, principal.username)
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
+        verify(chain, times(1))
+                .doFilter(req, res)
+    }
+
+    @Test
+    fun test_doFilterInternal_authcodeUri() {
+        `when`(req.requestURI).thenReturn("/authcode/foo")
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -114,6 +133,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -124,6 +145,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -135,6 +158,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -144,6 +169,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
 }
