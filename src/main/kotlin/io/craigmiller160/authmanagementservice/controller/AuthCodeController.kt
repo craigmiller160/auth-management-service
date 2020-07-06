@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.math.BigInteger
+import java.security.SecureRandom
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -16,10 +18,21 @@ class AuthCodeController (
         private val authCodeService: AuthCodeService
 ) {
 
+    companion object {
+        private val STATE_ATTR = "state"
+    }
+
+    private fun generateAuthCodeState(): String { // TODO test this
+        val random = SecureRandom()
+        val bigInt = BigInteger(130, random)
+        return bigInt.toString(32)
+    }
+
     @GetMapping("/login")
     fun login(req: HttpServletRequest, res: HttpServletResponse) {
-        req.session.setAttribute("state", "ABCDE") // TODO trying this
-        val authCodeLoginUrl = authCodeService.getAuthCodeLoginUrl()
+        val state = generateAuthCodeState()
+        req.session.setAttribute(STATE_ATTR, state)
+        val authCodeLoginUrl = authCodeService.getAuthCodeLoginUrl(state)
         res.status = 302
         res.addHeader("Location", authCodeLoginUrl)
     }

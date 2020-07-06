@@ -16,13 +16,14 @@ class AuthCodeService (
         private val manageRefreshTokenRepo: ManagementRefreshTokenRepository
 ) {
 
-    fun getAuthCodeLoginUrl(): String {
+    fun getAuthCodeLoginUrl(state: String): String { // TODO add state to tests
         val host = oAuthConfig.authServerHost
         val loginPath = oAuthConfig.authCodeLoginPath
         val redirectUri = URLEncoder.encode(oAuthConfig.authCodeRedirectUri, StandardCharsets.UTF_8)
         val clientKey = URLEncoder.encode(oAuthConfig.clientKey, StandardCharsets.UTF_8)
+        val encodedState = URLEncoder.encode(state, StandardCharsets.UTF_8)
 
-        return "$host$loginPath?response_type=code&client_id=$clientKey&redirect_uri=$redirectUri"
+        return "$host$loginPath?response_type=code&client_id=$clientKey&redirect_uri=$redirectUri&state=$encodedState"
     }
 
     fun code(code: String): Pair<ResponseCookie,String> {
