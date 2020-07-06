@@ -63,6 +63,7 @@ class JwtValidationFilter (
         } catch (ex: Exception) {
             when(ex) {
                 is ParseException, is JOSEException, is BadJOSEException ->
+                    // TODO instead of always throwing the exception, need to get the claims and the token ID and send the refresh token along
                     throw InvalidTokenException("Token validation failed", ex)
                 is RuntimeException -> throw ex
                 else -> throw RuntimeException(ex)
