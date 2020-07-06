@@ -34,7 +34,7 @@ class AuthCodeService (
                 .path("/")
                 .secure(true)
                 .httpOnly(true)
-                .maxAge(24 * 60 * 60) // TODO work on this
+                .maxAge(oAuthConfig.cookieMaxAgeSecs)
                 .sameSite("strict")
                 .build()
         return Pair(cookie, oAuthConfig.postAuthRedirect)

@@ -39,6 +39,7 @@ authmanageservice:
     accept-cookie: true
     cookie-name: auth-management-token
     post-auth-redirect: https://localhost:3000
+    cookie-max-age-secs: 86400
 
 logging:
   level:
