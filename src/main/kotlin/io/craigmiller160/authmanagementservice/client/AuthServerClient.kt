@@ -29,6 +29,7 @@ open class AuthServerClient (
     }
 
     fun tokenRefresh(refreshToken: String): TokenResponse {
+        println("INSIDE METHOD") // TODO delete this
         val request = LinkedMultiValueMap<String,String>()
         request.add("grant_type", "refresh_token")
         request.add("refresh_token", refreshToken)

@@ -3,6 +3,8 @@ package io.craigmiller160.authmanagementservice.security
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.dto.TokenResponse
+import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import org.junit.jupiter.api.AfterEach
@@ -12,14 +14,18 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Answers
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.client.RestTemplate
 import java.security.KeyPair
 import javax.servlet.FilterChain
 import javax.servlet.http.Cookie
@@ -36,8 +42,9 @@ class JwtValidationFilterTest {
     private lateinit var token: String
     private val cookieName = "cookie"
 
-    @Mock
     private lateinit var authServerClient: AuthServerClient
+    @Mock
+    private lateinit var restTemplate: RestTemplate
     @Mock
     private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
     @Mock
@@ -62,6 +69,8 @@ class JwtValidationFilterTest {
 
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
+
+        authServerClient = Mockito.spy(AuthServerClient(restTemplate, oAuthConfig))
 
         jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient)
         `when`(req.requestURI)
@@ -171,6 +180,34 @@ class JwtValidationFilterTest {
         assertNull(SecurityContextHolder.getContext().authentication)
         verify(chain, times(1))
                 .doFilter(req, res)
+    }
+
+    @Test
+    fun test_doFilterInternal_refresh() {
+        val jwt = JwtUtils.createJwt(-20)
+        val token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
+        `when`(req.getHeader("Authorization"))
+                .thenReturn("Bearer $token")
+
+        val refreshToken = "ABCDEFG"
+        val newRefreshToken = "HIJKLMNO"
+        val newTokenId = "id2"
+
+        `when`(manageRefreshTokenRepo.findByTokenId(JwtUtils.TOKEN_ID))
+                .thenReturn(ManagementRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
+        doReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
+                .`when`(authServerClient)
+                .tokenRefresh(newRefreshToken)
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        assertNotNull(SecurityContextHolder.getContext().authentication)
+
+        verify(chain, times(1))
+                .doFilter(req, res)
+        verify(manageRefreshTokenRepo, times(1))
+                .deleteById(1)
+        verify(manageRefreshTokenRepo, times(1))
+                .save(ManagementRefreshToken(0, newTokenId, newRefreshToken))
     }
 
 }
