@@ -31,15 +31,23 @@ data class OAuthConfig (
 
     lateinit var jwkSet: JWKSet
 
+    fun getBaseWait(): Long {
+        return 1000
+    }
+
+    fun loadJWKSet(): JWKSet {
+        return JWKSet.load(URL("$authServerHost$jwkPath"))
+    }
+
     @PostConstruct
-    fun loadJWKSet() {
+    fun tryToLoadJWKSet() {
         for (i in 0 until 5) {
             try {
-                jwkSet = JWKSet.load(URL("$authServerHost$jwkPath"))
+                jwkSet = loadJWKSet()
                 return
             } catch (ex: Exception) {
                 log.error("Error loading JWKSet", ex)
-                Thread.sleep(1000)
+                Thread.sleep(getBaseWait() * (i + 1))
             }
         }
 
