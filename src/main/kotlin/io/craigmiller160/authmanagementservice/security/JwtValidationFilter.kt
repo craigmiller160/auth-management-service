@@ -10,7 +10,10 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.dto.TokenResponse
+import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import org.slf4j.Logger
@@ -27,7 +30,8 @@ import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
         private val oAuthConfig: OAuthConfig,
-        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository
+        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository,
+        private val authServerClient: AuthServerClient
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -45,7 +49,7 @@ class JwtValidationFilter (
         chain.doFilter(req, res)
     }
 
-    private fun validateToken(token: String): JWTClaimsSet {
+    private fun validateToken(token: String, alreadyAttemptedRefresh: Boolean = false): JWTClaimsSet {
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
         val keySource = ImmutableJWKSet<SecurityContext>(oAuthConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
@@ -66,9 +70,15 @@ class JwtValidationFilter (
         } catch (ex: Exception) {
             when(ex) {
                 is BadJOSEException -> {
-                    attemptTokenRefresh(token)
-                    // TODO instead of always throwing the exception, need to get the claims and the token ID and send the refresh token along
-                    throw InvalidTokenException("Token validation failed", ex)
+                    if (alreadyAttemptedRefresh) {
+                        throw InvalidTokenException("Token validation failed", ex)
+                    }
+
+                    return attemptTokenRefresh(token)
+                            ?.let { tokenResponse ->
+                                validateToken(tokenResponse.accessToken, true)
+                            }
+                            ?: throw InvalidTokenException("Token validation failed", ex)
                 }
                 is ParseException, is JOSEException ->
                     throw InvalidTokenException("Token validation failed", ex)
@@ -78,12 +88,17 @@ class JwtValidationFilter (
         }
     }
 
-    private fun attemptTokenRefresh(token: String) {
+    private fun attemptTokenRefresh(token: String): TokenResponse? {
         val jwt = SignedJWT.parse(token)
         val claims = jwt.jwtClaimsSet
-        manageRefreshTokenRepo.findByTokenId(claims.jwtid)?.let { refreshToken ->
-            println("Refresh: $refreshToken") // TODO delete this
-        }
+        return manageRefreshTokenRepo.findByTokenId(claims.jwtid)
+                ?.let { refreshToken ->
+                    // TODO need better error handling here
+                    val tokenResponse = authServerClient.tokenRefresh(refreshToken.refreshToken)
+                    manageRefreshTokenRepo.deleteById(refreshToken.id)
+                    manageRefreshTokenRepo.save(ManagementRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
+                    tokenResponse
+                }
     }
 
     private fun createAuthentication(claims: JWTClaimsSet): Authentication {

@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
@@ -34,6 +35,8 @@ class JwtValidationFilterTest {
     private val cookieName = "cookie"
 
     @Mock
+    private lateinit var authServerClient: AuthServerClient
+    @Mock
     private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
     @Mock
     private lateinit var req: HttpServletRequest
@@ -58,7 +61,7 @@ class JwtValidationFilterTest {
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo)
+        jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient)
     }
 
     @AfterEach
