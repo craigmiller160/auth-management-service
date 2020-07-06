@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.config
 
 import io.craigmiller160.authmanagementservice.client.AuthServerClient
+import io.craigmiller160.authmanagementservice.client.AuthServerClientImpl
 import io.craigmiller160.authmanagementservice.client.RequestResponseLoggingInterceptor
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
@@ -29,7 +30,7 @@ class ClientConfig (
 
     @Bean
     fun authServerClient(restTemplate: RestTemplate): AuthServerClient {
-        return AuthServerClient(restTemplate, OAuthConfig)
+        return AuthServerClientImpl(restTemplate, OAuthConfig)
     }
 
 }

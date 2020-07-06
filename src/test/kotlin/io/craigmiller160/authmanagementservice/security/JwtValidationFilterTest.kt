@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Answers
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.times
@@ -25,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.client.RestTemplate
 import java.security.KeyPair
 import javax.servlet.FilterChain
 import javax.servlet.http.Cookie
@@ -42,9 +39,8 @@ class JwtValidationFilterTest {
     private lateinit var token: String
     private val cookieName = "cookie"
 
-    private lateinit var authServerClient: AuthServerClient
     @Mock
-    private lateinit var restTemplate: RestTemplate
+    private lateinit var authServerClient: AuthServerClient
     @Mock
     private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
     @Mock
@@ -69,8 +65,6 @@ class JwtValidationFilterTest {
 
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
-
-        authServerClient = Mockito.spy(AuthServerClient(restTemplate, oAuthConfig))
 
         jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient)
         `when`(req.requestURI)
@@ -197,7 +191,7 @@ class JwtValidationFilterTest {
                 .thenReturn(ManagementRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
         doReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
                 .`when`(authServerClient)
-                .tokenRefresh(newRefreshToken)
+                .tokenRefresh(refreshToken)
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNotNull(SecurityContextHolder.getContext().authentication)
