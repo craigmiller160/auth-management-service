@@ -145,4 +145,14 @@ class BasicControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
+    @Test
+    fun test_getAuthenticatedUser() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getAuthenticatedUser_unauthorized() {
+        TODO("Finish this")
+    }
+
 }
