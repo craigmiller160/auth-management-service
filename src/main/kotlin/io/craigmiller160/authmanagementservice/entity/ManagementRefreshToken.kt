@@ -6,6 +6,8 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
+// TODO need to clear this regularly
+
 @Entity
 @Table(name = "management_refresh_tokens")
 data class ManagementRefreshToken (

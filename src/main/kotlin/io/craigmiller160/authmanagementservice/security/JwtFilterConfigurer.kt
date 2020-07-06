@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.security
 
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.DefaultSecurityFilterChain
@@ -9,11 +10,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class JwtFilterConfigurer (
-        private val OAuthConfig: OAuthConfig
+        private val OAuthConfig: OAuthConfig,
+        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository
 ) : SecurityConfigurerAdapter<DefaultSecurityFilterChain,HttpSecurity>() {
 
     override fun configure(http: HttpSecurity?) {
-        http?.addFilterBefore(JwtValidationFilter(OAuthConfig), UsernamePasswordAuthenticationFilter::class.java)
+        http?.addFilterBefore(JwtValidationFilter(OAuthConfig, manageRefreshTokenRepo), UsernamePasswordAuthenticationFilter::class.java)
     }
 
 }

@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -33,6 +34,8 @@ class JwtValidationFilterTest {
     private val cookieName = "cookie"
 
     @Mock
+    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+    @Mock
     private lateinit var req: HttpServletRequest
     @Mock
     private lateinit var res: HttpServletResponse
@@ -55,7 +58,7 @@ class JwtValidationFilterTest {
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(oAuthConfig)
+        jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo)
     }
 
     @AfterEach

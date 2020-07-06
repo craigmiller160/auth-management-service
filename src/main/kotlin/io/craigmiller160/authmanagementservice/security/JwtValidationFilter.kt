@@ -7,10 +7,12 @@ import com.nimbusds.jose.proc.BadJOSEException
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
+import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -24,7 +26,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-        private val oAuthConfig: OAuthConfig
+        private val oAuthConfig: OAuthConfig,
+        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -62,12 +65,24 @@ class JwtValidationFilter (
             return jwtProcessor.process(token, null)
         } catch (ex: Exception) {
             when(ex) {
-                is ParseException, is JOSEException, is BadJOSEException ->
+                is BadJOSEException -> {
+                    attemptTokenRefresh(token)
                     // TODO instead of always throwing the exception, need to get the claims and the token ID and send the refresh token along
+                    throw InvalidTokenException("Token validation failed", ex)
+                }
+                is ParseException, is JOSEException ->
                     throw InvalidTokenException("Token validation failed", ex)
                 is RuntimeException -> throw ex
                 else -> throw RuntimeException(ex)
             }
+        }
+    }
+
+    private fun attemptTokenRefresh(token: String) {
+        val jwt = SignedJWT.parse(token)
+        val claims = jwt.jwtClaimsSet
+        manageRefreshTokenRepo.findByTokenId(claims.jwtid)?.let { refreshToken ->
+            println("Refresh: $refreshToken") // TODO delete this
         }
     }
 
