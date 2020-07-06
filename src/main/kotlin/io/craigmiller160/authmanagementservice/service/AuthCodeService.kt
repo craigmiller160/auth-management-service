@@ -26,13 +26,13 @@ class AuthCodeService (
         private val STATE_ATTR = "state"
     }
 
-    private fun generateAuthCodeState(): String { // TODO test this
+    private fun generateAuthCodeState(): String {
         val random = SecureRandom()
         val bigInt = BigInteger(130, random)
         return bigInt.toString(32)
     }
 
-    fun getAuthCodeLoginUrl(req: HttpServletRequest): String { // TODO add state to tests
+    fun prepareAuthCodeLogin(req: HttpServletRequest): String {
         val state = generateAuthCodeState()
         req.session.setAttribute(STATE_ATTR, state)
 

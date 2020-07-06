@@ -1,14 +1,10 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.service.AuthCodeService
-import org.springframework.http.ResponseCookie
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.math.BigInteger
-import java.security.SecureRandom
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -22,7 +18,7 @@ class AuthCodeController (
 
     @GetMapping("/login")
     fun login(req: HttpServletRequest, res: HttpServletResponse) {
-        val authCodeLoginUrl = authCodeService.getAuthCodeLoginUrl(req)
+        val authCodeLoginUrl = authCodeService.prepareAuthCodeLogin(req)
         res.status = 302
         res.addHeader("Location", authCodeLoginUrl)
     }
