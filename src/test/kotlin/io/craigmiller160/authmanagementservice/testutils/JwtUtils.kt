@@ -25,6 +25,8 @@ object JwtUtils {
     const val ROLES_CLAIM = "roles"
     const val CLIENT_KEY = "clientKey"
     const val CLIENT_NAME = "clientName"
+    const val FIRST_NAME = "firstName"
+    const val LAST_NAME = "lastName"
 
     fun createKeyPair(): KeyPair {
         val keyPairGen = KeyPairGenerator.getInstance("RSA")
@@ -54,6 +56,8 @@ object JwtUtils {
                 .claim(ROLES_CLAIM, listOf(ROLE_1, ROLE_2))
                 .claim("clientKey", CLIENT_KEY)
                 .claim("clientName", CLIENT_NAME)
+                .claim("firstName", FIRST_NAME)
+                .claim("lastName", LAST_NAME)
                 .build()
         return SignedJWT(header, claims)
     }
