@@ -55,6 +55,7 @@ class AuthCodeService (
 
         val tokens = authServerClient.authenticateAuthCode(code)
         val manageRefreshToken = ManagementRefreshToken(0, tokens.tokenId, tokens.refreshToken)
+        manageRefreshTokenRepo.removeByTokenId(tokens.tokenId)
         manageRefreshTokenRepo.save(manageRefreshToken)
         val cookie = createCookie(tokens.accessToken, oAuthConfig.cookieMaxAgeSecs)
         return Pair(cookie, oAuthConfig.postAuthRedirect)

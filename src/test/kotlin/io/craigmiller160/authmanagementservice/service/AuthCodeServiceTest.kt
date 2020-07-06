@@ -121,6 +121,8 @@ class AuthCodeServiceTest {
 
         verify(session, times(1))
                 .removeAttribute(AuthCodeService.STATE_ATTR)
+        verify(manageRefreshTokenRepo, times(1))
+                .removeByTokenId(response.tokenId)
     }
 
     private fun validateCookie(cookie: ResponseCookie, token: String, exp: Long) {
