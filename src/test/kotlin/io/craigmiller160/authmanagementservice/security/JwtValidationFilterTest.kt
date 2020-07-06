@@ -1,7 +1,11 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.dto.TokenResponse
+import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,6 +16,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -32,6 +39,10 @@ class JwtValidationFilterTest {
     private lateinit var token: String
     private val cookieName = "cookie"
 
+    @Mock
+    private lateinit var authServerClient: AuthServerClient
+    @Mock
+    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
     @Mock
     private lateinit var req: HttpServletRequest
     @Mock
@@ -55,7 +66,9 @@ class JwtValidationFilterTest {
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(oAuthConfig)
+        jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient)
+        `when`(req.requestURI)
+                .thenReturn("/something")
     }
 
     @AfterEach
@@ -75,12 +88,16 @@ class JwtValidationFilterTest {
         assertEquals(JwtUtils.USERNAME, principal.username)
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
     fun test_doFilterInternal_noToken() {
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -96,6 +113,17 @@ class JwtValidationFilterTest {
         assertEquals(JwtUtils.USERNAME, principal.username)
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
         assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
+        verify(chain, times(1))
+                .doFilter(req, res)
+    }
+
+    @Test
+    fun test_doFilterInternal_authcodeUri() {
+        `when`(req.requestURI).thenReturn("/authcode/foo")
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -108,6 +136,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -118,6 +148,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -129,6 +161,8 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
     }
 
     @Test
@@ -138,6 +172,41 @@ class JwtValidationFilterTest {
 
         jwtValidationFilter.doFilter(req, res, chain)
         assertNull(SecurityContextHolder.getContext().authentication)
+        verify(chain, times(1))
+                .doFilter(req, res)
+    }
+
+    @Test
+    fun test_doFilterInternal_refresh() {
+        val jwt = JwtUtils.createJwt(-20)
+        val token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
+        `when`(req.getHeader("Authorization"))
+                .thenReturn("Bearer $token")
+
+        val refreshToken = "ABCDEFG"
+        val newRefreshToken = "HIJKLMNO"
+        val newTokenId = "id2"
+
+        `when`(manageRefreshTokenRepo.findByTokenId(JwtUtils.TOKEN_ID))
+                .thenReturn(ManagementRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
+        doReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
+                .`when`(authServerClient)
+                .authenticateRefreshToken(refreshToken)
+
+        jwtValidationFilter.doFilter(req, res, chain)
+        val authentication = SecurityContextHolder.getContext().authentication
+        assertNotNull(authentication)
+        val principal = authentication.principal as UserDetails
+        assertEquals(JwtUtils.USERNAME, principal.username)
+        assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
+        assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
+
+        verify(chain, times(1))
+                .doFilter(req, res)
+        verify(manageRefreshTokenRepo, times(1))
+                .deleteById(1)
+        verify(manageRefreshTokenRepo, times(1))
+                .save(ManagementRefreshToken(0, newTokenId, newRefreshToken))
     }
 
 }

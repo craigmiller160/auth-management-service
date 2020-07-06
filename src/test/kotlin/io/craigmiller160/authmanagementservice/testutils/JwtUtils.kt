@@ -9,6 +9,8 @@ import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
@@ -25,6 +27,9 @@ object JwtUtils {
     const val ROLES_CLAIM = "roles"
     const val CLIENT_KEY = "clientKey"
     const val CLIENT_NAME = "clientName"
+    const val FIRST_NAME = "firstName"
+    const val LAST_NAME = "lastName"
+    const val TOKEN_ID = "JWTID"
 
     fun createKeyPair(): KeyPair {
         val keyPairGen = KeyPairGenerator.getInstance("RSA")
@@ -39,6 +44,16 @@ object JwtUtils {
         return JWKSet(builder.build())
     }
 
+    fun createAuthUser(): AuthenticatedUser {
+        return AuthenticatedUser(
+                userName = USERNAME,
+                grantedAuthorities = listOf(SimpleGrantedAuthority(ROLE_1), SimpleGrantedAuthority(ROLE_2)),
+                firstName = FIRST_NAME,
+                lastName = LAST_NAME,
+                tokenId = TOKEN_ID
+        )
+    }
+
     fun createJwt(expMinutes: Long = 100): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.RS256)
                 .build()
@@ -47,13 +62,15 @@ object JwtUtils {
         val expDate = Date.from(exp.atZone(ZoneId.systemDefault()).toInstant())
 
         val claims = JWTClaimsSet.Builder()
-                .jwtID("JWTID")
+                .jwtID(TOKEN_ID)
                 .issueTime(Date())
                 .subject(USERNAME)
                 .expirationTime(expDate)
                 .claim(ROLES_CLAIM, listOf(ROLE_1, ROLE_2))
                 .claim("clientKey", CLIENT_KEY)
                 .claim("clientName", CLIENT_NAME)
+                .claim("firstName", FIRST_NAME)
+                .claim("lastName", LAST_NAME)
                 .build()
         return SignedJWT(header, claims)
     }

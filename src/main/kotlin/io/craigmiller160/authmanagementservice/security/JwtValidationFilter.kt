@@ -7,17 +7,21 @@ import com.nimbusds.jose.proc.BadJOSEException
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
+import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.dto.TokenResponse
+import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.User
 import org.springframework.web.filter.OncePerRequestFilter
 import java.text.ParseException
 import javax.servlet.FilterChain
@@ -25,25 +29,29 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
-        private val oAuthConfig: OAuthConfig
+        private val oAuthConfig: OAuthConfig,
+        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository,
+        private val authServerClient: AuthServerClient
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
-        try {
-            val token = getToken(req)
-            val claims = validateToken(token)
-            SecurityContextHolder.getContext().authentication = createAuthentication(claims)
-        } catch (ex: InvalidTokenException) {
-            log.error("Error authenticating token", ex)
-            SecurityContextHolder.clearContext()
+        if (!req.requestURI.startsWith("/authcode")) {
+            try {
+                val token = getToken(req)
+                val claims = validateToken(token)
+                SecurityContextHolder.getContext().authentication = createAuthentication(claims)
+            } catch (ex: InvalidTokenException) {
+                log.error("Error authenticating token", ex)
+                SecurityContextHolder.clearContext()
+            }
         }
 
         chain.doFilter(req, res)
     }
 
-    private fun validateToken(token: String): JWTClaimsSet {
+    private fun validateToken(token: String, alreadyAttemptedRefresh: Boolean = false): JWTClaimsSet {
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
         val keySource = ImmutableJWKSet<SecurityContext>(oAuthConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
@@ -63,7 +71,18 @@ class JwtValidationFilter (
             return jwtProcessor.process(token, null)
         } catch (ex: Exception) {
             when(ex) {
-                is ParseException, is JOSEException, is BadJOSEException ->
+                is BadJOSEException -> {
+                    if (alreadyAttemptedRefresh) {
+                        throw InvalidTokenException("Token validation failed", ex)
+                    }
+
+                    return attemptTokenRefresh(token)
+                            ?.let { tokenResponse ->
+                                validateToken(tokenResponse.accessToken, true)
+                            }
+                            ?: throw InvalidTokenException("Token validation failed", ex)
+                }
+                is ParseException, is JOSEException ->
                     throw InvalidTokenException("Token validation failed", ex)
                 is RuntimeException -> throw ex
                 else -> throw RuntimeException(ex)
@@ -71,14 +90,34 @@ class JwtValidationFilter (
         }
     }
 
+    private fun attemptTokenRefresh(token: String): TokenResponse? {
+        val jwt = SignedJWT.parse(token)
+        val claims = jwt.jwtClaimsSet
+        return manageRefreshTokenRepo.findByTokenId(claims.jwtid)
+                ?.let { refreshToken ->
+                    try {
+                        val tokenResponse = authServerClient.authenticateRefreshToken(refreshToken.refreshToken)
+                        manageRefreshTokenRepo.deleteById(refreshToken.id)
+                        manageRefreshTokenRepo.save(ManagementRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
+                        tokenResponse
+                    } catch (ex: Exception) {
+                        log.error("Error refreshing token", ex)
+                        null
+                    }
+                }
+    }
+
     private fun createAuthentication(claims: JWTClaimsSet): Authentication {
         val authorities = claims.getStringListClaim("roles")
                 .map { SimpleGrantedAuthority(it) }
-        val userDetails = User.withUsername(claims.subject)
-                .password("")
-                .authorities(authorities)
-                .build()
-        return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        val authUser = AuthenticatedUser(
+                userName = claims.subject,
+                grantedAuthorities = authorities,
+                firstName = claims.getStringClaim("firstName"),
+                lastName = claims.getStringClaim("lastName"),
+                tokenId = claims.jwtid
+        )
+        return UsernamePasswordAuthenticationToken(authUser, "", authUser.authorities)
     }
 
     private fun getToken(req: HttpServletRequest): String {

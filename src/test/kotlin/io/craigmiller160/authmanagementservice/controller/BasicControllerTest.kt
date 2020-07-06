@@ -1,12 +1,15 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
 import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
+import io.craigmiller160.authmanagementservice.dto.AuthUserDto
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
@@ -29,12 +32,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @WebMvcTest
 @ContextConfiguration(classes = [
-    JwtFilterConfigurer::class,
     BasicController::class,
     WebSecurityConfig::class,
     AuthEntryPoint::class,
     UserListResponseAdvice::class,
-    ClientListResponseAdvice::class
+    ClientListResponseAdvice::class,
+    JwtFilterConfigurer::class
 ])
 class BasicControllerTest {
 
@@ -43,6 +46,12 @@ class BasicControllerTest {
 
     @MockBean
     private lateinit var oAuthConfig: OAuthConfig
+
+    @MockBean
+    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+
+    @MockBean
+    private lateinit var authServerClient: AuthServerClient
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -131,6 +140,33 @@ class BasicControllerTest {
     fun test_getClients_unauthorized() {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/basic/clients")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+    }
+
+    @Test
+    fun test_getAuthenticatedUser() {
+        val authUser = AuthUserDto.fromAuthenticatedUser(JwtUtils.createAuthUser())
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/auth")
+                        .header("Authorization", "Bearer $accessToken")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andDo { result ->
+                    val body = objectMapper.readValue(result.response.contentAsString, AuthUserDto::class.java)
+                    assertEquals(authUser, body)
+                }
+    }
+
+    @Test
+    fun test_getAuthenticatedUser_unauthorized() {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/auth")
                         .secure(true)
         )
                 .andDo(MockMvcResultHandlers.print())
