@@ -72,7 +72,7 @@ class AuthCodeService (
                 .path("/")
                 .secure(true)
                 .httpOnly(true)
-                .maxAge(oAuthConfig.cookieMaxAgeSecs)
+                .maxAge(maxAge)
                 .sameSite("strict")
                 .build()
     }
