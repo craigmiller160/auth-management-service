@@ -8,7 +8,9 @@ data class AuthenticatedUser (
         private val userName: String,
         private val grantedAuthorities: List<GrantedAuthority>,
         val firstName: String,
-        val lastName: String
+        val lastName: String,
+        @JsonIgnore
+        val tokenId: String
 ): UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {

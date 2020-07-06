@@ -114,7 +114,8 @@ class JwtValidationFilter (
                 userName = claims.subject,
                 grantedAuthorities = authorities,
                 firstName = claims.getStringClaim("firstName"),
-                lastName = claims.getStringClaim("lastName")
+                lastName = claims.getStringClaim("lastName"),
+                tokenId = claims.jwtid
         )
         return UsernamePasswordAuthenticationToken(authUser, "", authUser.authorities)
     }
