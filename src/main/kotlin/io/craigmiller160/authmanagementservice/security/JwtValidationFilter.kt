@@ -93,11 +93,15 @@ class JwtValidationFilter (
         val claims = jwt.jwtClaimsSet
         return manageRefreshTokenRepo.findByTokenId(claims.jwtid)
                 ?.let { refreshToken ->
-                    // TODO need better error handling here
-                    val tokenResponse = authServerClient.tokenRefresh(refreshToken.refreshToken)
-                    manageRefreshTokenRepo.deleteById(refreshToken.id)
-                    manageRefreshTokenRepo.save(ManagementRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
-                    tokenResponse
+                    try {
+                        val tokenResponse = authServerClient.tokenRefresh(refreshToken.refreshToken)
+                        manageRefreshTokenRepo.deleteById(refreshToken.id)
+                        manageRefreshTokenRepo.save(ManagementRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
+                        tokenResponse
+                    } catch (ex: Exception) {
+                        log.error("Error refreshing token", ex)
+                        null
+                    }
                 }
     }
 
