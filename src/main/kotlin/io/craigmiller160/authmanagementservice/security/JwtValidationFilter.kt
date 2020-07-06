@@ -37,13 +37,15 @@ class JwtValidationFilter (
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
-        try {
-            val token = getToken(req)
-            val claims = validateToken(token)
-            SecurityContextHolder.getContext().authentication = createAuthentication(claims)
-        } catch (ex: InvalidTokenException) {
-            log.error("Error authenticating token", ex)
-            SecurityContextHolder.clearContext()
+        if (!req.requestURI.startsWith("/authcode")) {
+            try {
+                val token = getToken(req)
+                val claims = validateToken(token)
+                SecurityContextHolder.getContext().authentication = createAuthentication(claims)
+            } catch (ex: InvalidTokenException) {
+                log.error("Error authenticating token", ex)
+                SecurityContextHolder.clearContext()
+            }
         }
 
         chain.doFilter(req, res)
