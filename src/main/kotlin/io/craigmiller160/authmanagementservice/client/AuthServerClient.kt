@@ -6,6 +6,7 @@ import io.craigmiller160.authmanagementservice.dto.TokenResponse
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.web.client.RestTemplate
 import java.util.Base64
 
@@ -21,10 +22,12 @@ class AuthServerClient (
         val host = oAuthConfig.authServerHost
         val path = oAuthConfig.tokenPath
 
-        val encodedAuthHeader = Base64.getEncoder().encodeToString("$clientKey:$clientSecret".toByteArray())
+        // TODO clean this up
+//        val encodedAuthHeader = Base64.getEncoder().encodeToString("$clientKey:$clientSecret".toByteArray())
 
         val headers = HttpHeaders()
-        headers.set("Authorization", "Basic $encodedAuthHeader")
+        headers.setBasicAuth(clientKey, clientSecret)
+        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
         val url = "$host$path"
         val request = TokenRequest(
@@ -33,7 +36,7 @@ class AuthServerClient (
                 code = code,
                 redirect_uri = redirectUri
         )
-        val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity<TokenResponse>(headers), TokenResponse::class.java)
+        val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity<TokenRequest>(request, headers), TokenResponse::class.java)
         return response.body!! // TODO probably need better error handling here
     }
 
