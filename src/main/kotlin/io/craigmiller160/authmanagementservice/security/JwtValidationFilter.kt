@@ -49,7 +49,7 @@ class JwtValidationFilter (
         chain.doFilter(req, res)
     }
 
-    private fun validateToken(token: String, alreadyAttemptedRefresh: Boolean = false): JWTClaimsSet {
+    private fun validateToken(token: String, alreadyAttemptedRefresh: Boolean = false): JWTClaimsSet { // TODO add token refreshing to unit tests
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
         val keySource = ImmutableJWKSet<SecurityContext>(oAuthConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
