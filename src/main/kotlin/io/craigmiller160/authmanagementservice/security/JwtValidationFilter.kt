@@ -10,6 +10,7 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
+import io.craigmiller160.authmanagementservice.dto.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -74,11 +75,11 @@ class JwtValidationFilter (
     private fun createAuthentication(claims: JWTClaimsSet): Authentication {
         val authorities = claims.getStringListClaim("roles")
                 .map { SimpleGrantedAuthority(it) }
-        val userDetails = User.withUsername(claims.subject)
-                .password("")
-                .authorities(authorities)
-                .build()
-        return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        val authUser = AuthenticatedUser(
+                username = claims.subject,
+                authorities = authorities
+        )
+        return UsernamePasswordAuthenticationToken(authUser, "", authUser.authorities)
     }
 
     private fun getToken(req: HttpServletRequest): String {

@@ -29,10 +29,7 @@ class BasicController (
 
     @GetMapping("/auth")
     fun getAuthenticatedUser(): AuthenticatedUser {
-        val principal = SecurityContextHolder.getContext().authentication.principal as org.springframework.security.core.userdetails.User
-        return AuthenticatedUser(
-                username = principal.username
-        )
+        return SecurityContextHolder.getContext().authentication.principal as AuthenticatedUser
     }
 
 }
