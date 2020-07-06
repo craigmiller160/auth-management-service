@@ -75,7 +75,9 @@ class JwtValidationFilter (
                 .map { SimpleGrantedAuthority(it) }
         val authUser = AuthenticatedUser(
                 userName = claims.subject,
-                grantedAuthorities = authorities
+                grantedAuthorities = authorities,
+                firstName = claims.getStringClaim("firstName"),
+                lastName = claims.getStringClaim("lastName")
         )
         return UsernamePasswordAuthenticationToken(authUser, "", authUser.authorities)
     }

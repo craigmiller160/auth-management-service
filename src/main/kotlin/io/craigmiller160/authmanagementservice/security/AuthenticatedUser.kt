@@ -6,7 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails
 
 data class AuthenticatedUser (
         private val userName: String,
-        private val grantedAuthorities: List<GrantedAuthority>
+        private val grantedAuthorities: List<GrantedAuthority>,
+        val firstName: String,
+        val lastName: String
 ): UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
