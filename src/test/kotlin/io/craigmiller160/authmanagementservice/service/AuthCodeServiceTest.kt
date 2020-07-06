@@ -4,24 +4,29 @@ import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.dto.TokenResponse
 import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
+import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
+import io.craigmiller160.authmanagementservice.testutils.JwtUtils
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.ResponseCookie
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import java.time.Duration
-import java.time.temporal.TemporalUnit
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
@@ -54,14 +59,15 @@ class AuthCodeServiceTest {
     @InjectMocks
     private lateinit var authCodeService: AuthCodeService
 
-    @BeforeEach
-    fun setup() {
-        `when`(req.session)
-                .thenReturn(session)
+    @AfterEach
+    fun clean() {
+        SecurityContextHolder.clearContext()
     }
 
     @Test
     fun test_prepareAuthCodeLogin() {
+        `when`(req.session)
+                .thenReturn(session)
         `when`(oAuthConfig.authServerHost)
                 .thenReturn(host)
         `when`(oAuthConfig.authCodeLoginPath)
@@ -87,6 +93,8 @@ class AuthCodeServiceTest {
 
     @Test
     fun test_code() {
+        `when`(req.session)
+                .thenReturn(session)
         `when`(oAuthConfig.cookieMaxAgeSecs)
                 .thenReturn(cookieExpSecs)
         `when`(oAuthConfig.cookieName)
@@ -127,12 +135,32 @@ class AuthCodeServiceTest {
 
     @Test
     fun test_code_badState() {
-        TODO("Finish this")
+        `when`(req.session)
+                .thenReturn(session)
+        val authCode = "DEF"
+        val state = "ABC"
+
+        val ex = assertThrows<BadAuthCodeStateException> { authCodeService.code(req, authCode, state) }
+        assertEquals("State does not match expected value", ex.message)
     }
 
     @Test
     fun test_logout() {
-        TODO("Finish this")
+        `when`(oAuthConfig.cookieName)
+                .thenReturn(cookieName)
+
+        val authentication = Mockito.mock(Authentication::class.java)
+        val authUser = JwtUtils.createAuthUser()
+        `when`(authentication.principal)
+                .thenReturn(authUser)
+        SecurityContextHolder.getContext().authentication = authentication
+
+        val cookie = authCodeService.logout()
+
+        validateCookie(cookie, "", 0)
+
+        verify(manageRefreshTokenRepo, times(1))
+                .removeByTokenId(authUser.tokenId)
     }
 
 }
