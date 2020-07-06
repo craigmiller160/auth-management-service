@@ -194,7 +194,12 @@ class JwtValidationFilterTest {
                 .tokenRefresh(refreshToken)
 
         jwtValidationFilter.doFilter(req, res, chain)
-        assertNotNull(SecurityContextHolder.getContext().authentication)
+        val authentication = SecurityContextHolder.getContext().authentication
+        assertNotNull(authentication)
+        val principal = authentication.principal as UserDetails
+        assertEquals(JwtUtils.USERNAME, principal.username)
+        assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_1), authentication.authorities.toList()[0])
+        assertEquals(SimpleGrantedAuthority(JwtUtils.ROLE_2), authentication.authorities.toList()[1])
 
         verify(chain, times(1))
                 .doFilter(req, res)
