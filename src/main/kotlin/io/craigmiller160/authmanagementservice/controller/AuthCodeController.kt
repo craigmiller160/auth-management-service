@@ -22,19 +22,8 @@ class AuthCodeController (
         res.addHeader("Location", authCodeLoginUrl)
     }
 
-    // TODO remove one of the get/post mappings here
-
     @GetMapping("/code")
-    fun getCode(@RequestParam("code") code: String, res: HttpServletResponse) {
-        code(code, res)
-    }
-
-    @PostMapping("/code")
-    fun postCode(@RequestParam("code") code: String, res: HttpServletResponse) {
-        code(code, res)
-    }
-
-    private fun code(code: String, res: HttpServletResponse) {
+    fun code(@RequestParam("code") code: String, res: HttpServletResponse) {
         val (cookie, postAuthRedirect) = authCodeService.code(code)
         res.status = 302
         res.addHeader("Location", postAuthRedirect)
