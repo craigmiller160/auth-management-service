@@ -34,6 +34,7 @@ class AuthCodeService (
     }
 
     fun logout(): ResponseCookie {
+        // TODO clear refresh token
         return createCookie("", 0)
     }
 
