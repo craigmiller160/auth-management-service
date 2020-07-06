@@ -9,4 +9,6 @@ interface ManagementRefreshTokenRepository : JpaRepository<ManagementRefreshToke
 
     fun findByTokenId(tokenId: String): ManagementRefreshToken? // TODO add to unit tests
 
+    fun removeByTokenId(tokenId: String): Int // TODO add to unit tests
+
 }

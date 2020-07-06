@@ -5,7 +5,9 @@ import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
+import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import org.springframework.http.ResponseCookie
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 import java.net.URLEncoder
@@ -59,7 +61,8 @@ class AuthCodeService (
     }
 
     fun logout(): ResponseCookie {
-        // TODO clear refresh token
+        val authUser = SecurityContextHolder.getContext().authentication.principal as AuthenticatedUser
+        manageRefreshTokenRepo.removeByTokenId(authUser.tokenId)
         return createCookie("", 0)
     }
 
