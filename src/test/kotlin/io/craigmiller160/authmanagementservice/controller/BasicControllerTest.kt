@@ -10,6 +10,7 @@ import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
+import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
@@ -18,10 +19,13 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -147,7 +151,19 @@ class BasicControllerTest {
 
     @Test
     fun test_getAuthenticatedUser() {
-        TODO("Finish this")
+        val authUser = JwtUtils.createAuthUser()
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/basic/auth")
+                        .header("Authorization", "Bearer $accessToken")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andDo { result ->
+                    val body = objectMapper.readValue(result.response.contentAsString, AuthenticatedUser::class.java)
+                    assertEquals(authUser, body)
+                }
     }
 
     @Test
