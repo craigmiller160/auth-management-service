@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.controller
 
+import io.craigmiller160.authmanagementservice.dto.AuthUserDto
 import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
@@ -26,8 +27,9 @@ class BasicController (
     }
 
     @GetMapping("/auth")
-    fun getAuthenticatedUser(): AuthenticatedUser {
-        return SecurityContextHolder.getContext().authentication.principal as AuthenticatedUser
+    fun getAuthenticatedUser(): AuthUserDto {
+        val authUser = SecurityContextHolder.getContext().authentication.principal as AuthenticatedUser
+        return AuthUserDto.fromAuthenticatedUser(authUser)
     }
 
 }

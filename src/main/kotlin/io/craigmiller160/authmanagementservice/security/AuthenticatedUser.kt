@@ -9,7 +9,6 @@ data class AuthenticatedUser (
         private val grantedAuthorities: List<GrantedAuthority>,
         val firstName: String,
         val lastName: String,
-        @JsonIgnore
         val tokenId: String
 ): UserDetails {
 
@@ -21,15 +20,10 @@ data class AuthenticatedUser (
         return this.userName
     }
 
-    @JsonIgnore
     override fun isEnabled() = true
-    @JsonIgnore
     override fun isCredentialsNonExpired() = true
-    @JsonIgnore
     override fun getPassword() = ""
-    @JsonIgnore
     override fun isAccountNonExpired() = true
-    @JsonIgnore
     override fun isAccountNonLocked() = true
 
 }
