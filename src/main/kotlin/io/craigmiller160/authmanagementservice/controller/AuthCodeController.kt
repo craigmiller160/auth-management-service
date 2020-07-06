@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @RestController
@@ -16,14 +17,16 @@ class AuthCodeController (
 ) {
 
     @GetMapping("/login")
-    fun login(res: HttpServletResponse) {
+    fun login(req: HttpServletRequest, res: HttpServletResponse) {
+        req.session.setAttribute("state", "ABCDE") // TODO trying this
         val authCodeLoginUrl = authCodeService.getAuthCodeLoginUrl()
         res.status = 302
         res.addHeader("Location", authCodeLoginUrl)
     }
 
     @GetMapping("/code")
-    fun code(@RequestParam("code") code: String, res: HttpServletResponse) {
+    fun code(@RequestParam("code") code: String, req: HttpServletRequest, res: HttpServletResponse) {
+        println("STATE: ${req.session.getAttribute("state")}") // TODO delete this
         val (cookie, postAuthRedirect) = authCodeService.code(code)
         res.status = 302
         res.addHeader("Location", postAuthRedirect)

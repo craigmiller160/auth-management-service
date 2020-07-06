@@ -23,8 +23,6 @@ class WebSecurityConfig (
     override fun configure(http: HttpSecurity?) {
         http?.let {
             http.csrf().disable()
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
                     .requiresChannel().anyRequest().requiresSecure()
                     .and()
                     .authorizeRequests()
