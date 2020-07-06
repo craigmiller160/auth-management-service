@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.client
 
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.dto.TokenResponse
+import io.craigmiller160.authmanagementservice.exception.InvalidResponseBodyException
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import java.lang.RuntimeException
 
 class AuthServerClientImpl (
         private val restTemplate: RestTemplate,
@@ -29,7 +31,6 @@ class AuthServerClientImpl (
     }
 
     override fun authenticateRefreshToken(refreshToken: String): TokenResponse {
-        println("INSIDE METHOD") // TODO delete this
         val request = LinkedMultiValueMap<String,String>()
         request.add("grant_type", "refresh_token")
         request.add("refresh_token", refreshToken)
@@ -50,7 +51,7 @@ class AuthServerClientImpl (
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
         val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity<MultiValueMap<String,String>>(body, headers), TokenResponse::class.java)
-        return response.body!! // TODO probably need better error handling here
+        return response.body ?: throw InvalidResponseBodyException()
     }
 
 }
