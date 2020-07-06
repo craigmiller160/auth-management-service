@@ -10,7 +10,6 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
-import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.User
 import org.springframework.web.filter.OncePerRequestFilter
 import java.text.ParseException
 import javax.servlet.FilterChain
@@ -76,8 +74,8 @@ class JwtValidationFilter (
         val authorities = claims.getStringListClaim("roles")
                 .map { SimpleGrantedAuthority(it) }
         val authUser = AuthenticatedUser(
-                username = claims.subject,
-                authorities = authorities
+                userName = claims.subject,
+                grantedAuthorities = authorities
         )
         return UsernamePasswordAuthenticationToken(authUser, "", authUser.authorities)
     }

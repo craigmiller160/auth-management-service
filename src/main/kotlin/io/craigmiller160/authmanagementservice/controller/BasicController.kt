@@ -3,8 +3,6 @@ package io.craigmiller160.authmanagementservice.controller
 import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.service.BasicService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
