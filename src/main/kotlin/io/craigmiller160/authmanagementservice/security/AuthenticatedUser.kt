@@ -13,7 +13,7 @@ data class AuthenticatedUser (
         return this.grantedAuthorities.toMutableList()
     }
 
-    override fun getUsername(): kotlin.String {
+    override fun getUsername(): String {
         return this.userName
     }
 
