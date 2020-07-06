@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component
 
 @Component
 class JwtFilterConfigurer (
-        private val OAuthConfig: OAuthConfig,
+        private val oAuthConfig: OAuthConfig,
         private val manageRefreshTokenRepo: ManagementRefreshTokenRepository,
         private val authServerClient: AuthServerClient
 ) : SecurityConfigurerAdapter<DefaultSecurityFilterChain,HttpSecurity>() {
 
     override fun configure(http: HttpSecurity?) {
-        http?.addFilterBefore(JwtValidationFilter(OAuthConfig, manageRefreshTokenRepo, authServerClient), UsernamePasswordAuthenticationFilter::class.java)
+        http?.addFilterBefore(JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient), UsernamePasswordAuthenticationFilter::class.java)
     }
 
 }

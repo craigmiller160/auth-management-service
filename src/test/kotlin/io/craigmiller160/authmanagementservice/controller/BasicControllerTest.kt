@@ -1,12 +1,14 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
 import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
+import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
@@ -29,12 +31,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @WebMvcTest
 @ContextConfiguration(classes = [
-    JwtFilterConfigurer::class,
     BasicController::class,
     WebSecurityConfig::class,
     AuthEntryPoint::class,
     UserListResponseAdvice::class,
-    ClientListResponseAdvice::class
+    ClientListResponseAdvice::class,
+    JwtFilterConfigurer::class
 ])
 class BasicControllerTest {
 
@@ -43,6 +45,12 @@ class BasicControllerTest {
 
     @MockBean
     private lateinit var oAuthConfig: OAuthConfig
+
+    @MockBean
+    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+
+    @MockBean
+    private lateinit var authServerClient: AuthServerClient
 
     @Autowired
     private lateinit var mockMvc: MockMvc
