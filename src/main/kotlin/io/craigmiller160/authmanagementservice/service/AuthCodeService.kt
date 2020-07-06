@@ -23,7 +23,7 @@ class AuthCodeService (
 ) {
 
     companion object {
-        private val STATE_ATTR = "state"
+        const val STATE_ATTR = "state"
     }
 
     private fun generateAuthCodeState(): String {
