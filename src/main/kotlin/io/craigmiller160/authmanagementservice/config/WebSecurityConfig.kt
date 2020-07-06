@@ -28,10 +28,10 @@ class WebSecurityConfig (
                     .requiresChannel().anyRequest().requiresSecure()
                     .and()
                     .authorizeRequests()
-//                    .anyRequest().fullyAuthenticated()
-                    .anyRequest().permitAll() // TODO revert this
-//                    .and()
-//                    .apply(jwtFilterConfigurer) // TODO restore this
+                    .antMatchers("/authcode/**").permitAll()
+                    .anyRequest().fullyAuthenticated()
+                    .and()
+                    .apply(jwtFilterConfigurer)
                     .and()
                     .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         }
