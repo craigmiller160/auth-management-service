@@ -53,7 +53,7 @@ class AuthCodeService (
 
         req.session.removeAttribute(STATE_ATTR)
 
-        val tokens = authServerClient.authCodeLogin(code)
+        val tokens = authServerClient.authenticateAuthCode(code)
         val manageRefreshToken = ManagementRefreshToken(0, tokens.tokenId, tokens.refreshToken)
         manageRefreshTokenRepo.save(manageRefreshToken)
         val cookie = createCookie(tokens.accessToken, oAuthConfig.cookieMaxAgeSecs)

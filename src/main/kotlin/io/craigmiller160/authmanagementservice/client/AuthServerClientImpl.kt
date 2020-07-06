@@ -15,7 +15,7 @@ class AuthServerClientImpl (
         private val oAuthConfig: OAuthConfig
 ) : AuthServerClient {
 
-    override fun authCodeLogin(code: String): TokenResponse {
+    override fun authenticateAuthCode(code: String): TokenResponse {
         val clientKey = oAuthConfig.clientKey
         val redirectUri = oAuthConfig.authCodeRedirectUri
 
@@ -28,7 +28,7 @@ class AuthServerClientImpl (
         return tokenRequest(request)
     }
 
-    override fun tokenRefresh(refreshToken: String): TokenResponse {
+    override fun authenticateRefreshToken(refreshToken: String): TokenResponse {
         println("INSIDE METHOD") // TODO delete this
         val request = LinkedMultiValueMap<String,String>()
         request.add("grant_type", "refresh_token")

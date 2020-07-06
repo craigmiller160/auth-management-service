@@ -191,7 +191,7 @@ class JwtValidationFilterTest {
                 .thenReturn(ManagementRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
         doReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
                 .`when`(authServerClient)
-                .tokenRefresh(refreshToken)
+                .authenticateRefreshToken(refreshToken)
 
         jwtValidationFilter.doFilter(req, res, chain)
         val authentication = SecurityContextHolder.getContext().authentication
