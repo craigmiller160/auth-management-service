@@ -14,8 +14,6 @@ class AuthCodeController (
         private val authCodeService: AuthCodeService
 ) {
 
-
-
     @GetMapping("/login")
     fun login(req: HttpServletRequest, res: HttpServletResponse) {
         val authCodeLoginUrl = authCodeService.prepareAuthCodeLogin(req)
