@@ -5,8 +5,12 @@ import io.craigmiller160.authmanagementservice.client.RequestResponseLoggingInte
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.MediaType
 import org.springframework.http.client.BufferingClientHttpRequestFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.converter.FormHttpMessageConverter
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.RestTemplate
 
 @Configuration
@@ -19,6 +23,7 @@ class ClientConfig (
         return RestTemplateBuilder()
                 .requestFactory { BufferingClientHttpRequestFactory(SimpleClientHttpRequestFactory()) }
                 .interceptors(listOf(RequestResponseLoggingInterceptor()))
+                .messageConverters(FormHttpMessageConverter(), MappingJackson2HttpMessageConverter()) // TODO trying this out
                 .build()
     }
 
