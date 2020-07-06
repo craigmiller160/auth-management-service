@@ -10,7 +10,7 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
-import io.craigmiller160.authmanagementservice.dto.AuthenticatedUser
+import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

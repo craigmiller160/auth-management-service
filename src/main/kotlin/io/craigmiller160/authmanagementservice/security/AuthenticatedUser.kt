@@ -1,4 +1,4 @@
-package io.craigmiller160.authmanagementservice.dto
+package io.craigmiller160.authmanagementservice.security
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
