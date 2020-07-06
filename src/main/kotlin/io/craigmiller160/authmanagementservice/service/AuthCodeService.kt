@@ -3,11 +3,15 @@ package io.craigmiller160.authmanagementservice.service
 import io.craigmiller160.authmanagementservice.client.AuthServerClient
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
+import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.security.SecureRandom
+import javax.servlet.http.HttpServletRequest
 
 @Service
 class AuthCodeService (
@@ -16,7 +20,20 @@ class AuthCodeService (
         private val manageRefreshTokenRepo: ManagementRefreshTokenRepository
 ) {
 
-    fun getAuthCodeLoginUrl(state: String): String { // TODO add state to tests
+    companion object {
+        private val STATE_ATTR = "state"
+    }
+
+    private fun generateAuthCodeState(): String { // TODO test this
+        val random = SecureRandom()
+        val bigInt = BigInteger(130, random)
+        return bigInt.toString(32)
+    }
+
+    fun getAuthCodeLoginUrl(req: HttpServletRequest): String { // TODO add state to tests
+        val state = generateAuthCodeState()
+        req.session.setAttribute(STATE_ATTR, state)
+
         val host = oAuthConfig.authServerHost
         val loginPath = oAuthConfig.authCodeLoginPath
         val redirectUri = URLEncoder.encode(oAuthConfig.authCodeRedirectUri, StandardCharsets.UTF_8)
@@ -26,7 +43,14 @@ class AuthCodeService (
         return "$host$loginPath?response_type=code&client_id=$clientKey&redirect_uri=$redirectUri&state=$encodedState"
     }
 
-    fun code(code: String): Pair<ResponseCookie,String> {
+    fun code(req: HttpServletRequest, code: String, state: String): Pair<ResponseCookie,String> {
+        val expectedState = req.session.getAttribute(STATE_ATTR) as String?
+        if (expectedState != state) {
+            throw BadAuthCodeStateException("State does not match expected value")
+        }
+
+        req.session.removeAttribute(STATE_ATTR)
+
         val tokens = authServerClient.authCodeLogin(code)
         val manageRefreshToken = ManagementRefreshToken(0, tokens.tokenId, tokens.refreshToken)
         manageRefreshTokenRepo.save(manageRefreshToken)

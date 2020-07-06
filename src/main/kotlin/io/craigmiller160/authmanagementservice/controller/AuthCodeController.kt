@@ -18,29 +18,18 @@ class AuthCodeController (
         private val authCodeService: AuthCodeService
 ) {
 
-    companion object {
-        private val STATE_ATTR = "state"
-    }
 
-    private fun generateAuthCodeState(): String { // TODO test this
-        val random = SecureRandom()
-        val bigInt = BigInteger(130, random)
-        return bigInt.toString(32)
-    }
 
     @GetMapping("/login")
     fun login(req: HttpServletRequest, res: HttpServletResponse) {
-        val state = generateAuthCodeState()
-        req.session.setAttribute(STATE_ATTR, state)
-        val authCodeLoginUrl = authCodeService.getAuthCodeLoginUrl(state)
+        val authCodeLoginUrl = authCodeService.getAuthCodeLoginUrl(req)
         res.status = 302
         res.addHeader("Location", authCodeLoginUrl)
     }
 
     @GetMapping("/code")
-    fun code(@RequestParam("code") code: String, req: HttpServletRequest, res: HttpServletResponse) {
-        println("STATE: ${req.session.getAttribute("state")}") // TODO delete this
-        val (cookie, postAuthRedirect) = authCodeService.code(code)
+    fun code(@RequestParam("code") code: String, @RequestParam("state") state: String, req: HttpServletRequest, res: HttpServletResponse) {
+        val (cookie, postAuthRedirect) = authCodeService.code(req, code, state)
         res.status = 302
         res.addHeader("Location", postAuthRedirect)
         res.addHeader("Set-Cookie", cookie.toString())
