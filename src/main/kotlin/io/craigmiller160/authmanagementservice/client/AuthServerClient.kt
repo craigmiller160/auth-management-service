@@ -1,7 +1,6 @@
 package io.craigmiller160.authmanagementservice.client
 
 import io.craigmiller160.authmanagementservice.config.OAuthConfig
-import io.craigmiller160.authmanagementservice.dto.TokenRequest
 import io.craigmiller160.authmanagementservice.dto.TokenResponse
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
