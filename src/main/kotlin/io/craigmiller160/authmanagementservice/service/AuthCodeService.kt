@@ -29,15 +29,23 @@ class AuthCodeService (
         val tokens = authServerClient.authCodeLogin(code)
         val manageRefreshToken = ManagementRefreshToken(0, tokens.tokenId, tokens.refreshToken)
         manageRefreshTokenRepo.save(manageRefreshToken)
-        val cookie = ResponseCookie
-                .from(oAuthConfig.cookieName, tokens.accessToken)
+        val cookie = createCookie(tokens.accessToken, oAuthConfig.cookieMaxAgeSecs)
+        return Pair(cookie, oAuthConfig.postAuthRedirect)
+    }
+
+    fun logout(): ResponseCookie {
+        return createCookie("", 0)
+    }
+
+    private fun createCookie(token: String, maxAge: Long): ResponseCookie {
+        return ResponseCookie
+                .from(oAuthConfig.cookieName, token)
                 .path("/")
                 .secure(true)
                 .httpOnly(true)
                 .maxAge(oAuthConfig.cookieMaxAgeSecs)
                 .sameSite("strict")
                 .build()
-        return Pair(cookie, oAuthConfig.postAuthRedirect)
     }
 
 }

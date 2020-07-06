@@ -30,4 +30,10 @@ class AuthCodeController (
         res.addHeader("Set-Cookie", cookie.toString())
     }
 
+    @GetMapping("/logout")
+    fun logout(res: HttpServletResponse) {
+        val cookie = authCodeService.logout()
+        res.addHeader("Set-Cookie", cookie.toString())
+    }
+
 }
