@@ -6,6 +6,8 @@ import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Service
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Service
 class AuthCodeService (
@@ -17,8 +19,8 @@ class AuthCodeService (
     fun getAuthCodeLoginUrl(): String {
         val host = oAuthConfig.authServerHost
         val loginPath = oAuthConfig.authCodeLoginPath
-        val redirectUri = oAuthConfig.authCodeRedirectUri // TODO need to URL encode this
-        val clientKey = oAuthConfig.clientKey
+        val redirectUri = URLEncoder.encode(oAuthConfig.authCodeRedirectUri, StandardCharsets.UTF_8)
+        val clientKey = URLEncoder.encode(oAuthConfig.clientKey, StandardCharsets.UTF_8)
 
         return "$host$loginPath?response_type=code&client_id=$clientKey&redirect_uri=$redirectUri"
     }

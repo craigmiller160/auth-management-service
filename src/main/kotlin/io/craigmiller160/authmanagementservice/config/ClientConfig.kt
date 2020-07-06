@@ -23,7 +23,7 @@ class ClientConfig (
         return RestTemplateBuilder()
                 .requestFactory { BufferingClientHttpRequestFactory(SimpleClientHttpRequestFactory()) }
                 .interceptors(listOf(RequestResponseLoggingInterceptor()))
-                .messageConverters(FormHttpMessageConverter(), MappingJackson2HttpMessageConverter()) // TODO trying this out
+                .messageConverters(FormHttpMessageConverter(), MappingJackson2HttpMessageConverter())
                 .build()
     }
 

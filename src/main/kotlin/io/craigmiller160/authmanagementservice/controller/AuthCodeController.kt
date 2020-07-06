@@ -36,11 +36,9 @@ class AuthCodeController (
 
     private fun code(code: String, res: HttpServletResponse) {
         val (cookie, postAuthRedirect) = authCodeService.code(code)
-        println("I'm here") // TODO delete this
-        res.writer.use { it.write("Success") } // TODO delete this
-//        res.status = 302
-//        res.addHeader("Location", postAuthRedirect)
-//        res.addHeader("Set-Cookie", cookie.toString())
+        res.status = 302
+        res.addHeader("Location", postAuthRedirect)
+        res.addHeader("Set-Cookie", cookie.toString())
     }
 
 }
