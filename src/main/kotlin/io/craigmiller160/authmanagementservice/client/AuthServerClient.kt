@@ -17,23 +17,38 @@ class AuthServerClient (
 
     fun authCodeLogin(code: String): TokenResponse {
         val clientKey = oAuthConfig.clientKey
-        val clientSecret = oAuthConfig.clientSecret
         val redirectUri = oAuthConfig.authCodeRedirectUri
-        val host = oAuthConfig.authServerHost
-        val path = oAuthConfig.tokenPath
 
-        val headers = HttpHeaders()
-        headers.setBasicAuth(clientKey, clientSecret)
-        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
-
-        val url = "$host$path"
         val request = LinkedMultiValueMap<String,String>()
         request.add("grant_type", "authorization_code")
         request.add("client_id", clientKey)
         request.add("code", code)
         request.add("redirect_uri", redirectUri)
 
-        val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity<MultiValueMap<String,String>>(request, headers), TokenResponse::class.java)
+        return tokenRequest(request)
+    }
+
+    fun tokenRefresh(refreshToken: String): TokenResponse {
+        val request = LinkedMultiValueMap<String,String>()
+        request.add("grant_type", "refresh_token")
+        request.add("refresh_token", refreshToken)
+
+        return tokenRequest(request)
+    }
+
+    private fun tokenRequest(body: MultiValueMap<String,String>): TokenResponse {
+        val host = oAuthConfig.authServerHost
+        val path = oAuthConfig.tokenPath
+        val clientKey = oAuthConfig.clientKey
+        val clientSecret = oAuthConfig.clientSecret
+
+        val url = "$host$path"
+
+        val headers = HttpHeaders()
+        headers.setBasicAuth(clientKey, clientSecret)
+        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+
+        val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity<MultiValueMap<String,String>>(body, headers), TokenResponse::class.java)
         return response.body!! // TODO probably need better error handling here
     }
 
