@@ -19,7 +19,7 @@ class AuthServerClient (
         val clientSecret = oAuthConfig.clientSecret
         val redirectUri = oAuthConfig.authCodeRedirectUri
         val host = oAuthConfig.authServerHost
-        val path = oAuthConfig.authCodeLoginPath
+        val path = oAuthConfig.tokenPath
 
         val encodedAuthHeader = Base64.getEncoder().encodeToString("$clientKey:$clientSecret".toByteArray())
 
