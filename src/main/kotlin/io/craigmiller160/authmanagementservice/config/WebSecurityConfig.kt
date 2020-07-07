@@ -1,13 +1,12 @@
 package io.craigmiller160.authmanagementservice.config
 
-import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
+import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.config.http.SessionCreationPolicy
 
 @Configuration
 @EnableWebSecurity
