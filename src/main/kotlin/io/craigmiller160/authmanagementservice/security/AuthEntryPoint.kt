@@ -1,7 +1,7 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.craigmiller160.authmanagementservice.dto.Error
+import io.craigmiller160.webutils.dto.ErrorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
@@ -19,7 +19,7 @@ class AuthEntryPoint (
             if (it.status >= 400) HttpStatus.valueOf(it.status) else HttpStatus.UNAUTHORIZED
         } ?: HttpStatus.UNAUTHORIZED
 
-        val error = Error(
+        val error = ErrorResponse(
                 status = status.value(),
                 error = status.reasonPhrase,
                 message = ex?.message ?: "",
