@@ -45,3 +45,4 @@ logging:
   level:
     root: ERROR
     io.craigmiller160.authmanagementservice: DEBUG
+    io.craigmiller160.webutils: DEBUG
