@@ -11,6 +11,7 @@ import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
+import io.craigmiller160.authmanagementservice.service.TokenRefreshService
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.TokenResponse
@@ -31,8 +32,7 @@ import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
         private val oAuthConfig: OAuthConfig,
-        private val appRefreshTokenRepo: AppRefreshTokenRepository,
-        private val authServerClient: AuthServerClient
+        private val tokenRefreshService: TokenRefreshService
 ) : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -77,7 +77,7 @@ class JwtValidationFilter (
                         throw InvalidTokenException("Token validation failed", ex)
                     }
 
-                    return attemptTokenRefresh(token)
+                    return tokenRefreshService.refreshToken(token)
                             ?.let { tokenResponse ->
                                 val claims = validateToken(tokenResponse.accessToken, res, true)
                                 res.addHeader("Set-Cookie", createCookie(tokenResponse.accessToken, oAuthConfig.cookieMaxAgeSecs).toString())
@@ -103,23 +103,6 @@ class JwtValidationFilter (
                 .maxAge(maxAge)
                 .sameSite("strict")
                 .build()
-    }
-
-    private fun attemptTokenRefresh(token: String): TokenResponse? { // TODO move to a service class, inject via DI, and make transactional
-        val jwt = SignedJWT.parse(token)
-        val claims = jwt.jwtClaimsSet
-        return appRefreshTokenRepo.findByTokenId(claims.jwtid)
-                ?.let { refreshToken ->
-                    try {
-                        val tokenResponse = authServerClient.authenticateRefreshToken(refreshToken.refreshToken)
-                        appRefreshTokenRepo.deleteById(refreshToken.id)
-                        appRefreshTokenRepo.save(AppRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
-                        tokenResponse
-                    } catch (ex: Exception) {
-                        log.error("Error refreshing token", ex)
-                        null
-                    }
-                }
     }
 
     private fun createAuthentication(claims: JWTClaimsSet): Authentication {
