@@ -14,6 +14,7 @@ import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.AuthUserDto
 import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import io.craigmiller160.oauth2.security.JwtValidationFilterConfigurer
+import io.craigmiller160.oauth2.service.TokenRefreshService
 import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -37,6 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     AuthEntryPoint::class,
     UserListResponseAdvice::class,
     ClientListResponseAdvice::class,
+    TokenRefreshService::class,
     JwtValidationFilterConfigurer::class // TODO need to reduce the number of lib classes that need to be listed here
 ])
 class BasicControllerTest {
