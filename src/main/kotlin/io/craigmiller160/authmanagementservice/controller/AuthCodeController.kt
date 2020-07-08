@@ -1,6 +1,6 @@
 package io.craigmiller160.authmanagementservice.controller
 
-import io.craigmiller160.authmanagementservice.service.AuthCodeService
+import io.craigmiller160.oauth2.service.AuthCodeService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
