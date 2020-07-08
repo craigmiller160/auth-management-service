@@ -67,6 +67,7 @@ class AuthCodeService (
         return createCookie("", 0)
     }
 
+    // TODO add to utility class
     private fun createCookie(token: String, maxAge: Long): ResponseCookie {
         return ResponseCookie
                 .from(oAuthConfig.cookieName, token)

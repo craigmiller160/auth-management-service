@@ -18,6 +18,7 @@ import io.craigmiller160.oauth2.entity.AppRefreshToken
 import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseCookie
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -40,7 +41,7 @@ class JwtValidationFilter (
         if (!req.requestURI.startsWith("/authcode")) {
             try {
                 val token = getToken(req)
-                val claims = validateToken(token)
+                val claims = validateToken(token, res)
                 SecurityContextHolder.getContext().authentication = createAuthentication(claims)
             } catch (ex: InvalidTokenException) {
                 log.error("Error authenticating token", ex)
@@ -51,7 +52,7 @@ class JwtValidationFilter (
         chain.doFilter(req, res)
     }
 
-    private fun validateToken(token: String, alreadyAttemptedRefresh: Boolean = false): JWTClaimsSet {
+    private fun validateToken(token: String, res: HttpServletResponse, alreadyAttemptedRefresh: Boolean = false): JWTClaimsSet {
         val jwtProcessor = DefaultJWTProcessor<SecurityContext>()
         val keySource = ImmutableJWKSet<SecurityContext>(oAuthConfig.jwkSet)
         val expectedAlg = JWSAlgorithm.RS256
@@ -78,7 +79,9 @@ class JwtValidationFilter (
 
                     return attemptTokenRefresh(token)
                             ?.let { tokenResponse ->
-                                validateToken(tokenResponse.accessToken, true)
+                                val claims = validateToken(tokenResponse.accessToken, res, true)
+                                res.addHeader("Set-Cookie", createCookie(tokenResponse.accessToken, oAuthConfig.cookieMaxAgeSecs).toString())
+                                claims
                             }
                             ?: throw InvalidTokenException("Token validation failed", ex)
                 }
@@ -88,6 +91,18 @@ class JwtValidationFilter (
                 else -> throw RuntimeException(ex)
             }
         }
+    }
+
+    // TODO add to utility class
+    private fun createCookie(token: String, maxAge: Long): ResponseCookie {
+        return ResponseCookie
+                .from(oAuthConfig.cookieName, token)
+                .path("/")
+                .secure(true)
+                .httpOnly(true)
+                .maxAge(maxAge)
+                .sameSite("strict")
+                .build()
     }
 
     private fun attemptTokenRefresh(token: String): TokenResponse? { // TODO move to a service class, inject via DI, and make transactional
