@@ -12,8 +12,8 @@ import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
-import io.craigmiller160.webutils.oauth2.AuthServerClient
-import io.craigmiller160.webutils.oauth2.OAuthConfig
+import io.craigmiller160.oauth2.client.AuthServerClient
+import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

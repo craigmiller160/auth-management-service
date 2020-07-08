@@ -4,9 +4,9 @@ import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
-import io.craigmiller160.webutils.dto.TokenResponse
-import io.craigmiller160.webutils.oauth2.AuthServerClient
-import io.craigmiller160.webutils.oauth2.OAuthConfig
+import io.craigmiller160.oauth2.client.AuthServerClient
+import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.dto.TokenResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
