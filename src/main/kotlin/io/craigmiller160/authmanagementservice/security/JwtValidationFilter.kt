@@ -36,7 +36,7 @@ class JwtValidationFilter (
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
+    override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) { // TODO refreshed token needs to be added to response as cookie
         if (!req.requestURI.startsWith("/authcode")) {
             try {
                 val token = getToken(req)
@@ -90,7 +90,7 @@ class JwtValidationFilter (
         }
     }
 
-    private fun attemptTokenRefresh(token: String): TokenResponse? {
+    private fun attemptTokenRefresh(token: String): TokenResponse? { // TODO move to a service class, inject via DI, and make transactional
         val jwt = SignedJWT.parse(token)
         val claims = jwt.jwtClaimsSet
         return appRefreshTokenRepo.findByTokenId(claims.jwtid)
