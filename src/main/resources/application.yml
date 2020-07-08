@@ -45,3 +45,4 @@ logging:
     root: ERROR
     io.craigmiller160.authmanagementservice: DEBUG
     io.craigmiller160.webutils: DEBUG
+    io.craigmiller160.oauth2: DEBUG
