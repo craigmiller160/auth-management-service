@@ -5,4 +5,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import java.lang.RuntimeException
 
 @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Invalid response body")
-class InvalidResponseBodyException : RuntimeException()
+class InvalidResponseBodyException : RuntimeException() // TODO delete this
