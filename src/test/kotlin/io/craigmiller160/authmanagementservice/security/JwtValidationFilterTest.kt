@@ -3,11 +3,8 @@ package io.craigmiller160.authmanagementservice.security
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.service.TokenRefreshService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
-import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.TokenResponse
-import io.craigmiller160.oauth2.entity.AppRefreshToken
-import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -15,9 +12,11 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.eq
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
@@ -41,11 +40,6 @@ class JwtValidationFilterTest {
     private lateinit var keyPair: KeyPair
     private lateinit var token: String
     private val cookieName = "cookie"
-
-    @Mock
-    private lateinit var authServerClient: AuthServerClient // TODO delete this
-    @Mock
-    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository // TODO delete this
 
     @Mock
     private lateinit var tokenRefreshService: TokenRefreshService
@@ -194,11 +188,8 @@ class JwtValidationFilterTest {
         val newRefreshToken = "HIJKLMNO"
         val newTokenId = "id2"
 
-        `when`(appRefreshTokenRepo.findByTokenId(JwtUtils.TOKEN_ID))
-                .thenReturn(AppRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
-        doReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
-                .`when`(authServerClient)
-                .authenticateRefreshToken(refreshToken)
+        `when`(tokenRefreshService.refreshToken(token))
+                .thenReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
 
         jwtValidationFilter.doFilter(req, res, chain)
         val authentication = SecurityContextHolder.getContext().authentication
@@ -210,10 +201,8 @@ class JwtValidationFilterTest {
 
         verify(chain, times(1))
                 .doFilter(req, res)
-        verify(appRefreshTokenRepo, times(1))
-                .deleteById(1)
-        verify(appRefreshTokenRepo, times(1))
-                .save(AppRefreshToken(0, newTokenId, newRefreshToken))
+        verify(res, times(1))
+                .addHeader(eq("Set-Cookie"), anyString())
     }
 
 }
