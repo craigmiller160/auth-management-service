@@ -2,13 +2,13 @@ package io.craigmiller160.authmanagementservice.controller
 
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.isA
-import io.craigmiller160.authmanagementservice.client.AuthServerClient
-import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
-import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.AuthCodeService
+import io.craigmiller160.webutils.oauth2.AuthServerClient
+import io.craigmiller160.webutils.oauth2.OAuthConfig
+import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     JwtFilterConfigurer::class,
     AuthCodeController::class,
     WebSecurityConfig::class,
-    AuthEntryPoint::class
+    AuthEntryPoint::class // TODO this is rough, requiring these imports in all unit tests...
 ])
 class AuthCodeControllerTest {
 

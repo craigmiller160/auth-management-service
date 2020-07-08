@@ -1,6 +1,6 @@
 package io.craigmiller160.authmanagementservice
 
-import io.craigmiller160.webutils.security.TlsConfigurer
+import io.craigmiller160.webutils.tls.TlsConfigurer
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 

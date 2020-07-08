@@ -1,8 +1,6 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.craigmiller160.authmanagementservice.client.AuthServerClient
-import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
 import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
@@ -10,11 +8,13 @@ import io.craigmiller160.authmanagementservice.dto.AuthUserDto
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
-import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
+import io.craigmiller160.webutils.oauth2.AuthServerClient
+import io.craigmiller160.webutils.oauth2.OAuthConfig
+import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
