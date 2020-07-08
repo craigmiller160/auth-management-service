@@ -3,11 +3,11 @@ package io.craigmiller160.authmanagementservice.controller
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.isA
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.AuthCodeService
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -36,7 +36,7 @@ class AuthCodeControllerTest {
     private lateinit var oAuthConfig: OAuthConfig
 
     @MockBean
-    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository
 
     @MockBean
     private lateinit var authServerClient: AuthServerClient

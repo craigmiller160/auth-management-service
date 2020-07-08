@@ -7,13 +7,13 @@ import io.craigmiller160.authmanagementservice.controller.advice.UserListRespons
 import io.craigmiller160.authmanagementservice.dto.AuthUserDto
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -48,7 +48,7 @@ class BasicControllerTest {
     private lateinit var oAuthConfig: OAuthConfig
 
     @MockBean
-    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository
 
     @MockBean
     private lateinit var authServerClient: AuthServerClient

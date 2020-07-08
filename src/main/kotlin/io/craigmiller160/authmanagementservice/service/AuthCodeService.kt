@@ -1,11 +1,11 @@
 package io.craigmiller160.authmanagementservice.service
 
-import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.entity.AppRefreshToken
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import org.springframework.http.ResponseCookie
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 class AuthCodeService (
         private val oAuthConfig: OAuthConfig,
         private val authServerClient: AuthServerClient,
-        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository
+        private val appRefreshTokenRepo: AppRefreshTokenRepository
 ) {
 
     companion object {
@@ -54,16 +54,16 @@ class AuthCodeService (
         req.session.removeAttribute(STATE_ATTR)
 
         val tokens = authServerClient.authenticateAuthCode(code)
-        val manageRefreshToken = ManagementRefreshToken(0, tokens.tokenId, tokens.refreshToken)
-        manageRefreshTokenRepo.removeByTokenId(tokens.tokenId)
-        manageRefreshTokenRepo.save(manageRefreshToken)
+        val manageRefreshToken = AppRefreshToken(0, tokens.tokenId, tokens.refreshToken)
+        appRefreshTokenRepo.removeByTokenId(tokens.tokenId)
+        appRefreshTokenRepo.save(manageRefreshToken)
         val cookie = createCookie(tokens.accessToken, oAuthConfig.cookieMaxAgeSecs)
         return Pair(cookie, oAuthConfig.postAuthRedirect)
     }
 
     fun logout(): ResponseCookie {
         val authUser = SecurityContextHolder.getContext().authentication.principal as AuthenticatedUser
-        manageRefreshTokenRepo.removeByTokenId(authUser.tokenId)
+        appRefreshTokenRepo.removeByTokenId(authUser.tokenId)
         return createCookie("", 0)
     }
 

@@ -1,12 +1,12 @@
 package io.craigmiller160.authmanagementservice.service
 
-import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.TokenResponse
+import io.craigmiller160.oauth2.entity.AppRefreshToken
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -48,7 +48,7 @@ class AuthCodeServiceTest {
     private lateinit var authServerClient: AuthServerClient
 
     @Mock
-    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository
 
     @Mock
     private lateinit var req: HttpServletRequest
@@ -115,13 +115,13 @@ class AuthCodeServiceTest {
         assertEquals(postAuthRedirect, redirect)
         validateCookie(cookie, response.accessToken, cookieExpSecs)
 
-        val manageRefreshToken = ManagementRefreshToken(0, response.tokenId, response.refreshToken)
-        verify(manageRefreshTokenRepo, times(1))
+        val manageRefreshToken = AppRefreshToken(0, response.tokenId, response.refreshToken)
+        verify(appRefreshTokenRepo, times(1))
                 .save(manageRefreshToken)
 
         verify(session, times(1))
                 .removeAttribute(AuthCodeService.STATE_ATTR)
-        verify(manageRefreshTokenRepo, times(1))
+        verify(appRefreshTokenRepo, times(1))
                 .removeByTokenId(response.tokenId)
     }
 
@@ -161,7 +161,7 @@ class AuthCodeServiceTest {
 
         validateCookie(cookie, "", 0)
 
-        verify(manageRefreshTokenRepo, times(1))
+        verify(appRefreshTokenRepo, times(1))
                 .removeByTokenId(authUser.tokenId)
     }
 

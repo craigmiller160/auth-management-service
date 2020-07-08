@@ -1,12 +1,12 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
-import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.TokenResponse
+import io.craigmiller160.oauth2.entity.AppRefreshToken
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -42,7 +42,7 @@ class JwtValidationFilterTest {
     @Mock
     private lateinit var authServerClient: AuthServerClient
     @Mock
-    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository
     @Mock
     private lateinit var req: HttpServletRequest
     @Mock
@@ -66,7 +66,7 @@ class JwtValidationFilterTest {
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(oAuthConfig, manageRefreshTokenRepo, authServerClient)
+        jwtValidationFilter = JwtValidationFilter(oAuthConfig, appRefreshTokenRepo, authServerClient)
         `when`(req.requestURI)
                 .thenReturn("/something")
     }
@@ -187,8 +187,8 @@ class JwtValidationFilterTest {
         val newRefreshToken = "HIJKLMNO"
         val newTokenId = "id2"
 
-        `when`(manageRefreshTokenRepo.findByTokenId(JwtUtils.TOKEN_ID))
-                .thenReturn(ManagementRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
+        `when`(appRefreshTokenRepo.findByTokenId(JwtUtils.TOKEN_ID))
+                .thenReturn(AppRefreshToken(1, JwtUtils.TOKEN_ID, refreshToken))
         doReturn(TokenResponse(this.token, newRefreshToken, newTokenId))
                 .`when`(authServerClient)
                 .authenticateRefreshToken(refreshToken)
@@ -203,10 +203,10 @@ class JwtValidationFilterTest {
 
         verify(chain, times(1))
                 .doFilter(req, res)
-        verify(manageRefreshTokenRepo, times(1))
+        verify(appRefreshTokenRepo, times(1))
                 .deleteById(1)
-        verify(manageRefreshTokenRepo, times(1))
-                .save(ManagementRefreshToken(0, newTokenId, newRefreshToken))
+        verify(appRefreshTokenRepo, times(1))
+                .save(AppRefreshToken(0, newTokenId, newRefreshToken))
     }
 
 }

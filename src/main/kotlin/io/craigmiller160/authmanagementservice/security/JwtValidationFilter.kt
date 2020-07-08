@@ -10,12 +10,12 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
-import io.craigmiller160.authmanagementservice.entity.ManagementRefreshToken
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.TokenResponse
+import io.craigmiller160.oauth2.entity.AppRefreshToken
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse
 
 class JwtValidationFilter (
         private val oAuthConfig: OAuthConfig,
-        private val manageRefreshTokenRepo: ManagementRefreshTokenRepository,
+        private val appRefreshTokenRepo: AppRefreshTokenRepository,
         private val authServerClient: AuthServerClient
 ) : OncePerRequestFilter() {
 
@@ -93,12 +93,12 @@ class JwtValidationFilter (
     private fun attemptTokenRefresh(token: String): TokenResponse? {
         val jwt = SignedJWT.parse(token)
         val claims = jwt.jwtClaimsSet
-        return manageRefreshTokenRepo.findByTokenId(claims.jwtid)
+        return appRefreshTokenRepo.findByTokenId(claims.jwtid)
                 ?.let { refreshToken ->
                     try {
                         val tokenResponse = authServerClient.authenticateRefreshToken(refreshToken.refreshToken)
-                        manageRefreshTokenRepo.deleteById(refreshToken.id)
-                        manageRefreshTokenRepo.save(ManagementRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
+                        appRefreshTokenRepo.deleteById(refreshToken.id)
+                        appRefreshTokenRepo.save(AppRefreshToken(0, tokenResponse.tokenId, tokenResponse.refreshToken))
                         tokenResponse
                     } catch (ex: Exception) {
                         log.error("Error refreshing token", ex)
