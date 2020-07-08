@@ -1,10 +1,10 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
-import io.craigmiller160.authmanagementservice.service.TokenRefreshService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.dto.TokenResponse
+import io.craigmiller160.oauth2.service.TokenRefreshService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.anyString
@@ -31,8 +30,6 @@ import javax.servlet.http.HttpServletResponse
 
 @ExtendWith(MockitoExtension::class)
 class JwtValidationFilterTest {
-
-    // TODO these tests are probably broken
 
     private lateinit var oAuthConfig: OAuthConfig
     private lateinit var jwkSet: JWKSet

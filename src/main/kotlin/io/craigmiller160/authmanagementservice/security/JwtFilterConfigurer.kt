@@ -1,9 +1,7 @@
 package io.craigmiller160.authmanagementservice.security
 
-import io.craigmiller160.authmanagementservice.service.TokenRefreshService
-import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
-import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
+import io.craigmiller160.oauth2.service.TokenRefreshService
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.DefaultSecurityFilterChain

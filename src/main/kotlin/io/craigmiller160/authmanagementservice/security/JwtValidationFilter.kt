@@ -7,16 +7,11 @@ import com.nimbusds.jose.proc.BadJOSEException
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
-import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import io.craigmiller160.authmanagementservice.exception.InvalidTokenException
-import io.craigmiller160.authmanagementservice.service.TokenRefreshService
-import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
-import io.craigmiller160.oauth2.dto.TokenResponse
-import io.craigmiller160.oauth2.entity.AppRefreshToken
-import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
+import io.craigmiller160.oauth2.service.TokenRefreshService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseCookie
