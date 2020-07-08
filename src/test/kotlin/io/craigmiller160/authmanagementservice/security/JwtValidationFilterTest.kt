@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.security
 
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.service.TokenRefreshService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
@@ -32,6 +33,8 @@ import javax.servlet.http.HttpServletResponse
 @ExtendWith(MockitoExtension::class)
 class JwtValidationFilterTest {
 
+    // TODO these tests are probably broken
+
     private lateinit var oAuthConfig: OAuthConfig
     private lateinit var jwkSet: JWKSet
     private lateinit var jwtValidationFilter: JwtValidationFilter
@@ -40,9 +43,13 @@ class JwtValidationFilterTest {
     private val cookieName = "cookie"
 
     @Mock
-    private lateinit var authServerClient: AuthServerClient
+    private lateinit var authServerClient: AuthServerClient // TODO delete this
     @Mock
-    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository
+    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository // TODO delete this
+
+    @Mock
+    private lateinit var tokenRefreshService: TokenRefreshService
+
     @Mock
     private lateinit var req: HttpServletRequest
     @Mock
@@ -66,7 +73,7 @@ class JwtValidationFilterTest {
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
 
-        jwtValidationFilter = JwtValidationFilter(oAuthConfig, appRefreshTokenRepo, authServerClient)
+        jwtValidationFilter = JwtValidationFilter(oAuthConfig, tokenRefreshService)
         `when`(req.requestURI)
                 .thenReturn("/something")
     }
