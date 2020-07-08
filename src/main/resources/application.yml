@@ -25,21 +25,20 @@ spring:
     username: user
     password: password
 
-authmanageservice:
-  oauth2:
-    auth-server-host: https://localhost:7003
-    jwk-path: /jwk
-    token-path: /oauth/token
-    auth-code-login-path: /ui/login.html
-    auth-code-redirect-uri: https://localhost:3000/api/authcode/code
-    client-name: auth-management-service
-    client-key: a4cc4fef-564e-44c1-82af-45572f124c1a
-    client-secret: 1566aadf-800f-4a9d-9828-6a77426a53b5
-    accept-bearer-token: true
-    accept-cookie: true
-    cookie-name: auth-management-token
-    post-auth-redirect: https://localhost:3000
-    cookie-max-age-secs: 86400
+oauth2:
+  auth-server-host: https://localhost:7003
+  jwk-path: /jwk
+  token-path: /oauth/token
+  auth-code-login-path: /ui/login.html
+  auth-code-redirect-uri: https://localhost:3000/api/authcode/code
+  client-name: auth-management-service
+  client-key: a4cc4fef-564e-44c1-82af-45572f124c1a
+  client-secret: 1566aadf-800f-4a9d-9828-6a77426a53b5
+  accept-bearer-token: true
+  accept-cookie: true
+  cookie-name: auth-management-token
+  post-auth-redirect: https://localhost:3000
+  cookie-max-age-secs: 86400
 
 logging:
   level:
