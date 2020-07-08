@@ -14,7 +14,7 @@ import javax.transaction.Transactional
 class TokenRefreshService (
         private val appRefreshTokenRepo: AppRefreshTokenRepository,
         private val authServerClient: AuthServerClient
-) { // TODO write unit tests
+) {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
