@@ -1,11 +1,11 @@
 package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.exception.BadAuthCodeStateException
-import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.entity.AppRefreshToken
 import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
+import io.craigmiller160.oauth2.security.AuthenticatedUser
 import org.springframework.http.ResponseCookie
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service

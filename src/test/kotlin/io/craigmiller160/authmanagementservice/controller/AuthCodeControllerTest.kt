@@ -3,11 +3,11 @@ package io.craigmiller160.authmanagementservice.controller
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.isA
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
-import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.AuthCodeService
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
+import io.craigmiller160.oauth2.security.JwtValidationFilterConfigurer
 import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @WebMvcTest
 @ContextConfiguration(classes = [
-    JwtFilterConfigurer::class,
+    JwtValidationFilterConfigurer::class,
     AuthCodeController::class,
     WebSecurityConfig::class,
     AuthEntryPoint::class // TODO this is rough, requiring these imports in all unit tests...

@@ -3,13 +3,12 @@ package io.craigmiller160.authmanagementservice.testutils
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.RSASSASigner
-import com.nimbusds.jose.crypto.impl.RSASSA
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
+import io.craigmiller160.oauth2.security.AuthenticatedUser
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.security.KeyPair
 import java.security.KeyPairGenerator

@@ -4,16 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
 import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
-import io.craigmiller160.authmanagementservice.dto.AuthUserDto
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.dto.AuthUserDto
 import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
+import io.craigmiller160.oauth2.security.JwtValidationFilterConfigurer
 import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -37,7 +37,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     AuthEntryPoint::class,
     UserListResponseAdvice::class,
     ClientListResponseAdvice::class,
-    JwtFilterConfigurer::class
+    JwtValidationFilterConfigurer::class // TODO need to reduce the number of lib classes that need to be listed here
 ])
 class BasicControllerTest {
 

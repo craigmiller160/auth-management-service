@@ -1,10 +1,10 @@
 package io.craigmiller160.authmanagementservice.controller
 
-import io.craigmiller160.authmanagementservice.dto.AuthUserDto
-import io.craigmiller160.authmanagementservice.security.AuthenticatedUser
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.service.BasicService
+import io.craigmiller160.oauth2.dto.AuthUserDto
+import io.craigmiller160.oauth2.security.AuthenticatedUser
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
