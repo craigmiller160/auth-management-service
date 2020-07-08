@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Date
 
-object JwtUtils { // TODO see if this can be deleted
+object JwtUtils {
 
     const val ROLE_1 = "ROLE_1"
     const val ROLE_2 = "ROLE_2"
