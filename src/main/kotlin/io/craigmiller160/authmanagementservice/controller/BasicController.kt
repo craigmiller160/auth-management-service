@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/basic")
-class BasicController (
+class BasicController ( // TODO ultimately delete this
         private val basicService: BasicService
 ) {
 

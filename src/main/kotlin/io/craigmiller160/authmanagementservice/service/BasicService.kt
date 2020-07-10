@@ -7,7 +7,7 @@ import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.stereotype.Service
 
 @Service
-class BasicService (
+class BasicService ( // TODO ultimately delete this
         private val userRepo: UserRepository,
         private val clientRepo: ClientRepository
 ) {
