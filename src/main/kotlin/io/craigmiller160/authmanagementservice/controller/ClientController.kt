@@ -20,8 +20,12 @@ class ClientController (
 ) {
 
     @GetMapping
-    fun getClients(): ClientList {
-        return clientService.getClients()
+    fun getClients(): ResponseEntity<ClientList> {
+        val clients = clientService.getClients()
+        if (clients.clients.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok(clients)
     }
 
     @GetMapping("/{id}")
