@@ -25,7 +25,7 @@ class WebSecurityConfig (
                     .requiresChannel().anyRequest().requiresSecure()
                     .and()
                     .authorizeRequests()
-                    .antMatchers("/authcode/**").permitAll()
+                    .antMatchers(*jwtFilterConfigurer.defaultInsecurePathPatterns).permitAll()
                     .anyRequest().fullyAuthenticated()
                     .and()
                     .apply(jwtFilterConfigurer)
