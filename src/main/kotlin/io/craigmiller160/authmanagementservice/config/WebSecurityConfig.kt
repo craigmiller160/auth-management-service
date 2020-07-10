@@ -1,13 +1,12 @@
 package io.craigmiller160.authmanagementservice.config
 
-import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
-import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
+import io.craigmiller160.oauth2.security.JwtValidationFilterConfigurer
+import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.config.http.SessionCreationPolicy
 
 @Configuration
 @EnableWebSecurity
@@ -16,7 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
         securedEnabled = true
 )
 class WebSecurityConfig (
-        private val jwtFilterConfigurer: JwtFilterConfigurer,
+        private val jwtFilterConfigurer: JwtValidationFilterConfigurer,
         private val authEntryPoint: AuthEntryPoint
 ) : WebSecurityConfigurerAdapter() {
 
@@ -26,7 +25,7 @@ class WebSecurityConfig (
                     .requiresChannel().anyRequest().requiresSecure()
                     .and()
                     .authorizeRequests()
-                    .antMatchers("/authcode/**").permitAll()
+                    .antMatchers(*jwtFilterConfigurer.defaultInsecurePathPatterns).permitAll()
                     .anyRequest().fullyAuthenticated()
                     .and()
                     .apply(jwtFilterConfigurer)

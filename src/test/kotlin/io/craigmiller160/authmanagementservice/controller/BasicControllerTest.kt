@@ -1,20 +1,20 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.craigmiller160.authmanagementservice.client.AuthServerClient
-import io.craigmiller160.authmanagementservice.config.OAuthConfig
 import io.craigmiller160.authmanagementservice.config.WebSecurityConfig
 import io.craigmiller160.authmanagementservice.controller.advice.ClientListResponseAdvice
 import io.craigmiller160.authmanagementservice.controller.advice.UserListResponseAdvice
-import io.craigmiller160.authmanagementservice.dto.AuthUserDto
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.repository.ManagementRefreshTokenRepository
-import io.craigmiller160.authmanagementservice.security.AuthEntryPoint
-import io.craigmiller160.authmanagementservice.security.JwtFilterConfigurer
 import io.craigmiller160.authmanagementservice.service.BasicService
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
+import io.craigmiller160.oauth2.client.AuthServerClient
+import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
+import io.craigmiller160.oauth2.security.JwtValidationFilterConfigurer
+import io.craigmiller160.oauth2.service.TokenRefreshService
+import io.craigmiller160.webutils.security.AuthEntryPoint
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -37,7 +37,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     AuthEntryPoint::class,
     UserListResponseAdvice::class,
     ClientListResponseAdvice::class,
-    JwtFilterConfigurer::class
+    TokenRefreshService::class,
+    JwtValidationFilterConfigurer::class
 ])
 class BasicControllerTest {
 
@@ -48,7 +49,7 @@ class BasicControllerTest {
     private lateinit var oAuthConfig: OAuthConfig
 
     @MockBean
-    private lateinit var manageRefreshTokenRepo: ManagementRefreshTokenRepository
+    private lateinit var appRefreshTokenRepo: AppRefreshTokenRepository
 
     @MockBean
     private lateinit var authServerClient: AuthServerClient
@@ -72,8 +73,6 @@ class BasicControllerTest {
         val jwkSet = JwtUtils.createJwkSet(keyPair)
         `when`(oAuthConfig.jwkSet)
                 .thenReturn(jwkSet)
-        `when`(oAuthConfig.acceptBearerToken)
-                .thenReturn(true)
         `when`(oAuthConfig.clientKey)
                 .thenReturn(JwtUtils.CLIENT_KEY)
         `when`(oAuthConfig.clientName)
@@ -140,33 +139,6 @@ class BasicControllerTest {
     fun test_getClients_unauthorized() {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/basic/clients")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-    }
-
-    @Test
-    fun test_getAuthenticatedUser() {
-        val authUser = AuthUserDto.fromAuthenticatedUser(JwtUtils.createAuthUser())
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/basic/auth")
-                        .header("Authorization", "Bearer $accessToken")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andDo { result ->
-                    val body = objectMapper.readValue(result.response.contentAsString, AuthUserDto::class.java)
-                    assertEquals(authUser, body)
-                }
-    }
-
-    @Test
-    fun test_getAuthenticatedUser_unauthorized() {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/basic/auth")
                         .secure(true)
         )
                 .andDo(MockMvcResultHandlers.print())
