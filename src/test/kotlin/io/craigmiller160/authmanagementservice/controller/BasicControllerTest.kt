@@ -146,31 +146,4 @@ class BasicControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
-    @Test
-    fun test_getAuthenticatedUser() {
-        val authUser = AuthUserDto.fromAuthenticatedUser(JwtUtils.createAuthUser())
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/basic/auth")
-                        .header("Authorization", "Bearer $accessToken")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andDo { result ->
-                    val body = objectMapper.readValue(result.response.contentAsString, AuthUserDto::class.java)
-                    assertEquals(authUser, body)
-                }
-    }
-
-    @Test
-    fun test_getAuthenticatedUser_unauthorized() {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/basic/auth")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-    }
-
 }
