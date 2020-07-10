@@ -11,7 +11,6 @@ import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.oauth2.client.AuthServerClient
 import io.craigmiller160.oauth2.config.OAuthConfig
-import io.craigmiller160.oauth2.dto.AuthUserDto
 import io.craigmiller160.oauth2.repository.AppRefreshTokenRepository
 import io.craigmiller160.oauth2.security.JwtValidationFilterConfigurer
 import io.craigmiller160.oauth2.service.TokenRefreshService
@@ -39,7 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
     UserListResponseAdvice::class,
     ClientListResponseAdvice::class,
     TokenRefreshService::class,
-    JwtValidationFilterConfigurer::class // TODO need to reduce the number of lib classes that need to be listed here
+    JwtValidationFilterConfigurer::class
 ])
 class BasicControllerTest {
 
