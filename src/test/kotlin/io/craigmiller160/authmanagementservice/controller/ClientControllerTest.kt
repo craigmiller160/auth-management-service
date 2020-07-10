@@ -1,8 +1,8 @@
-package io.craigmiller160.authmanagementservice.service
+package io.craigmiller160.authmanagementservice.controller
 
 import org.junit.jupiter.api.Test
 
-class ClientServiceTest  {
+class ClientControllerTest {
 
     @Test
     fun test() {
