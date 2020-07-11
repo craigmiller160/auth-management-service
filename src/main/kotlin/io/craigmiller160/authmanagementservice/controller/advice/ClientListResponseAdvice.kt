@@ -9,7 +9,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
-@ControllerAdvice
+//@ControllerAdvice
 class ClientListResponseAdvice : ResponseBodyAdvice<ClientList> {
 
     override fun supports(method: MethodParameter, clazz: Class<out HttpMessageConverter<*>>): Boolean {

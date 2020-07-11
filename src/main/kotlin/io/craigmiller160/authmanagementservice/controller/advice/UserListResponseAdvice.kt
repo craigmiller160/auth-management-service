@@ -10,7 +10,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
-@ControllerAdvice
+//@ControllerAdvice
 class UserListResponseAdvice : ResponseBodyAdvice<UserList> {
     override fun supports(method: MethodParameter, clazz: Class<out HttpMessageConverter<*>>): Boolean {
         return method.containingClass == BasicController::class.java && method.parameterType == UserList::class.java
