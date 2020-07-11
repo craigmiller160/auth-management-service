@@ -19,6 +19,11 @@ class ClientController (
         private val clientService: ClientService
 ) {
 
+    @GetMapping("/guid")
+    fun generateGuid(): String {
+        return clientService.generateGuid()
+    }
+
     @GetMapping
     fun getClients(): ResponseEntity<ClientList> {
         val clients = clientService.getClients()

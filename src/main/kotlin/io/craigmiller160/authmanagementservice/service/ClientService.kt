@@ -5,6 +5,7 @@ import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class ClientService (
@@ -12,6 +13,10 @@ class ClientService (
 ) {
 
     // TODO validate inputs
+
+    fun generateGuid(): String {
+        return UUID.randomUUID().toString()
+    }
 
     fun getClients(): ClientList {
         val clients = clientRepo.findAll()
