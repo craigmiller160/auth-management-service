@@ -12,6 +12,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 @ControllerAdvice
 class ClientResponseAdvice : ResponseBodyAdvice<Client> {
 
+    // TODO these are not working when the method returns a ResponseEntity
+
     override fun supports(method: MethodParameter, clazz: Class<out HttpMessageConverter<*>>): Boolean {
         return method.parameterType == Client::class.java
     }
