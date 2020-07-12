@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.controller
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.service.ClientService
+import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,6 +23,13 @@ class ClientController (
     @GetMapping("/guid")
     fun generateGuid(): String {
         return clientService.generateGuid()
+    }
+
+    @GetMapping("/{id}/client-secret") // TODO secure behind Admin rights
+    fun getClientSecret(@PathVariable id: Long): ResponseEntity<String> {
+        return clientService.getClientSecret(id)
+                ?.let { ResponseEntity.ok(it) }
+                ?: ResponseEntity.noContent().build()
     }
 
     @GetMapping

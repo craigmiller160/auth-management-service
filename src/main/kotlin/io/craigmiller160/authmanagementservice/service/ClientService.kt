@@ -18,6 +18,11 @@ class ClientService (
         return UUID.randomUUID().toString()
     }
 
+    fun getClientSecret(id: Long): String? {
+        val client = clientRepo.findById(id).orElse(null)
+        return client?.let { it.clientSecret }
+    }
+
     fun getClients(): ClientList {
         val clients = clientRepo.findAll()
         return ClientList(clients)
