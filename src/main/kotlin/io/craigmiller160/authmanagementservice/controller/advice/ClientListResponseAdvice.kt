@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 //@ControllerAdvice
-class ClientListResponseAdvice : ResponseBodyAdvice<ClientList> {
+class ClientListResponseAdvice : ResponseBodyAdvice<ClientList> { // TODO delete this
 
     override fun supports(method: MethodParameter, clazz: Class<out HttpMessageConverter<*>>): Boolean {
         return method.parameterType == ClientList::class.java

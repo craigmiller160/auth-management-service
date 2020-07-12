@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller.advice
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
+import io.craigmiller160.authmanagementservice.entity.Client
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.AfterReturning
@@ -15,40 +16,44 @@ import java.lang.RuntimeException
 @ControllerAdvice
 class ResponseSanitizingAdvice {
 
+    // TODO need unit tests
+
     @Pointcut("execution(public * io.craigmiller160.authmanagementservice.controller.*Controller.*(..))")
     fun controllerPublicMethods() { }
-
-//    @AfterReturning("controllerPublicMethods()", returning = "result")
-//    fun sanitize(joinPoint: JoinPoint, result: Any?) {
-//        result?.let { res ->
-//            when (res) {
-//                is ResponseEntity<*> -> {
-//                    val body = res.body
-//                    when(body) {
-//                        is ClientList -> {
-//                            val newClients = body.clients.map { client -> client.copy(clientSecret = "") }
-//                            println(newClients) // TODO delete this
-//                        }
-//                        else -> throw RuntimeException("No match")
-//                    }
-//                }
-//                else -> throw RuntimeException("No match") // TODO delete this
-//            }
-//        }
-//    }
 
     @Around("controllerPublicMethods()")
     fun sanitize(joinPoint: ProceedingJoinPoint): Any? {
         val result = joinPoint.proceed(joinPoint.args)
         return result?.let { res ->
             when (res) {
-                is ResponseEntity<*> -> {
-                    println("IsResponseEntity")
-                    ResponseEntity.ok("Hello")
-                }
-                else -> result
+                is ResponseEntity<*> -> sanitizeResponseEntity(res)
+                else -> sanitizeEntity(res)
             }
         }
+    }
+
+    private fun sanitizeResponseEntity(response: ResponseEntity<*>): ResponseEntity<*> {
+        val sanitizedBody = response.body?.let { sanitizeEntity(it) }
+        return ResponseEntity
+                .status(response.statusCodeValue)
+                .headers(response.headers)
+                .body(sanitizedBody)
+    }
+
+    private fun sanitizeEntity(entity: Any): Any {
+        return when (entity) {
+            is ClientList -> sanitizeClientList(entity)
+            is Client -> sanitizeClient(entity)
+            else -> entity
+        }
+    }
+
+    private fun sanitizeClientList(clientList: ClientList): ClientList {
+        return clientList.copy(clients = clientList.clients.map { sanitizeClient(it) })
+    }
+
+    private fun sanitizeClient(client: Client): Client {
+        return client.copy(clientSecret = "")
     }
 
 }

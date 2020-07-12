@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 //@ControllerAdvice
-class UserListResponseAdvice : ResponseBodyAdvice<UserList> {
+class UserListResponseAdvice : ResponseBodyAdvice<UserList> { // TODO delete this
     override fun supports(method: MethodParameter, clazz: Class<out HttpMessageConverter<*>>): Boolean {
         return method.containingClass == BasicController::class.java && method.parameterType == UserList::class.java
     }

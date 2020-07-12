@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 //@ControllerAdvice
-class ResponseEntityResponseAdvice : ResponseBodyAdvice<ResponseEntity<*>> {
+class ResponseEntityResponseAdvice : ResponseBodyAdvice<ResponseEntity<*>> { // TODO delete this
 
     // TODO write unit tests
 

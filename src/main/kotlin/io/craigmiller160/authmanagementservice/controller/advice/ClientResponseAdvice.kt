@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 //@ControllerAdvice
-class ClientResponseAdvice : ResponseBodyAdvice<Client> {
+class ClientResponseAdvice : ResponseBodyAdvice<Client> { // TODO delete this
 
     // TODO these are not working when the method returns a ResponseEntity
 
