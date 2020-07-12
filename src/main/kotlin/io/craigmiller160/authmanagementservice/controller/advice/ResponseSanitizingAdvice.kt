@@ -1,7 +1,9 @@
 package io.craigmiller160.authmanagementservice.controller.advice
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
+import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.User
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.AfterReturning
@@ -44,6 +46,8 @@ class ResponseSanitizingAdvice {
         return when (entity) {
             is ClientList -> sanitizeClientList(entity)
             is Client -> sanitizeClient(entity)
+            is UserList -> sanitizeUserList(entity)
+            is User -> sanitizeUser(entity)
             else -> entity
         }
     }
@@ -54,6 +58,14 @@ class ResponseSanitizingAdvice {
 
     private fun sanitizeClient(client: Client): Client {
         return client.copy(clientSecret = "")
+    }
+
+    private fun sanitizeUserList(userList: UserList): UserList {
+        return userList.copy(users = userList.users.map { sanitizeUser(it) })
+    }
+
+    private fun sanitizeUser(user: User): User {
+        return user.copy(password = "")
     }
 
 }
