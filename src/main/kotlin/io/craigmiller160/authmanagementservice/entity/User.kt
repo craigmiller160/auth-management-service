@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.entity
 
+import io.craigmiller160.authmanagementservice.dto.Sanitizer
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -16,4 +17,8 @@ data class User (
         val firstName: String,
         val lastName: String,
         val password: String
-)
+) : Sanitizer<User> {
+        override fun sanitize(): User {
+                return this.copy(password = "")
+        }
+}

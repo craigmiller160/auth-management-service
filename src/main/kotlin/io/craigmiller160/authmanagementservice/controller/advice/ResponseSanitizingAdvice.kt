@@ -1,18 +1,12 @@
 package io.craigmiller160.authmanagementservice.controller.advice
 
-import io.craigmiller160.authmanagementservice.dto.ClientList
-import io.craigmiller160.authmanagementservice.dto.UserList
-import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.User
-import org.aspectj.lang.JoinPoint
+import io.craigmiller160.authmanagementservice.dto.Sanitizer
 import org.aspectj.lang.ProceedingJoinPoint
-import org.aspectj.lang.annotation.AfterReturning
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
-import java.lang.RuntimeException
 
 @Aspect
 @ControllerAdvice
@@ -42,30 +36,11 @@ class ResponseSanitizingAdvice {
                 .body(sanitizedBody)
     }
 
-    private fun sanitizeEntity(entity: Any): Any {
+    private fun sanitizeEntity(entity: Any): Any? {
         return when (entity) {
-            is ClientList -> sanitizeClientList(entity)
-            is Client -> sanitizeClient(entity)
-            is UserList -> sanitizeUserList(entity)
-            is User -> sanitizeUser(entity)
+            is Sanitizer<*> -> entity.sanitize()
             else -> entity
         }
-    }
-
-    private fun sanitizeClientList(clientList: ClientList): ClientList {
-        return clientList.copy(clients = clientList.clients.map { sanitizeClient(it) })
-    }
-
-    private fun sanitizeClient(client: Client): Client {
-        return client.copy(clientSecret = "")
-    }
-
-    private fun sanitizeUserList(userList: UserList): UserList {
-        return userList.copy(users = userList.users.map { sanitizeUser(it) })
-    }
-
-    private fun sanitizeUser(user: User): User {
-        return user.copy(password = "")
     }
 
 }

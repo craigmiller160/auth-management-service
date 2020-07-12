@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.entity
 
+import io.craigmiller160.authmanagementservice.dto.Sanitizer
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -21,4 +22,8 @@ data class Client (
         val allowAuthCode: Boolean,
         val accessTokenTimeoutSecs: Int,
         val refreshTokenTimeoutSecs: Int
-)
+) : Sanitizer<Client> {
+        override fun sanitize(): Client {
+                return this.copy(clientSecret = "")
+        }
+}
