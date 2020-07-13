@@ -19,7 +19,7 @@ class ClientService (
     }
 
     fun getClients(): ClientList {
-        val clients = clientRepo.findAll()
+        val clients = clientRepo.findAllByOrderByName()
         return ClientList(clients)
     }
 
