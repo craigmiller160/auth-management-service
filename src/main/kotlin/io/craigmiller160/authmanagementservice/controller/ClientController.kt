@@ -25,13 +25,6 @@ class ClientController (
         return clientService.generateGuid()
     }
 
-    @GetMapping("/{id}/client-secret") // TODO secure behind Admin rights
-    fun getClientSecret(@PathVariable id: Long): ResponseEntity<String> {
-        return clientService.getClientSecret(id)
-                ?.let { ResponseEntity.ok(it) }
-                ?: ResponseEntity.noContent().build()
-    }
-
     @GetMapping
     fun getClients(): ResponseEntity<ClientList> {
         val clients = clientService.getClients()
