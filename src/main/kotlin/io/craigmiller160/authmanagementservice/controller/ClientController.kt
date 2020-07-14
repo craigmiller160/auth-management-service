@@ -20,6 +20,8 @@ class ClientController (
         private val clientService: ClientService
 ) {
 
+    // TODO unit tests
+
     @GetMapping("/guid")
     fun generateGuid(): String {
         return clientService.generateGuid()
@@ -35,7 +37,7 @@ class ClientController (
     }
 
     @GetMapping("/{id}")
-    fun getClient(@PathVariable id: Long): ResponseEntity<Client> { // TODO make sure the controller advice works here
+    fun getClient(@PathVariable id: Long): ResponseEntity<Client> {
         return clientService.getClient(id)
                 ?.let { ResponseEntity.ok(it) }
                 ?: ResponseEntity.noContent().build()

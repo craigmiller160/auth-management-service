@@ -13,6 +13,7 @@ class ClientService (
 ) {
 
     // TODO validate inputs
+    // TODO unit tests
 
     fun generateGuid(): String {
         return UUID.randomUUID().toString()
@@ -38,7 +39,7 @@ class ClientService (
                 id = id,
                 clientSecret = if (client.clientSecret.isBlank()) existing.clientSecret else client.clientSecret
         )
-        return clientRepo.save(client)
+        return clientRepo.save(finalClient)
     }
 
     fun deleteClient(id: Long): Client {
