@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
+import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.service.ClientService
 import org.apache.coyote.Response
@@ -37,7 +38,7 @@ class ClientController (
     }
 
     @GetMapping("/{id}")
-    fun getClient(@PathVariable id: Long): ResponseEntity<Client> {
+    fun getClient(@PathVariable id: Long): ResponseEntity<FullClient> {
         return clientService.getClient(id)
                 ?.let { ResponseEntity.ok(it) }
                 ?: ResponseEntity.noContent().build()
