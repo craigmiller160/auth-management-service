@@ -45,6 +45,7 @@ class ClientService (
         return clientRepo.save(client)
     }
 
+    @Transactional
     fun updateClient(id: Long, client: Client): Client {
         val existing = clientRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("Client not found for ID: $id") }
@@ -55,6 +56,7 @@ class ClientService (
         return clientRepo.save(finalClient)
     }
 
+    @Transactional
     fun deleteClient(id: Long): Client {
         val existing = clientRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("Client not found for ID: $id") }
@@ -62,15 +64,24 @@ class ClientService (
         return existing
     }
 
-    fun updateRole(id: Long, role: Role): Role {
-        TODO("Finish this")
+    @Transactional
+    fun updateRole(clientId: Long, roleId: Long, role: Role): Role {
+        roleRepo.findByClientIdAndId(clientId, roleId)
+                ?: throw EntityNotFoundException("Role not found for ClientID $clientId and RoleID $roleId")
+        val finalRole = role.copy(id = roleId, clientId = clientId)
+        return roleRepo.save(finalRole)
     }
 
-    fun createRole(role: Role): Role {
-        TODO("Finish this")
+    fun createRole(clientId: Long, role: Role): Role {
+        val finalRole = role.copy(id = 0, clientId = clientId)
+        return roleRepo.save(finalRole)
     }
 
-    fun deleteRole(id: Long): Role {
-        TODO("Finish this")
+    @Transactional
+    fun deleteRole(clientId: Long, roleId: Long): Role {
+        val existing = roleRepo.findByClientIdAndId(clientId, roleId)
+                ?: throw EntityNotFoundException("Role not found for ClientID $clientId and RoleID $roleId")
+        roleRepo.deleteByClientIdAndId(clientId, roleId)
+        return existing
     }
 }

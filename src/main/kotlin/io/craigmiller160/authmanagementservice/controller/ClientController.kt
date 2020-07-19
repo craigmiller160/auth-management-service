@@ -5,7 +5,6 @@ import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.service.ClientService
-import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -60,19 +59,19 @@ class ClientController (
         return clientService.deleteClient(id)
     }
 
-    @PutMapping("/roles/{id}")
-    fun updateRole(@PathVariable id: Long, @RequestBody role: Role): Role {
-        return clientService.updateRole(id, role)
+    @PutMapping("{clientId}/roles/{roleId}")
+    fun updateRole(@PathVariable clientId: Long, @PathVariable roleId: Long, @RequestBody role: Role): Role {
+        return clientService.updateRole(clientId, roleId, role)
     }
 
-    @PostMapping("/roles")
-    fun createRole(@RequestBody role: Role): Role {
-        return clientService.createRole(role)
+    @PostMapping("{clientId}/roles")
+    fun createRole(@PathVariable clientId: Long, @RequestBody role: Role): Role {
+        return clientService.createRole(clientId, role)
     }
 
-    @DeleteMapping("/roles/{id}")
-    fun deleteRole(@PathVariable id: Long): Role {
-        return clientService.deleteRole(id)
+    @DeleteMapping("{clientId}/roles/{roleId}")
+    fun deleteRole(@PathVariable clientId: Long, @PathVariable roleId: Long): Role {
+        return clientService.deleteRole(clientId, roleId)
     }
 
 }

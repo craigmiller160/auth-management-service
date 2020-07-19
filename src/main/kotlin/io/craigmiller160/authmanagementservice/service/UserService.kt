@@ -5,6 +5,7 @@ import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class UserService (
@@ -24,6 +25,7 @@ class UserService (
         return userRepo.save(user)
     }
 
+    @Transactional
     fun updateUser(id: Long, user: User): User {
         val existing = userRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("User not found for ID: $id") }
@@ -32,6 +34,7 @@ class UserService (
         return userRepo.save(finalUser)
     }
 
+    @Transactional
     fun deleteUser(id: Long): User {
         val existing = userRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("User not found for ID: $id") }
