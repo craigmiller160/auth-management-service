@@ -11,8 +11,6 @@ class UserService (
         private val userRepo: UserRepository
 ) {
 
-    // TODO unit tests
-
     fun getUsers(): UserList {
         val users = userRepo.findAllByOrderByEmail()
         return UserList(users)
