@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
+import io.craigmiller160.authmanagementservice.dto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
@@ -85,5 +86,10 @@ class ClientService (
                 ?: throw EntityNotFoundException("Role not found for ClientID $clientId and RoleID $roleId")
         roleRepo.deleteByClientIdAndId(clientId, roleId)
         return existing
+    }
+
+    fun getRoles(clientId: Long): RoleList {
+        val roles = roleRepo.findAllByClientIdOrderByName(clientId)
+        return RoleList(roles)
     }
 }
