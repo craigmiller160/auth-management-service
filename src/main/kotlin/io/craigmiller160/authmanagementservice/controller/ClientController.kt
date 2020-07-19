@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.controller
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.service.ClientService
 import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
@@ -57,6 +58,16 @@ class ClientController (
     @DeleteMapping("/{id}")
     fun deleteClient(@PathVariable id: Long): Client {
         return clientService.deleteClient(id)
+    }
+
+    @PutMapping("/roles/{id}")
+    fun updateRole(@PathVariable id: Long, @RequestBody role: Role): Role {
+        return clientService.updateRole(id, role)
+    }
+
+    @PostMapping("/roles")
+    fun createRole(@RequestBody role: Role): Role {
+        return clientService.createRole(role)
     }
 
 }
