@@ -35,8 +35,8 @@ class ClientService (
     fun getClient(id: Long): FullClient? {
         val result = clientRepo.findById(id).orElse(null)
         return result?.let { client ->
-            val users = userRepo.findAllByClientId(client.id)
-            val roles = roleRepo.findAllByClientId(client.id)
+            val users = userRepo.findAllByClientIdOrderByEmail(client.id)
+            val roles = roleRepo.findAllByClientIdOrderByName(client.id)
             return FullClient(client, users, roles)
         }
     }

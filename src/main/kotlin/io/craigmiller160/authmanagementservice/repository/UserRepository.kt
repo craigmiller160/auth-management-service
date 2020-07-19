@@ -13,6 +13,6 @@ interface UserRepository : JpaRepository<User,Long> {
     fun findAllByOrderByEmail(): List<User>
 
     @Query("SELECT u FROM User u WHERE u.id IN (SELECT cu.userId FROM ClientUser cu WHERE cu.clientId = ?1)")
-    fun findAllByClientId(clientId: Long): List<User>
+    fun findAllByClientIdOrderByEmail(clientId: Long): List<User>
 
 }

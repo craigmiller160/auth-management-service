@@ -9,7 +9,7 @@ import javax.transaction.Transactional
 @Repository
 interface RoleRepository : JpaRepository<Role,Long> {
 
-    fun findAllByClientId(clientId: Long): List<Role>
+    fun findAllByClientIdOrderByName(clientId: Long): List<Role>
 
     fun findByClientIdAndId(clientId: Long, id: Long): Role?
 
