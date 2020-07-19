@@ -58,6 +58,7 @@ class ClientService (
 
     @Transactional
     fun deleteClient(id: Long): Client {
+        // TODO need to cascade this
         val existing = clientRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("Client not found for ID: $id") }
         clientRepo.deleteById(id)
@@ -79,6 +80,7 @@ class ClientService (
 
     @Transactional
     fun deleteRole(clientId: Long, roleId: Long): Role {
+        // TODO need to cascade this for related users
         val existing = roleRepo.findByClientIdAndId(clientId, roleId)
                 ?: throw EntityNotFoundException("Role not found for ClientID $clientId and RoleID $roleId")
         roleRepo.deleteByClientIdAndId(clientId, roleId)
