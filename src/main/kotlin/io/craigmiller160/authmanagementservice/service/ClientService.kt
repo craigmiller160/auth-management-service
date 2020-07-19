@@ -69,4 +69,8 @@ class ClientService (
     fun createRole(role: Role): Role {
         TODO("Finish this")
     }
+
+    fun deleteRole(id: Long): Role {
+        TODO("Finish this")
+    }
 }

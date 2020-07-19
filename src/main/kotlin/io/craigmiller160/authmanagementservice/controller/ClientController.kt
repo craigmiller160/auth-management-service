@@ -70,4 +70,9 @@ class ClientController (
         return clientService.createRole(role)
     }
 
+    @DeleteMapping("/roles/{id}")
+    fun deleteRole(@PathVariable id: Long): Role {
+        return clientService.deleteRole(id)
+    }
+
 }
