@@ -10,6 +10,9 @@ data class FullUser (
         val roles: List<Role>
 ) : Sanitizer<FullUser> {
 
+    // TODO each user has multiple clients, and can have one or more roles within that client
+    // TODO how does this work from a DTO and UI standpoint?
+
     override fun sanitize(): FullUser {
         val user = this.user.sanitize()
         val client = this.client.sanitize()
