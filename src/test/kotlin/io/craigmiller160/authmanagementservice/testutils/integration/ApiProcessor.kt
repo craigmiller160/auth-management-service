@@ -15,16 +15,16 @@ class ApiProcessor (
         private val authToken: String? = null
 ) {
 
-    fun testGet(uriArg: UriArg, status: Int = 200): MvcResult {
-        val reqBuilder = commonRequest(MockMvcRequestBuilders.get(uriArg.path, *uriArg.vars.toTypedArray()))
+    fun testGet(req: Req, status: Int = 200): MvcResult {
+        val reqBuilder = commonRequest(MockMvcRequestBuilders.get(req.path, *req.vars.toTypedArray()))
         return mockMvc.perform(reqBuilder)
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().`is`(status))
                 .andReturn()
     }
 
-    fun testPost(uri: String, body: Any, uriVars: Array<Any> = arrayOf(), status: Int = 200): MvcResult {
-        val requestBuilder = commonBodyRequest(MockMvcRequestBuilders.post(uri, uriVars), body)
+    fun testPost(req: Req, status: Int = 200): MvcResult {
+        val requestBuilder = commonBodyRequest(MockMvcRequestBuilders.post(req.path, *req.vars.toTypedArray()), req.body)
         return mockMvc.perform(requestBuilder)
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().`is`(status))
