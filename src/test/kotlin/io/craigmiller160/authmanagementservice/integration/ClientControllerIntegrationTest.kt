@@ -3,8 +3,12 @@ package io.craigmiller160.authmanagementservice.integration
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.oauth2.config.OAuthConfig
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -48,6 +52,22 @@ class ClientControllerIntegrationTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    @Autowired
+    private lateinit var clientRepo: ClientRepository
+
+    private val client = Client(
+            id = 0,
+            name = "Client",
+            clientKey = "key",
+            clientSecret = "secret",
+            enabled = true,
+            allowAuthCode = true,
+            allowPassword = true,
+            allowClientCredentials = true,
+            accessTokenTimeoutSecs = 100,
+            refreshTokenTimeoutSecs = 100
+    )
+
     private lateinit var token: String
 
     @BeforeEach
@@ -65,19 +85,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_createClient() {
-        val client = Client(
-                id = 0,
-                name = "Client",
-                clientKey = "key",
-                clientSecret = "secret",
-                enabled = true,
-                allowAuthCode = true,
-                allowPassword = true,
-                allowClientCredentials = true,
-                accessTokenTimeoutSecs = 100,
-                refreshTokenTimeoutSecs = 100
-        )
-        mockMvc.perform(
+        val result = mockMvc.perform(
                 post("/clients")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(client))
@@ -86,6 +94,88 @@ class ClientControllerIntegrationTest {
         )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
+                .andReturn()
+        val content = result.response.contentAsString
+        val clientResult = objectMapper.readValue(content, Client::class.java)
+        assertEquals(client.copy(id = clientResult.id), clientResult)
+
+        val dbClient = clientRepo.findById(clientResult.id).orElse(null)
+        assertNotNull(dbClient)
+        assertEquals(client.copy(id = clientResult.id), dbClient)
     }
+
+    @Test
+    fun test_createClient_unauthorized() {
+        mockMvc.perform(
+                post("/clients")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(client))
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun test_getClient() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getClient_noContent() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getClient_unauthorized() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getClients() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getClients_noContent() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getClients_unauthorized() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_updateClient() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_updateClient_noMatch() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_updateClient_unauthorized() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_deleteClient() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_deleteClient_noMatch() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_deeClient_unauthorized() {
+        TODO("Finish this")
+    }
+
+    // TODO need role API tests
 
 }

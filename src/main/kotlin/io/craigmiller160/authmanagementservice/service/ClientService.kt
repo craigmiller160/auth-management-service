@@ -28,7 +28,6 @@ class ClientService (
     private val encoder = BCryptPasswordEncoder()
 
     // TODO validate inputs
-    // TODO unit tests
 
     fun generateGuid(): String {
         return UUID.randomUUID().toString()
