@@ -122,7 +122,7 @@ class ClientControllerIntegrationTest {
     @Test
     fun test_createClient() {
         val client = TestData.createClient(0)
-        val result = apiProcessor.testPost("/clients", client)
+        val result = apiProcessor.testPost(Req("/clients", body = client))
         val content = result.response.contentAsString
         val clientResult = objectMapper.readValue(content, Client::class.java)
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)

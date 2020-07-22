@@ -31,10 +31,12 @@ class ApiProcessor (
                 .andReturn()
     }
 
-    private fun commonBodyRequest(reqBuilder: MockHttpServletRequestBuilder, body: Any): MockHttpServletRequestBuilder {
-        return commonRequest(reqBuilder)
-                .contentType("application/json")
+    private fun commonBodyRequest(reqBuilder: MockHttpServletRequestBuilder, body: Any?): MockHttpServletRequestBuilder {
+        val commonBuilder = commonRequest(reqBuilder)
+        return body?.let {
+            commonBuilder.contentType("application/json")
                 .content(objectMapper.writeValueAsString(body))
+        } ?: commonBuilder
     }
 
     private fun commonRequest(reqBuilder: MockHttpServletRequestBuilder): MockHttpServletRequestBuilder {
