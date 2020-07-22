@@ -105,6 +105,7 @@ class ClientControllerIntegrationTest {
 
         apiProcessor = ApiProcessor(
                 mockMvc,
+                objectMapper,
                 isSecure = true,
                 authToken = token
         )

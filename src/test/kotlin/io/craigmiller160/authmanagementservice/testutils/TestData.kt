@@ -10,7 +10,7 @@ import io.craigmiller160.authmanagementservice.entity.User
 object TestData {
 
     fun createUser(id: Long) = User(
-            id = id,
+            id,
             email = "craig_$id@gmail.com",
             firstName = "Craig_$id",
             lastName = "Miller_$id",
@@ -18,7 +18,7 @@ object TestData {
     )
 
     fun createRole(id: Long, clientId: Long) = Role(
-            id = id,
+            id,
             name = "Role_$id",
             clientId = clientId
     )
@@ -30,7 +30,7 @@ object TestData {
     )
 
     fun createClient(id: Long) = Client(
-            id = id,
+            id,
             name = "Client_$id",
             clientKey = "Key_$id",
             clientSecret = "Secret_$id",
