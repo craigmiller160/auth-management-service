@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.controller
 
+import io.craigmiller160.authmanagementservice.dto.FullUser
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.service.UserService
@@ -31,24 +32,24 @@ class UserController (
     }
 
     @GetMapping("/{id}")
-    fun getUser(@PathVariable id: Long): ResponseEntity<User> {
+    fun getUser(@PathVariable id: Long): ResponseEntity<FullUser> {
         return userService.getUser(id)
                 ?.let { ResponseEntity.ok(it) }
                 ?: ResponseEntity.noContent().build()
     }
 
     @PostMapping
-    fun createUser(@RequestBody user: User): User {
+    fun createUser(@RequestBody user: User): FullUser {
         return userService.createUser(user)
     }
 
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: Long, @RequestBody user: User): User {
+    fun updateUser(@PathVariable id: Long, @RequestBody user: FullUser): FullUser {
         return userService.updateUser(id, user)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteUser(@PathVariable id: Long): User {
+    fun deleteUser(@PathVariable id: Long): FullUser {
         return userService.deleteUser(id)
     }
 
