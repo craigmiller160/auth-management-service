@@ -1,6 +1,5 @@
 package io.craigmiller160.authmanagementservice.service
 
-import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.dto.FullUser
 import io.craigmiller160.authmanagementservice.dto.FullUserClient
 import io.craigmiller160.authmanagementservice.dto.UserList
@@ -83,11 +82,11 @@ class UserService (
     }
 
     @Transactional
-    fun deleteUser(id: Long): User {
-        // TODO need to return the rest of the data here
-        // TODO also need to delete the other references here
-        val existing = userRepo.findById(id)
-                .orElseThrow { EntityNotFoundException("User not found for ID: $id") }
+    fun deleteUser(id: Long): FullUser {
+        val existing = getUser(id)
+                ?: throw EntityNotFoundException("User not found for ID: $id")
+        clientUserRoleRepo.deleteAllByUserId(id)
+        clientUserRepo.deleteAllByUserId(id)
         userRepo.deleteById(id)
         return existing
     }
