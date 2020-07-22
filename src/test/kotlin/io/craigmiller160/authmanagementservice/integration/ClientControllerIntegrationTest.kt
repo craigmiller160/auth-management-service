@@ -12,6 +12,7 @@ import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
+import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -80,6 +81,7 @@ class ClientControllerIntegrationTest {
     private lateinit var user2: User
     private lateinit var role1: Role
     private lateinit var role2: Role
+    private lateinit var apiProcessor: ApiProcessor
 
     @BeforeEach
     fun setup() {
@@ -100,6 +102,12 @@ class ClientControllerIntegrationTest {
         user2 = userRepo.save(TestData.createUser(2))
         clientUserRepo.save(TestData.createClientUser(client1.id, user1.id))
         clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
+
+        apiProcessor = ApiProcessor(
+                mockMvc,
+                isSecure = true,
+                authToken = token
+        )
     }
 
     @AfterEach
@@ -146,14 +154,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid() {
-        val result = mockMvc.perform(
-                get("/clients/guid")
-                        .header("Authorization", "Bearer $token")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = apiProcessor.testGet("/clients/guid")
         UUID.fromString(result.response.contentAsString)
     }
 

@@ -13,7 +13,7 @@ class ApiProcessor (
         private val authToken: String? = null
 ) {
 
-    fun testGet(uri: String, uriVars: Array<Any>, status: Int = 200): MvcResult {
+    fun testGet(uri: String, uriVars: Array<Any> = arrayOf(), status: Int = 200): MvcResult {
         val reqBuilder = commonRequest(MockMvcRequestBuilders.get(uri, *uriVars))
         return mockMvc.perform(reqBuilder)
                 .andDo(MockMvcResultHandlers.print())
