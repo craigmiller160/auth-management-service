@@ -22,8 +22,6 @@ class ClientController (
         private val clientService: ClientService
 ) {
 
-    // TODO unit tests
-
     @GetMapping("/guid")
     fun generateGuid(): String {
         return clientService.generateGuid()
