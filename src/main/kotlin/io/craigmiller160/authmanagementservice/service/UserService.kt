@@ -4,6 +4,7 @@ import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.UserRepository
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
@@ -11,6 +12,8 @@ import javax.transaction.Transactional
 class UserService (
         private val userRepo: UserRepository
 ) {
+
+    private val encoder = BCryptPasswordEncoder()
 
     fun getUsers(): UserList {
         val users = userRepo.findAllByOrderByEmail()
@@ -30,7 +33,14 @@ class UserService (
         val existing = userRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("User not found for ID: $id") }
 
-        val finalUser = user.copy(id = id)
+        val finalUser = user.copy(
+                id = id,
+                password = if (user.password.isNotBlank()) {
+                    "{bcrypt}${encoder.encode(user.password)}"
+                } else {
+                    existing.password
+                }
+        )
         return userRepo.save(finalUser)
     }
 

@@ -11,6 +11,7 @@ import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.UUID
 import javax.transaction.Transactional
@@ -23,6 +24,8 @@ class ClientService (
         private val clientUserRoleRepo: ClientUserRoleRepository,
         private val clientUserRepo: ClientUserRepository
 ) {
+
+    private val encoder = BCryptPasswordEncoder()
 
     // TODO validate inputs
     // TODO unit tests
@@ -56,7 +59,11 @@ class ClientService (
                 .orElseThrow { EntityNotFoundException("Client not found for ID: $id") }
         val finalClient = client.copy(
                 id = id,
-                clientSecret = if (client.clientSecret.isBlank()) existing.clientSecret else client.clientSecret
+                clientSecret = if (client.clientSecret.isBlank()) {
+                    "{bcrypt}${encoder.encode(existing.clientSecret)}"
+                } else {
+                    client.clientSecret
+                }
         )
         return clientRepo.save(finalClient)
     }
