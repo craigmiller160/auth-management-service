@@ -186,12 +186,23 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient_noContent() {
-        TODO("Finish this")
+        mockMvc.perform(
+                get("/clients/{id}", 0)
+                        .header("Authorization", "Bearer $token")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isNoContent)
     }
 
     @Test
     fun test_getClient_unauthorized() {
-        TODO("Finish this")
+        mockMvc.perform(
+                get("/clients/{id}", client1.id)
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized)
     }
 
     @Test
