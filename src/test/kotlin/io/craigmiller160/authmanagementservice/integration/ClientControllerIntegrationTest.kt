@@ -85,7 +85,7 @@ class ClientControllerIntegrationTest {
                 .andReturn()
         val content = result.response.contentAsString
         val clientResult = objectMapper.readValue(content, Client::class.java)
-        assertEquals(client.copy(id = clientResult.id), clientResult)
+        assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
 
         val dbClient = clientRepo.findById(clientResult.id).orElse(null)
         assertNotNull(dbClient)
