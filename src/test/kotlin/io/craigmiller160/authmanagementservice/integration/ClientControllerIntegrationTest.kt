@@ -170,14 +170,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-        val result = mockMvc.perform(
-                get("/clients/{id}", client1.id)
-                        .header("Authorization", "Bearer $token")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = apiProcessor.testGet("/clients/{id}", arrayOf(client1.id))
         val contentString = result.response.contentAsString
         val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
         assertEquals(client1.copy(clientSecret = ""), clientResult.client)
