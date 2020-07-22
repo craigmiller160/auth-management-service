@@ -1,5 +1,8 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.FullClient
+import io.craigmiller160.authmanagementservice.dto.FullUser
+import io.craigmiller160.authmanagementservice.dto.FullUserClient
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
@@ -24,14 +27,23 @@ class UserService (
         return UserList(users)
     }
 
-    fun getUser(id: Long): User? {
-        // TODO need the rest of the data here
-        return userRepo.findById(id).orElse(null)
+    @Transactional
+    fun getUser(id: Long): FullUser? {
+         return userRepo.findById(id).orElse(null)
+                 ?.let { user ->
+                     val clients = clientRepo.findAllByUserOrderByName(user.id)
+                     val fullUserClients = clients.map { client ->
+                         val roles = roleRepo.findAllByClientIdOrderByName(client.id)
+                         val userRoles = roleRepo.findAllByClientAndUserOrderByName(client.id, user.id)
+                         FullUserClient(client, userRoles, roles)
+                     }
+                     FullUser(user, fullUserClients)
+                 }
     }
 
-    fun createUser(user: User): User {
-        // TODO need to return an empty shell of the rest of the data here
-        return userRepo.save(user)
+    fun createUser(user: User): FullUser {
+        val newUser = userRepo.save(user)
+        return FullUser(user, listOf())
     }
 
     @Transactional
