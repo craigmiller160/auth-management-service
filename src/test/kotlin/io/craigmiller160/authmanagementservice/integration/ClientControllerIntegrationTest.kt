@@ -54,6 +54,10 @@ class ClientControllerIntegrationTest {
     fun setup() {
         `when`(oauthConfig.jwkSet)
                 .thenReturn(jwkSet)
+        `when`(oauthConfig.clientKey)
+                .thenReturn(JwtUtils.CLIENT_KEY)
+        `when`(oauthConfig.clientName)
+                .thenReturn(JwtUtils.CLIENT_NAME)
 
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
