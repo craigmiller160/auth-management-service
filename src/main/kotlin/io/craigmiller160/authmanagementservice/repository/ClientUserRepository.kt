@@ -13,4 +13,8 @@ interface ClientUserRepository : JpaRepository<ClientUser,Long> {
     @Modifying
     fun deleteAllByClientId(clientId: Long): Long
 
+    @Transactional
+    @Modifying
+    fun deleteAllByUserId(userId: Long): Long
+
 }

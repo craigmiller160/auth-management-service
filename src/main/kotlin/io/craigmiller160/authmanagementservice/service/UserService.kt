@@ -4,9 +4,13 @@ import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.dto.FullUser
 import io.craigmiller160.authmanagementservice.dto.FullUserClient
 import io.craigmiller160.authmanagementservice.dto.UserList
+import io.craigmiller160.authmanagementservice.entity.ClientUser
+import io.craigmiller160.authmanagementservice.entity.ClientUserRole
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
+import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
+import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -17,7 +21,9 @@ import javax.transaction.Transactional
 class UserService (
         private val userRepo: UserRepository,
         private val clientRepo: ClientRepository,
-        private val roleRepo: RoleRepository
+        private val roleRepo: RoleRepository,
+        private val clientUserRoleRepo: ClientUserRoleRepository,
+        private val clientUserRepo: ClientUserRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
@@ -47,20 +53,33 @@ class UserService (
     }
 
     @Transactional
-    fun updateUser(id: Long, user: User): User {
-        // TODO need to save the rest of the data here
-        val existing = userRepo.findById(id)
+    fun updateUser(id: Long, user: FullUser): FullUser {
+        val existingUser = userRepo.findById(id)
                 .orElseThrow { EntityNotFoundException("User not found for ID: $id") }
-
-        val finalUser = user.copy(
+        val finalUser = user.user.copy(
                 id = id,
-                password = if (user.password.isNotBlank()) {
-                    "{bcrypt}${encoder.encode(user.password)}"
+                password = if (user.user.password.isNotBlank()) {
+                    "{bcrypt}${encoder.encode(user.user.password)}"
                 } else {
-                    existing.password
+                    existingUser.password
                 }
         )
-        return userRepo.save(finalUser)
+        userRepo.save(finalUser)
+
+        clientUserRoleRepo.deleteAllByUserId(id)
+        clientUserRepo.deleteAllByUserId(id)
+
+        user.clients.forEach { client ->
+            val clientUser = ClientUser(0, id, client.client.id)
+            clientUserRepo.save(clientUser)
+
+            client.userRoles.forEach { role ->
+                val clientUserRole = ClientUserRole(0, id, client.client.id, role.id)
+                clientUserRoleRepo.save(clientUserRole)
+            }
+        }
+
+        return getUser(id)!!
     }
 
     @Transactional
