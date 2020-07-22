@@ -121,16 +121,7 @@ class ClientControllerIntegrationTest {
     @Test
     fun test_createClient() {
         val client = TestData.createClient(0)
-        val result = mockMvc.perform(
-                post("/clients")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(client))
-                        .header("Authorization", "Bearer $token")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk)
-                .andReturn()
+        val result = apiProcessor.testPost("/clients", client)
         val content = result.response.contentAsString
         val clientResult = objectMapper.readValue(content, Client::class.java)
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
@@ -181,13 +172,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient_noContent() {
-        mockMvc.perform(
-                get("/clients/{id}", 0)
-                        .header("Authorization", "Bearer $token")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isNoContent)
+        apiProcessor.testGet("/clients/{id}", arrayOf(0), 204)
     }
 
     @Test
