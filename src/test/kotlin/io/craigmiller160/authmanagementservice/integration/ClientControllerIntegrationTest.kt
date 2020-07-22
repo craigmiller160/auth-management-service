@@ -5,10 +5,10 @@ import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.security.KeyPair
@@ -55,19 +55,6 @@ class ClientControllerIntegrationTest {
     @Autowired
     private lateinit var clientRepo: ClientRepository
 
-    private val client = Client(
-            id = 0,
-            name = "Client",
-            clientKey = "key",
-            clientSecret = "secret",
-            enabled = true,
-            allowAuthCode = true,
-            allowPassword = true,
-            allowClientCredentials = true,
-            accessTokenTimeoutSecs = 100,
-            refreshTokenTimeoutSecs = 100
-    )
-
     private lateinit var token: String
 
     @BeforeEach
@@ -85,6 +72,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_createClient() {
+        val client = TestData.createClient(0)
         val result = mockMvc.perform(
                 post("/clients")
                         .contentType("application/json")
@@ -106,6 +94,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_createClient_unauthorized() {
+        val client = TestData.createClient(0)
         mockMvc.perform(
                 post("/clients")
                         .contentType("application/json")
