@@ -20,10 +20,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.security.KeyPair
+import java.util.*
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -99,6 +101,29 @@ class ClientControllerIntegrationTest {
                 post("/clients")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(client))
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun test_generateGuid() {
+        val result = mockMvc.perform(
+                get("/clients/guid")
+                        .header("Authorization", "Bearer $token")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andReturn()
+        UUID.fromString(result.response.contentAsString)
+    }
+
+    @Test
+    fun test_generateGuid_unauthorized() {
+        mockMvc.perform(
+                get("/clients/guid")
                         .secure(true)
         )
                 .andDo(MockMvcResultHandlers.print())
