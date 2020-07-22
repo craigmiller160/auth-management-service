@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -122,7 +123,7 @@ class ClientControllerIntegrationTest {
     @Test
     fun test_createClient() {
         val client = TestData.createClient(0)
-        val result = apiProcessor.testPost(Req("/clients", body = client))
+        val result = apiProcessor.request(Req(HttpMethod.POST, "/clients", body = client))
         val content = result.response.contentAsString
         val clientResult = objectMapper.readValue(content, Client::class.java)
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
@@ -147,7 +148,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid() {
-        val result = apiProcessor.testGet(Req("/clients/guid"))
+        val result = apiProcessor.request(Req(HttpMethod.GET, "/clients/guid"))
         UUID.fromString(result.response.contentAsString)
     }
 
@@ -163,7 +164,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-        val result = apiProcessor.testGet(Req("/clients/{id}", listOf(client1.id)))
+        val result = apiProcessor.request(Req(HttpMethod.GET, "/clients/{id}", listOf(client1.id)))
         val contentString = result.response.contentAsString
         val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
         assertEquals(client1.copy(clientSecret = ""), clientResult.client)
@@ -173,7 +174,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient_noContent() {
-        apiProcessor.testGet(Req("/clients/{id}", listOf(0)), 204)
+        apiProcessor.request(Req(HttpMethod.GET, "/clients/{id}", listOf(0)), 204)
     }
 
     @Test

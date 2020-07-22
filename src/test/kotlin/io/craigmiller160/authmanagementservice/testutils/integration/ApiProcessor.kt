@@ -1,12 +1,14 @@
 package io.craigmiller160.authmanagementservice.testutils.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.http.HttpMethod
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.lang.RuntimeException
 
 class ApiProcessor (
         private val mockMvc: MockMvc,
@@ -15,17 +17,15 @@ class ApiProcessor (
         private val authToken: String? = null
 ) {
 
-    fun testGet(req: Req, status: Int = 200): MvcResult {
-        val reqBuilder = commonRequest(MockMvcRequestBuilders.get(req.path, *req.vars.toTypedArray()))
-        return mockMvc.perform(reqBuilder)
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().`is`(status))
-                .andReturn()
-    }
+    fun request(req: Req, status: Int = 200): MvcResult {
+        val commonBuilder = commonRequest(MockMvcRequestBuilders.get(req.path, *req.vars.toTypedArray()))
+        val reqBuilder = when (req.method) {
+            HttpMethod.GET -> commonRequest(MockMvcRequestBuilders.get(req.path, *req.vars.toTypedArray()))
+            HttpMethod.POST -> commonBodyRequest(MockMvcRequestBuilders.post(req.path, *req.vars.toTypedArray()), req.body)
+            else -> throw RuntimeException("Invalid HTTP method: ${req.method}")
+        }
 
-    fun testPost(req: Req, status: Int = 200): MvcResult {
-        val requestBuilder = commonBodyRequest(MockMvcRequestBuilders.post(req.path, *req.vars.toTypedArray()), req.body)
-        return mockMvc.perform(requestBuilder)
+        return mockMvc.perform(reqBuilder)
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().`is`(status))
                 .andReturn()
