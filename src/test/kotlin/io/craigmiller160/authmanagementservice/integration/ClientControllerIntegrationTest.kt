@@ -13,6 +13,7 @@ import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
+import io.craigmiller160.authmanagementservice.testutils.integration.UriArg
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -146,7 +147,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid() {
-        val result = apiProcessor.testGet("/clients/guid")
+        val result = apiProcessor.testGet(UriArg("/clients/guid"))
         UUID.fromString(result.response.contentAsString)
     }
 
@@ -162,7 +163,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-        val result = apiProcessor.testGet("/clients/{id}", arrayOf(client1.id))
+        val result = apiProcessor.testGet(UriArg("/clients/{id}", listOf(client1.id)))
         val contentString = result.response.contentAsString
         val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
         assertEquals(client1.copy(clientSecret = ""), clientResult.client)
@@ -172,7 +173,7 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient_noContent() {
-        apiProcessor.testGet("/clients/{id}", arrayOf(0), 204)
+        apiProcessor.testGet(UriArg("/clients/{id}", listOf(0)), 204)
     }
 
     @Test
