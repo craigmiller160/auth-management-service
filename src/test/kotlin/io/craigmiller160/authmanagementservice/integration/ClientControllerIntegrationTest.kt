@@ -2,11 +2,18 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.Role
+import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
+import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
+import io.craigmiller160.authmanagementservice.repository.RoleRepository
+import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.oauth2.config.OAuthConfig
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
@@ -57,7 +64,22 @@ class ClientControllerIntegrationTest {
     @Autowired
     private lateinit var clientRepo: ClientRepository
 
+    @Autowired
+    private lateinit var userRepo: UserRepository
+
+    @Autowired
+    private lateinit var roleRepo: RoleRepository
+
+    @Autowired
+    private lateinit var clientUserRepo: ClientUserRepository
+
     private lateinit var token: String
+    private lateinit var client1: Client
+    private lateinit var client2: Client
+    private lateinit var user1: User
+    private lateinit var user2: User
+    private lateinit var role1: Role
+    private lateinit var role2: Role
 
     @BeforeEach
     fun setup() {
@@ -70,6 +92,21 @@ class ClientControllerIntegrationTest {
 
         val jwt = JwtUtils.createJwt()
         token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
+        client1 = clientRepo.save(TestData.createClient(1))
+        client2 = clientRepo.save(TestData.createClient(2))
+        role1 = roleRepo.save(TestData.createRole(1, client1.id))
+        role2 = roleRepo.save(TestData.createRole(2, client1.id))
+        user1 = userRepo.save(TestData.createUser(1))
+        user2 = userRepo.save(TestData.createUser(2))
+        clientUserRepo.save(TestData.createClientUser(client1.id, user1.id))
+        clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
+    }
+
+    @AfterEach
+    fun clean() {
+        clientRepo.deleteAll()
+        userRepo.deleteAll()
+        roleRepo.deleteAll()
     }
 
     @Test
@@ -132,7 +169,19 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-        TODO("Finish this")
+        val result = mockMvc.perform(
+                get("/clients/{id}", client1.id)
+                        .header("Authorization", "Bearer $token")
+                        .secure(true)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andReturn()
+        val contentString = result.response.contentAsString
+        val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
+        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
+        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
+        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
     }
 
     @Test
