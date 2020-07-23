@@ -74,12 +74,4 @@ class ClientService (
         clientRepo.deleteById(id)
         return existing
     }
-
-    @Transactional
-    fun updateRole(clientId: Long, roleId: Long, role: Role): Role {
-        roleRepo.findByClientIdAndId(clientId, roleId)
-                ?: throw EntityNotFoundException("Role not found for ClientID $clientId and RoleID $roleId")
-        val finalRole = role.copy(id = roleId, clientId = clientId)
-        return roleRepo.save(finalRole)
-    }
 }

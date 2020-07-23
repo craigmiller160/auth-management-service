@@ -2,9 +2,7 @@ package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
-import io.craigmiller160.authmanagementservice.dto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.service.ClientService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -56,30 +54,6 @@ class ClientController (
     @DeleteMapping("/{id}")
     fun deleteClient(@PathVariable id: Long): Client {
         return clientService.deleteClient(id)
-    }
-
-    @PutMapping("/{clientId}/roles/{roleId}")
-    fun updateRole(@PathVariable clientId: Long, @PathVariable roleId: Long, @RequestBody role: Role): Role {
-        return clientService.updateRole(clientId, roleId, role)
-    }
-
-    @PostMapping("/{clientId}/roles")
-    fun createRole(@PathVariable clientId: Long, @RequestBody role: Role): Role {
-        return clientService.createRole(clientId, role)
-    }
-
-    @DeleteMapping("/{clientId}/roles/{roleId}")
-    fun deleteRole(@PathVariable clientId: Long, @PathVariable roleId: Long): Role {
-        return clientService.deleteRole(clientId, roleId)
-    }
-
-    @GetMapping("/{clientId}/roles")
-    fun getRoles(@PathVariable clientId: Long): ResponseEntity<RoleList> {
-        val roles = clientService.getRoles(clientId)
-        if (roles.roles.isEmpty()) {
-            return ResponseEntity.noContent().build()
-        }
-        return ResponseEntity.ok(roles)
     }
 
 }
