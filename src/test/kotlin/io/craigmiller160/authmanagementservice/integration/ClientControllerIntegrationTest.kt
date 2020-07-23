@@ -13,6 +13,7 @@ import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
+import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessorBuilder
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -58,7 +59,7 @@ class ClientControllerIntegrationTest {
     private lateinit var oauthConfig: OAuthConfig
 
     @Autowired
-    private lateinit var mockMvc: MockMvc
+    private lateinit var mockMvc: MockMvc // TODO remove this
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -74,6 +75,9 @@ class ClientControllerIntegrationTest {
 
     @Autowired
     private lateinit var clientUserRepo: ClientUserRepository
+
+    @Autowired
+    private lateinit var apiProcessBuilder: ApiProcessorBuilder
 
     private lateinit var token: String
     private lateinit var client1: Client
@@ -104,9 +108,7 @@ class ClientControllerIntegrationTest {
         clientUserRepo.save(TestData.createClientUser(client1.id, user1.id))
         clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
 
-        apiProcessor = ApiProcessor(
-                mockMvc,
-                objectMapper,
+        apiProcessor = apiProcessBuilder.build(
                 isSecure = true,
                 authToken = token
         )
