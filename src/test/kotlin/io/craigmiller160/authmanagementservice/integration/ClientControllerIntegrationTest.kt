@@ -1,6 +1,5 @@
 package io.craigmiller160.authmanagementservice.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
@@ -20,6 +19,7 @@ import io.craigmiller160.webutils.dto.ErrorResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,13 +31,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.security.KeyPair
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -206,6 +201,7 @@ class ClientControllerIntegrationTest {
             request {
                 path = "/clients/{id}"
                 vars = arrayOf(1)
+                doAuth = false
             }
             response {
                 status = 401
@@ -268,7 +264,7 @@ class ClientControllerIntegrationTest {
         assertEquals(newClient.copy(clientSecret = ""), clientResult)
 
         val dbClient = clientRepo.findById(newClient.id)
-        assertEquals(newClient, dbClient)
+        assertEquals(newClient, dbClient.get())
     }
 
     @Test
@@ -312,7 +308,17 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_deleteClient() {
-        TODO("Finish this")
+        val clientResult = apiProcessor.call {
+            request {
+                method = HttpMethod.DELETE
+                path = "/clients/{id}"
+                vars = arrayOf(client1.id)
+            }
+        }.convert(Client::class.java)
+        assertEquals(client1.copy(clientSecret = ""), clientResult)
+
+        val dbClient = clientRepo.findById(client1.id)
+        assertTrue(dbClient.isEmpty)
     }
 
     @Test
