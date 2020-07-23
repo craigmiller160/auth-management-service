@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
@@ -176,42 +177,41 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-//        val result = apiProcessor.call {
-//            request {
-//                path = "/clients/{id}"
-//                vars = arrayOf(client1.id)
-//            }
-//        }
-//        val contentString = result.response.contentAsString
-//        val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
-//        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
-//        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
-//        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
-        TODO("Finish this")
+        val clientResult = apiProcessor.call {
+            request {
+                path = "/clients/{id}"
+                vars = arrayOf(client1.id)
+            }
+        }.convert(FullClient::class.java)
+        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
+        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
+        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
     }
 
     @Test
     fun test_getClient_noContent() {
-//        apiProcessor.call {
-//            request {
-//                path = "/clients/{id}"
-//                vars = arrayOf(0)
-//            }
-//            response {
-//                status = 204
-//            }
-//        }
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                path = "/clients/{id}"
+                vars = arrayOf(0)
+            }
+            response {
+                status = 204
+            }
+        }
     }
 
     @Test
     fun test_getClient_unauthorized() {
-        mockMvc.perform(
-                get("/clients/{id}", client1.id)
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isUnauthorized)
+        apiProcessor.call {
+            request {
+                path = "/clients/{id}"
+                vars = arrayOf(1)
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
