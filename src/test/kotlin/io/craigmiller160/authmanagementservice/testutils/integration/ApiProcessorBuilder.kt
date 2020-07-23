@@ -10,8 +10,8 @@ class ApiProcessorBuilder (
         private val objectMapper: ObjectMapper
 ) {
 
-    fun build(isSecure: Boolean = false, authToken: String? = null): ApiProcessor {
-        return ApiProcessor(mockMvc, objectMapper, isSecure, authToken)
+    fun build(https: Boolean = false, authToken: String? = null): ApiProcessor {
+        return ApiProcessor(mockMvc, objectMapper, https, authToken)
     }
 
 }

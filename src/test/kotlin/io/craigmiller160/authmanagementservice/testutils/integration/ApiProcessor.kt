@@ -21,10 +21,19 @@ class ApiProcessor (
         val apiConfig = ApiConfig()
         apiConfig.init()
 
-        val reqBuilder = when(apiConfig.req.method) {
-            HttpMethod.GET -> commonRequest(MockMvcRequestBuilders.get(apiConfig.req.path, *apiConfig.req.vars))
-            HttpMethod.POST -> commonBodyRequest(MockMvcRequestBuilders.post(apiConfig.req.path, *apiConfig.req.vars), apiConfig.req.body)
+        var reqBuilder = when(apiConfig.req.method) {
+            HttpMethod.GET -> MockMvcRequestBuilders.get(apiConfig.req.path, *apiConfig.req.vars)
+            HttpMethod.POST -> MockMvcRequestBuilders.post(apiConfig.req.path, *apiConfig.req.vars)
             else -> throw RuntimeException("Invalid HTTP method: ${apiConfig.req.method}")
+        }
+        reqBuilder = reqBuilder.secure(true)
+        if (apiConfig.req.doAuth && authToken != null) {
+            reqBuilder = reqBuilder.header("Authorization", "Bearer $authToken")
+        }
+
+        if (apiConfig.req.body != null) {
+            reqBuilder = reqBuilder.contentType("application/json")
+                    .content(objectMapper.writeValueAsString(apiConfig.req.body))
         }
 
         val result = mockMvc.perform(reqBuilder)
@@ -32,22 +41,6 @@ class ApiProcessor (
                 .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
         return ApiResult(result, objectMapper)
-    }
-
-    private fun commonBodyRequest(reqBuilder: MockHttpServletRequestBuilder, body: Any?): MockHttpServletRequestBuilder {
-        val commonBuilder = commonRequest(reqBuilder)
-        return body?.let {
-            commonBuilder.contentType("application/json")
-                .content(objectMapper.writeValueAsString(body))
-        } ?: commonBuilder
-    }
-
-    private fun commonRequest(reqBuilder: MockHttpServletRequestBuilder): MockHttpServletRequestBuilder {
-        var newReqBuilder = reqBuilder.secure(isSecure)
-        newReqBuilder = authToken?.let {
-            reqBuilder.header("Authorization", "Bearer $it")
-        } ?: reqBuilder
-        return newReqBuilder
     }
 
 }

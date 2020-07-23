@@ -7,4 +7,5 @@ class RequestConfig {
     var path: String = ""
     var vars: Array<Any> = arrayOf()
     var body: Any? = null
+    var doAuth: Boolean = true
 }

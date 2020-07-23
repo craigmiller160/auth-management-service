@@ -2,7 +2,6 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
-import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
@@ -109,7 +108,7 @@ class ClientControllerIntegrationTest {
         clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
 
         apiProcessor = apiProcessBuilder.build(
-                isSecure = true,
+                https = true,
                 authToken = token
         )
     }
