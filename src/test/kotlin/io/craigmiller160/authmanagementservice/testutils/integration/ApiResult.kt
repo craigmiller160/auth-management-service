@@ -11,8 +11,8 @@ class ApiResult (
     val content = mvcResult.response.contentAsString
     val response = mvcResult.response
 
-    fun <T> convert(action: (mapper: ObjectMapper, content: String) -> T): T {
-        return action(objectMapper, content)
+    fun <T> convert(type: Class<T>): T {
+        return objectMapper.readValue(content, type)
     }
 
 }

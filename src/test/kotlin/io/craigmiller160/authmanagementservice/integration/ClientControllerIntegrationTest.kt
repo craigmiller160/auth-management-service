@@ -130,7 +130,7 @@ class ClientControllerIntegrationTest {
                 path = "/clients"
                 body = client
             }
-        }.convert { mapper, content -> mapper.readValue(content, Client::class.java) }
+        }.convert(Client::class.java)
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
 
         val dbClient = clientRepo.findById(clientResult.id).orElse(null)
