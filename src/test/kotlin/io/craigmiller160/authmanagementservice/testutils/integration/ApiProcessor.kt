@@ -21,7 +21,7 @@ class ApiProcessor (
         return request(HttpMethod.GET, path, vars, null, status)
     }
 
-    fun call(init: ApiConfig.() -> Unit): MvcResult {
+    fun call(init: ApiConfig.() -> Unit): Any {
         val apiConfig = ApiConfig()
         apiConfig.init()
 
@@ -31,10 +31,12 @@ class ApiProcessor (
             else -> throw RuntimeException("Invalid HTTP method: ${apiConfig.req.method}")
         }
 
-        return mockMvc.perform(reqBuilder)
+        val result = mockMvc.perform(reqBuilder)
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
+        val content = result.response.contentAsString
+        return apiConfig.res.convert(objectMapper, content)
     }
 
     fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {

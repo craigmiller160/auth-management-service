@@ -135,7 +135,7 @@ class ClientControllerIntegrationTest {
                     mapper.readValue(content, Client::class.java)
                 }
             }
-        }
+        } as Client
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
 
         val dbClient = clientRepo.findById(clientResult.id).orElse(null)
@@ -158,13 +158,14 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid() {
-        val result = apiProcessor.call {
-            request {
-                path = "/clients/guid"
-            }
-        }
-        val uuid = UUID.fromString(result.response.contentAsString)
-        assertNotNull(uuid)
+//        val result = apiProcessor.call {
+//            request {
+//                path = "/clients/guid"
+//            }
+//        }
+//        val uuid = UUID.fromString(result.response.contentAsString)
+//        assertNotNull(uuid)
+        TODO("Finish this")
     }
 
     @Test
@@ -179,17 +180,18 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-        val result = apiProcessor.call {
-            request {
-                path = "/clients/{id}"
-                vars = arrayOf(client1.id)
-            }
-        }
-        val contentString = result.response.contentAsString
-        val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
-        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
-        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
-        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
+//        val result = apiProcessor.call {
+//            request {
+//                path = "/clients/{id}"
+//                vars = arrayOf(client1.id)
+//            }
+//        }
+//        val contentString = result.response.contentAsString
+//        val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
+//        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
+//        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
+//        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
+        TODO("Finish this")
     }
 
     @Test
