@@ -21,8 +21,8 @@ class ApiProcessor (
         return request(HttpMethod.GET, path, vars, null, status)
     }
 
-    fun <T> call(init: ApiConfig.() -> Unit): T {
-        val apiConfig = ApiConfig()
+    fun <T> call(init: ApiConfig<T>.() -> Unit): T {
+        val apiConfig = ApiConfig<T>()
         apiConfig.init()
 
         val reqBuilder = when(apiConfig.req.method) {
@@ -37,10 +37,20 @@ class ApiProcessor (
                 .andReturn()
 
         val content = result.response.contentAsString
-        val finalContent = apiConfig.res.responseType?.let {
-            objectMapper.readValue(content, it)
-        } ?: content
-        return finalContent as T
+        val responseType = apiConfig.res.responseType ?: String::class.java
+        return convertResponse(content, responseType) as T
+    }
+
+    private fun <T> convertResponse(content: String, responseType: Class<T>): T {
+        return when(responseType) {
+            String::class.java -> content as T
+            Int::class.java -> content.toInt() as T
+            Long::class.java -> content.toLong() as T
+            Float::class.java -> content.toFloat() as T
+            Short::class.java -> content.toShort() as T
+            Double::class.java -> content.toDouble() as T
+            else -> objectMapper.readValue(content, responseType) as T
+        }
     }
 
     fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {

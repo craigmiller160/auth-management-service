@@ -1,9 +1,6 @@
 package io.craigmiller160.authmanagementservice.testutils.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
-
-class ResponseConfig {
+class ResponseConfig<T> {
     var status: Int = 200
-//    var convert: (mapper: ObjectMapper, content: String) -> T
-    var responseType: Class<*>? = null
+    var responseType: Class<T>? = null
 }
