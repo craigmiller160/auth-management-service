@@ -140,14 +140,17 @@ class ClientControllerIntegrationTest {
     @Test
     fun test_createClient_unauthorized() {
         val client = TestData.createClient(0)
-        mockMvc.perform(
-                post("/clients")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(client))
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isUnauthorized)
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients"
+                doAuth = false
+                body = client
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
