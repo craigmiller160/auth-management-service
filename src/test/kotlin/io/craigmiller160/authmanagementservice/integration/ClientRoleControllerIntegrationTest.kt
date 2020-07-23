@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
@@ -86,12 +87,37 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
 
     @Test
     fun test_createRole() {
-        TODO("Finish this")
+        val role = TestData.createRole(0, client1.id)
+        val roleResult = apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients/{clientId}/roles"
+                vars = arrayOf(client1.id)
+                body = role
+            }
+        }.convert(Role::class.java)
+
+        assertEquals(role.copy(id = roleResult.id), roleResult)
+
+        val dbRole = roleRepo.findById(roleResult.id)
+        assertEquals(role.copy(id = roleResult.id), dbRole.get())
     }
 
     @Test
     fun test_createRole_unauthorized() {
-        TODO("Finish this")
+        val role = TestData.createRole(0, client1.id)
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients/{clientId}/roles"
+                vars = arrayOf(client1.id)
+                body = role
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
