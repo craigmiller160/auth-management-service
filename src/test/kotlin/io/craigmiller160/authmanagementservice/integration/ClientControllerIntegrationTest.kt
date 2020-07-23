@@ -323,12 +323,33 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_deleteClient_noMatch() {
-        TODO("Finish this")
+        val errorResult = apiProcessor.call {
+            request {
+                method = HttpMethod.DELETE
+                path = "/clients/{id}"
+                vars = arrayOf(0)
+            }
+            response {
+                status = 400
+            }
+        }.convert(ErrorResponse::class.java)
+
+        assertEquals("Entity not found - Client not found for ID: 0", errorResult.message)
     }
 
     @Test
     fun test_deleteClient_unauthorized() {
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                method = HttpMethod.DELETE
+                path = "/clients/{id}"
+                vars = arrayOf(client1.id)
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     // TODO need role API tests
