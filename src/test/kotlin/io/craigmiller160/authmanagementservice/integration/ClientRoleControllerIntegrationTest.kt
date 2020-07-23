@@ -47,8 +47,7 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
     fun test_getRoles() {
         val roleListResult = apiProcessor.call {
             request {
-                path = "/clients/{clientId}/roles"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}/roles"
             }
         }.convert(RoleList::class.java)
 
@@ -62,8 +61,7 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
         clean()
         apiProcessor.call {
             request {
-                path = "/clients/{clientId}/roles"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}/roles"
             }
             response {
                 status = 204
@@ -75,8 +73,7 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
     fun test_getRoles_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/clients/{clientId}/roles"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}/roles"
                 doAuth = false
             }
             response {
@@ -91,8 +88,7 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
         val roleResult = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/{clientId}/roles"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}/roles"
                 body = role
             }
         }.convert(Role::class.java)
@@ -109,8 +105,7 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/{clientId}/roles"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}/roles"
                 body = role
                 doAuth = false
             }
