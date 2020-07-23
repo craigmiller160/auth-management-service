@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
@@ -213,22 +214,60 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClients() {
-        TODO("Finish this")
+        val clientListResult = apiProcessor.call {
+            request {
+                path = "/clients"
+            }
+        }.convert(ClientList::class.java)
+        val clients = clientListResult.clients.sortedBy { it.name }
+        assertEquals(client1.copy(clientSecret = ""), clients[0])
+        assertEquals(client2.copy(clientSecret = ""), clients[1])
     }
 
     @Test
     fun test_getClients_noContent() {
-        TODO("Finish this")
+        clean()
+        apiProcessor.call {
+            request {
+                path = "/clients"
+            }
+            response {
+                status = 204
+            }
+        }
     }
 
     @Test
     fun test_getClients_unauthorized() {
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                path = "/clients"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
     fun test_updateClient() {
-        TODO("Finish this")
+        val newClient = client1.copy(
+                name = "TotallyNewClient"
+        )
+        val clientResult = apiProcessor.call {
+            request {
+                method = HttpMethod.PUT
+                path = "/clients/{id}"
+                vars = arrayOf(1)
+                body = newClient
+            }
+        }.convert(Client::class.java)
+
+        assertEquals(newClient.copy(clientSecret = ""), clientResult)
+
+        val dbClient = clientRepo.findById(newClient.id)
+        assertEquals(newClient, dbClient)
     }
 
     @Test

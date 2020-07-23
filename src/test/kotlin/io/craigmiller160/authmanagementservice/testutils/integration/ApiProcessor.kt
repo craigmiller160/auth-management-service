@@ -24,6 +24,8 @@ class ApiProcessor (
         var reqBuilder = when(apiConfig.req.method) {
             HttpMethod.GET -> MockMvcRequestBuilders.get(apiConfig.req.path, *apiConfig.req.vars)
             HttpMethod.POST -> MockMvcRequestBuilders.post(apiConfig.req.path, *apiConfig.req.vars)
+            HttpMethod.PUT -> MockMvcRequestBuilders.put(apiConfig.req.path, *apiConfig.req.vars)
+            HttpMethod.DELETE -> MockMvcRequestBuilders.delete(apiConfig.req.path, *apiConfig.req.vars)
             else -> throw RuntimeException("Invalid HTTP method: ${apiConfig.req.method}")
         }
         reqBuilder = reqBuilder.secure(true)
