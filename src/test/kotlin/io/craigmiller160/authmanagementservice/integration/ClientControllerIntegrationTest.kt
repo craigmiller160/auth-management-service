@@ -1,6 +1,5 @@
 package io.craigmiller160.authmanagementservice.integration
 
-import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,26 +29,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.security.KeyPair
 import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-class ClientControllerIntegrationTest {
-
-    companion object {
-
-        private lateinit var keyPair: KeyPair
-        private lateinit var jwkSet: JWKSet
-
-        @BeforeAll
-        @JvmStatic
-        fun beforeAll() {
-            keyPair = JwtUtils.createKeyPair()
-            jwkSet = JwtUtils.createJwkSet(keyPair)
-        }
-    }
+class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @MockBean
     private lateinit var oauthConfig: OAuthConfig
