@@ -21,7 +21,7 @@ class ApiProcessor (
         return request(HttpMethod.GET, path, vars, null, status)
     }
 
-    fun call(init: ApiConfig.() -> Unit): Any {
+    fun <T> call(init: ApiConfig.() -> Unit): T {
         val apiConfig = ApiConfig()
         apiConfig.init()
 
@@ -35,10 +35,12 @@ class ApiProcessor (
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
+
         val content = result.response.contentAsString
-        return apiConfig.res.responseType?.let {
+        val finalContent = apiConfig.res.responseType?.let {
             objectMapper.readValue(content, it)
         } ?: content
+        return finalContent as T
     }
 
     fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {
