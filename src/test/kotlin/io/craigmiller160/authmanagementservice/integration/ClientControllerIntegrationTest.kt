@@ -14,6 +14,7 @@ import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -145,16 +146,19 @@ class ClientControllerIntegrationTest {
     @Test
     fun test_generateGuid() {
         val result = apiProcessor.get("/clients/guid")
-        UUID.fromString(result.response.contentAsString)
+        val uuid = UUID.fromString(result.response.contentAsString)
+        assertNotNull(uuid)
     }
 
     @Test
     fun test_newProcess() {
-        apiProcessor.call {
+        val result = apiProcessor.call {
             request {
-                path = "foo"
+                path = "/clients/guid"
             }
         }
+        val uuid = UUID.fromString(result.response.contentAsString)
+        assertNotNull(uuid)
     }
 
     @Test

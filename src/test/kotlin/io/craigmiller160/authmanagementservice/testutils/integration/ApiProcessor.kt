@@ -21,10 +21,20 @@ class ApiProcessor (
         return request(HttpMethod.GET, path, vars, null, status)
     }
 
-    fun call(init: ApiConfig.() -> Unit) {
+    fun call(init: ApiConfig.() -> Unit): MvcResult {
         val apiConfig = ApiConfig()
         apiConfig.init()
-        println(apiConfig.req)
+
+        val reqBuilder = when(apiConfig.req.method) {
+            HttpMethod.GET -> commonRequest(MockMvcRequestBuilders.get(apiConfig.req.path, *apiConfig.req.vars))
+            HttpMethod.POST -> commonBodyRequest(MockMvcRequestBuilders.post(apiConfig.req.path, *apiConfig.req.vars), apiConfig.req.body)
+            else -> throw RuntimeException("Invalid HTTP method: ${apiConfig.req.method}")
+        }
+
+        return mockMvc.perform(reqBuilder)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().`is`(200)) // TODO make this a config
+                .andReturn()
     }
 
     fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {
