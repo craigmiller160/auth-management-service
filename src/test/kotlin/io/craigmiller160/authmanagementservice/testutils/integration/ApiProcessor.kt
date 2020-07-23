@@ -33,7 +33,7 @@ class ApiProcessor (
 
         return mockMvc.perform(reqBuilder)
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().`is`(200)) // TODO make this a config
+                .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
     }
 
