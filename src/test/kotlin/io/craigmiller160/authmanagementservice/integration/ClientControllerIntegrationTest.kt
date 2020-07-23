@@ -16,6 +16,7 @@ import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
 import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessorBuilder
 import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.webutils.dto.ErrorResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -259,7 +260,7 @@ class ClientControllerIntegrationTest {
             request {
                 method = HttpMethod.PUT
                 path = "/clients/{id}"
-                vars = arrayOf(1)
+                vars = arrayOf(client1.id)
                 body = newClient
             }
         }.convert(Client::class.java)
@@ -272,12 +273,41 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_updateClient_noMatch() {
-        TODO("Finish this")
+        val newClient = client1.copy(
+                name = "TotallyNewClient"
+        )
+        val errorResult = apiProcessor.call {
+            request {
+                method = HttpMethod.PUT
+                path = "/clients/{id}"
+                vars = arrayOf(0)
+                body = newClient
+            }
+            response {
+                status = 400
+            }
+        }.convert(ErrorResponse::class.java)
+
+        assertEquals("Entity not found - Client not found for ID: 0", errorResult.message)
     }
 
     @Test
     fun test_updateClient_unauthorized() {
-        TODO("Finish this")
+        val newClient = client1.copy(
+                name = "TotallyNewClient"
+        )
+        apiProcessor.call {
+            request {
+                method = HttpMethod.PUT
+                path = "/clients/{id}"
+                vars = arrayOf(0)
+                body = newClient
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
