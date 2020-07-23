@@ -17,10 +17,6 @@ class ApiProcessor (
         private val authToken: String? = null
 ) {
 
-    fun get(path: String, vars: Array<Any> = arrayOf(), status: Int = 200): MvcResult {
-        return request(HttpMethod.GET, path, vars, null, status)
-    }
-
     fun call(init: ApiConfig.() -> Unit): ApiResult {
         val apiConfig = ApiConfig()
         apiConfig.init()
@@ -36,36 +32,6 @@ class ApiProcessor (
                 .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
         return ApiResult(result, objectMapper)
-    }
-
-    private fun <T> convertResponse(content: String, responseType: Class<T>): T {
-        return when(responseType) {
-            String::class.java -> content as T
-            Int::class.java -> content.toInt() as T
-            Long::class.java -> content.toLong() as T
-            Float::class.java -> content.toFloat() as T
-            Short::class.java -> content.toShort() as T
-            Double::class.java -> content.toDouble() as T
-            else -> objectMapper.readValue(content, responseType) as T
-        }
-    }
-
-    fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {
-        return request(HttpMethod.POST, path, vars, body, status)
-    }
-
-    private fun request(method: HttpMethod, path: String, vars: Array<Any>, body: Any?, status: Int): MvcResult {
-        val commonBuilder = commonRequest(MockMvcRequestBuilders.get(path, *vars))
-        val reqBuilder = when (method) {
-            HttpMethod.GET -> commonRequest(MockMvcRequestBuilders.get(path, *vars))
-            HttpMethod.POST -> commonBodyRequest(MockMvcRequestBuilders.post(path, *vars), body)
-            else -> throw RuntimeException("Invalid HTTP method: $method")
-        }
-
-        return mockMvc.perform(reqBuilder)
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().`is`(status))
-                .andReturn()
     }
 
     private fun commonBodyRequest(reqBuilder: MockHttpServletRequestBuilder, body: Any?): MockHttpServletRequestBuilder {

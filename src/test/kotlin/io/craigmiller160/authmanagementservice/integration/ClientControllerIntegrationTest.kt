@@ -130,8 +130,7 @@ class ClientControllerIntegrationTest {
                 path = "/clients"
                 body = client
             }
-        }
-                .convert { mapper, content -> mapper.readValue(content, Client::class.java) }
+        }.convert { mapper, content -> mapper.readValue(content, Client::class.java) }
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
 
         val dbClient = clientRepo.findById(clientResult.id).orElse(null)
@@ -154,14 +153,13 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid() {
-//        val result = apiProcessor.call<String> {
-//            request {
-//                path = "/clients/guid"
-//            }
-//        }
-//        val uuid = UUID.fromString(result)
-//        assertNotNull(uuid)
-        TODO("Finish this")
+        val result = apiProcessor.call {
+            request {
+                path = "/clients/guid"
+            }
+        }.content
+        val uuid = UUID.fromString(result)
+        assertNotNull(uuid)
     }
 
     @Test
