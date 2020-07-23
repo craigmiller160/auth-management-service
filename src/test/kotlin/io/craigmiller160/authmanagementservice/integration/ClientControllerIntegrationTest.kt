@@ -33,11 +33,7 @@ import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
-@AutoConfigureMockMvc
 class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
-
-    @MockBean
-    private lateinit var oauthConfig: OAuthConfig
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
@@ -51,29 +47,15 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     @Autowired
     private lateinit var clientUserRepo: ClientUserRepository
 
-    @Autowired
-    private lateinit var apiProcessBuilder: ApiProcessorBuilder
-
-    private lateinit var token: String
     private lateinit var client1: Client
     private lateinit var client2: Client
     private lateinit var user1: User
     private lateinit var user2: User
     private lateinit var role1: Role
     private lateinit var role2: Role
-    private lateinit var apiProcessor: ApiProcessor
 
     @BeforeEach
     fun setup() {
-        `when`(oauthConfig.jwkSet)
-                .thenReturn(jwkSet)
-        `when`(oauthConfig.clientKey)
-                .thenReturn(JwtUtils.CLIENT_KEY)
-        `when`(oauthConfig.clientName)
-                .thenReturn(JwtUtils.CLIENT_NAME)
-
-        val jwt = JwtUtils.createJwt()
-        token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
         client1 = clientRepo.save(TestData.createClient(1))
         client2 = clientRepo.save(TestData.createClient(2))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
@@ -82,11 +64,6 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         user2 = userRepo.save(TestData.createUser(2))
         clientUserRepo.save(TestData.createClientUser(client1.id, user1.id))
         clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
-
-        apiProcessor = apiProcessBuilder.build(
-                https = true,
-                authToken = token
-        )
     }
 
     @AfterEach
