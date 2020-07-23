@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.authmanagementservice.dto.FullClient
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
@@ -14,6 +15,7 @@ import io.craigmiller160.authmanagementservice.testutils.TestData
 import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -118,16 +121,22 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_createClient() {
-//        val client = TestData.createClient(0)
-//        val result = apiProcessor.request(Req(HttpMethod.POST, "/clients", body = client))
-//        val content = result.response.contentAsString
-//        val clientResult = objectMapper.readValue(content, Client::class.java)
-//        assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
-//
-//        val dbClient = clientRepo.findById(clientResult.id).orElse(null)
-//        assertNotNull(dbClient)
-//        assertEquals(client.copy(id = clientResult.id), dbClient)
-        TODO("Finish this")
+        val client = TestData.createClient(0)
+        val result = apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients"
+                body = client
+            }
+        }
+        val content = result.response.contentAsString
+        val clientResult = objectMapper.readValue(content, Client::class.java)
+        assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
+
+        val dbClient = clientRepo.findById(clientResult.id).orElse(null)
+        assertNotNull(dbClient)
+        assertEquals(client.copy(id = clientResult.id), dbClient)
+
     }
 
     @Test
@@ -166,19 +175,30 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient() {
-//        val result = apiProcessor.request(Req(HttpMethod.GET, "/clients/{id}", listOf(client1.id)))
-//        val contentString = result.response.contentAsString
-//        val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
-//        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
-//        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
-//        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
-        TODO("Finish this")
+        val result = apiProcessor.call {
+            request {
+                path = "/clients/{id}"
+                vars = arrayOf(client1.id)
+            }
+        }
+        val contentString = result.response.contentAsString
+        val clientResult = objectMapper.readValue(contentString, FullClient::class.java)
+        assertEquals(client1.copy(clientSecret = ""), clientResult.client)
+        assertEquals(listOf(role1, role2), clientResult.roles.sortedBy { it.name })
+        assertEquals(listOf(user1.copy(password = ""), user2.copy(password = "")), clientResult.users.sortedBy { it.email })
     }
 
     @Test
     fun test_getClient_noContent() {
-//        apiProcessor.request(Req(HttpMethod.GET, "/clients/{id}", listOf(0)), 204)
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                path = "/clients/{id}"
+                vars = arrayOf(0)
+            }
+            response {
+                status = 204
+            }
+        }
     }
 
     @Test
@@ -232,7 +252,7 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
-    fun test_deeClient_unauthorized() {
+    fun test_deleteClient_unauthorized() {
         TODO("Finish this")
     }
 
