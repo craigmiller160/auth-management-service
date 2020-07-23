@@ -59,12 +59,6 @@ class ClientControllerIntegrationTest {
     private lateinit var oauthConfig: OAuthConfig
 
     @Autowired
-    private lateinit var mockMvc: MockMvc // TODO remove this
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper // TODO remove this
-
-    @Autowired
     private lateinit var clientRepo: ClientRepository
 
     @Autowired
@@ -167,12 +161,15 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid_unauthorized() {
-        mockMvc.perform(
-                get("/clients/guid")
-                        .secure(true)
-        )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isUnauthorized)
+        apiProcessor.call {
+            request {
+                path = "/clients/guid"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
