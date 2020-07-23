@@ -149,6 +149,15 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
+    fun test_newProcess() {
+        apiProcessor.call {
+            request {
+                path = "foo"
+            }
+        }
+    }
+
+    @Test
     fun test_generateGuid_unauthorized() {
         mockMvc.perform(
                 get("/clients/guid")

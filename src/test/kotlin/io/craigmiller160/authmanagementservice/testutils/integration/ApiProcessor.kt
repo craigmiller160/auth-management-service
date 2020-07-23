@@ -21,6 +21,12 @@ class ApiProcessor (
         return request(HttpMethod.GET, path, vars, null, status)
     }
 
+    fun call(init: ApiConfig.() -> Unit) {
+        val apiConfig = ApiConfig()
+        apiConfig.init()
+        println(apiConfig.req)
+    }
+
     fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {
         return request(HttpMethod.POST, path, vars, body, status)
     }
