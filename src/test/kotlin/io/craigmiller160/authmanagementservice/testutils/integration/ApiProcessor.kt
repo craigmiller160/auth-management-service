@@ -21,8 +21,8 @@ class ApiProcessor (
         return request(HttpMethod.GET, path, vars, null, status)
     }
 
-    fun <T> call(init: ApiConfig<T>.() -> Unit): T {
-        val apiConfig = ApiConfig<T>()
+    fun call(init: ApiConfig.() -> Unit): ApiResult {
+        val apiConfig = ApiConfig()
         apiConfig.init()
 
         val reqBuilder = when(apiConfig.req.method) {
@@ -35,10 +35,7 @@ class ApiProcessor (
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
-
-        val content = result.response.contentAsString
-        val responseType = apiConfig.res.responseType ?: String::class.java
-        return convertResponse(content, responseType) as T
+        return ApiResult(result, objectMapper)
     }
 
     private fun <T> convertResponse(content: String, responseType: Class<T>): T {

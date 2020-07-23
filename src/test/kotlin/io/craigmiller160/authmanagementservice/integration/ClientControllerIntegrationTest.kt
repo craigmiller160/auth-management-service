@@ -62,7 +62,7 @@ class ClientControllerIntegrationTest {
     private lateinit var mockMvc: MockMvc // TODO remove this
 
     @Autowired
-    private lateinit var objectMapper: ObjectMapper
+    private lateinit var objectMapper: ObjectMapper // TODO remove this
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
@@ -124,16 +124,14 @@ class ClientControllerIntegrationTest {
     @Test
     fun test_createClient() {
         val client = TestData.createClient(0)
-        val clientResult = apiProcessor.call<Client> {
+        val clientResult = apiProcessor.call {
             request {
                 method = HttpMethod.POST
                 path = "/clients"
                 body = client
             }
-            response {
-                responseType = Client::class.java
-            }
         }
+                .convert { mapper, content -> mapper.readValue(content, Client::class.java) }
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
 
         val dbClient = clientRepo.findById(clientResult.id).orElse(null)

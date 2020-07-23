@@ -1,8 +1,8 @@
 package io.craigmiller160.authmanagementservice.testutils.integration
 
-class ApiConfig<T> {
+class ApiConfig {
     var req = RequestConfig()
-    var res = ResponseConfig<T>()
+    var res = ResponseConfig()
 
     fun request(init: RequestConfig.() -> Unit) {
         val request = RequestConfig()
@@ -10,8 +10,8 @@ class ApiConfig<T> {
         req = request
     }
 
-    fun response(init: ResponseConfig<T>.() -> Unit) {
-        val response = ResponseConfig<T>()
+    fun response(init: ResponseConfig.() -> Unit) {
+        val response = ResponseConfig()
         response.init()
         res = response
     }
