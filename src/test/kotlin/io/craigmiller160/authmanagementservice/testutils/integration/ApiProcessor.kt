@@ -36,7 +36,9 @@ class ApiProcessor (
                 .andExpect(MockMvcResultMatchers.status().`is`(apiConfig.res.status))
                 .andReturn()
         val content = result.response.contentAsString
-        return apiConfig.res.convert(objectMapper, content)
+        return apiConfig.res.responseType?.let {
+            objectMapper.readValue(content, it)
+        } ?: content
     }
 
     fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {

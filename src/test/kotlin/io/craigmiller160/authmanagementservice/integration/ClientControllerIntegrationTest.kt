@@ -131,9 +131,7 @@ class ClientControllerIntegrationTest {
                 body = client
             }
             response {
-                convert = { mapper, content ->
-                    mapper.readValue(content, Client::class.java)
-                }
+                responseType = Client::class.java
             }
         } as Client
         assertEquals(client.copy(id = clientResult.id, clientSecret = ""), clientResult)
@@ -196,15 +194,16 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_getClient_noContent() {
-        apiProcessor.call {
-            request {
-                path = "/clients/{id}"
-                vars = arrayOf(0)
-            }
-            response {
-                status = 204
-            }
-        }
+//        apiProcessor.call {
+//            request {
+//                path = "/clients/{id}"
+//                vars = arrayOf(0)
+//            }
+//            response {
+//                status = 204
+//            }
+//        }
+        TODO("Finish this")
     }
 
     @Test
