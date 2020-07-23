@@ -145,13 +145,6 @@ class ClientControllerIntegrationTest {
 
     @Test
     fun test_generateGuid() {
-        val result = apiProcessor.get("/clients/guid")
-        val uuid = UUID.fromString(result.response.contentAsString)
-        assertNotNull(uuid)
-    }
-
-    @Test
-    fun test_newProcess() {
         val result = apiProcessor.call {
             request {
                 path = "/clients/guid"
