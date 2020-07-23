@@ -17,12 +17,20 @@ class ApiProcessor (
         private val authToken: String? = null
 ) {
 
-    fun request(req: Req, status: Int = 200): MvcResult {
-        val commonBuilder = commonRequest(MockMvcRequestBuilders.get(req.path, *req.vars.toTypedArray()))
-        val reqBuilder = when (req.method) {
-            HttpMethod.GET -> commonRequest(MockMvcRequestBuilders.get(req.path, *req.vars.toTypedArray()))
-            HttpMethod.POST -> commonBodyRequest(MockMvcRequestBuilders.post(req.path, *req.vars.toTypedArray()), req.body)
-            else -> throw RuntimeException("Invalid HTTP method: ${req.method}")
+    fun get(path: String, vars: Array<Any> = arrayOf(), status: Int = 200): MvcResult {
+        return request(HttpMethod.GET, path, vars, null, status)
+    }
+
+    fun post(path: String, vars: Array<Any> = arrayOf(), body: Any? = null, status: Int = 200): MvcResult {
+        return request(HttpMethod.POST, path, vars, body, status)
+    }
+
+    private fun request(method: HttpMethod, path: String, vars: Array<Any>, body: Any?, status: Int): MvcResult {
+        val commonBuilder = commonRequest(MockMvcRequestBuilders.get(path, *vars))
+        val reqBuilder = when (method) {
+            HttpMethod.GET -> commonRequest(MockMvcRequestBuilders.get(path, *vars))
+            HttpMethod.POST -> commonBodyRequest(MockMvcRequestBuilders.post(path, *vars), body)
+            else -> throw RuntimeException("Invalid HTTP method: $method")
         }
 
         return mockMvc.perform(reqBuilder)
