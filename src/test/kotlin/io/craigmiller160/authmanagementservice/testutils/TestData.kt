@@ -3,25 +3,37 @@ package io.craigmiller160.authmanagementservice.testutils
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.ClientUser
+import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
 
 object TestData {
 
-    fun createUser() = User(
-            id = 0,
-            email = "craig@gmail.com",
-            firstName = "Craig",
-            lastName = "Miller",
+    fun createUser(id: Long) = User(
+            id,
+            email = "craig_$id@gmail.com",
+            firstName = "Craig_$id",
+            lastName = "Miller_$id",
             password = "password"
     )
 
-    fun createUserList() = UserList(listOf(createUser()))
+    fun createRole(id: Long, clientId: Long) = Role(
+            id,
+            name = "Role_$id",
+            clientId = clientId
+    )
 
-    fun createClient() = Client(
+    fun createClientUser(clientId: Long, userId: Long) = ClientUser(
             id = 0,
-            name = "Client",
-            clientKey = "Key",
-            clientSecret = "Secret",
+            clientId = clientId,
+            userId = userId
+    )
+
+    fun createClient(id: Long) = Client(
+            id,
+            name = "Client_$id",
+            clientKey = "Key_$id",
+            clientSecret = "Secret_$id",
             enabled = true,
             allowClientCredentials = false,
             allowPassword = false,
@@ -29,7 +41,5 @@ object TestData {
             accessTokenTimeoutSecs = 0,
             refreshTokenTimeoutSecs = 0
     )
-
-    fun createClientList() = ClientList(listOf(createClient()))
 
 }
