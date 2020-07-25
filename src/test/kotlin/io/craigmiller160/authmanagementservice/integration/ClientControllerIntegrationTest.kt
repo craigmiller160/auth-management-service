@@ -134,8 +134,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClient() {
         val clientResult = apiProcessor.call {
             request {
-                path = "/clients/{id}"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}"
             }
         }.convert(FullClient::class.java)
         assertEquals(client1.copy(clientSecret = ""), clientResult.client)
@@ -147,8 +146,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClient_noContent() {
         apiProcessor.call {
             request {
-                path = "/clients/{id}"
-                vars = arrayOf(0)
+                path = "/clients/0"
             }
             response {
                 status = 204
@@ -160,8 +158,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClient_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/clients/{id}"
-                vars = arrayOf(1)
+                path = "/clients/1"
                 doAuth = false
             }
             response {
@@ -216,8 +213,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val clientResult = apiProcessor.call {
             request {
                 method = HttpMethod.PUT
-                path = "/clients/{id}"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}"
                 body = newClient
             }
         }.convert(Client::class.java)
@@ -236,8 +232,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val errorResult = apiProcessor.call {
             request {
                 method = HttpMethod.PUT
-                path = "/clients/{id}"
-                vars = arrayOf(0)
+                path = "/clients/0"
                 body = newClient
             }
             response {
@@ -256,8 +251,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.PUT
-                path = "/clients/{id}"
-                vars = arrayOf(0)
+                path = "/clients/0"
                 body = newClient
                 doAuth = false
             }
@@ -272,8 +266,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val clientResult = apiProcessor.call {
             request {
                 method = HttpMethod.DELETE
-                path = "/clients/{id}"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}"
             }
         }.convert(Client::class.java)
         assertEquals(client1.copy(clientSecret = ""), clientResult)
@@ -287,8 +280,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val errorResult = apiProcessor.call {
             request {
                 method = HttpMethod.DELETE
-                path = "/clients/{id}"
-                vars = arrayOf(0)
+                path = "/clients/0"
             }
             response {
                 status = 400
@@ -303,8 +295,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.DELETE
-                path = "/clients/{id}"
-                vars = arrayOf(client1.id)
+                path = "/clients/${client1.id}"
                 doAuth = false
             }
             response {
@@ -312,7 +303,5 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
             }
         }
     }
-
-    // TODO need role API tests
 
 }

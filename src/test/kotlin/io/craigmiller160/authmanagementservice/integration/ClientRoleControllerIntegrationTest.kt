@@ -1,19 +1,16 @@
 package io.craigmiller160.authmanagementservice.integration
 
-import io.craigmiller160.authmanagementservice.dto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
@@ -22,7 +19,6 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
-
     @Autowired
     private lateinit var roleRepo: RoleRepository
 
@@ -39,80 +35,36 @@ class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() 
 
     @AfterEach
     fun clean() {
-        roleRepo.deleteAll()
-        clientRepo.deleteAll()
+
     }
 
     @Test
     fun test_getRoles() {
-        val roleListResult = apiProcessor.call {
+        apiProcessor.call {
             request {
                 path = "/clients/${client1.id}/roles"
             }
-        }.convert(RoleList::class.java)
-
-        val roles = roleListResult.roles.sortedBy { it.name }
-        assertEquals(role1, roles[0])
-        assertEquals(role2, roles[1])
+        }
     }
 
     @Test
     fun test_getRoles_noContent() {
-        clean()
-        apiProcessor.call {
-            request {
-                path = "/clients/${client1.id}/roles"
-            }
-            response {
-                status = 204
-            }
-        }
+        TODO("Finish this")
     }
 
     @Test
     fun test_getRoles_unauthorized() {
-        apiProcessor.call {
-            request {
-                path = "/clients/${client1.id}/roles"
-                doAuth = false
-            }
-            response {
-                status = 401
-            }
-        }
+        TODO("Finish this")
     }
 
     @Test
     fun test_createRole() {
-        val role = TestData.createRole(0, client1.id)
-        val roleResult = apiProcessor.call {
-            request {
-                method = HttpMethod.POST
-                path = "/clients/${client1.id}/roles"
-                body = role
-            }
-        }.convert(Role::class.java)
-
-        assertEquals(role.copy(id = roleResult.id), roleResult)
-
-        val dbRole = roleRepo.findById(roleResult.id)
-        assertEquals(role.copy(id = roleResult.id), dbRole.get())
+        TODO("Finish this")
     }
 
     @Test
     fun test_createRole_unauthorized() {
-        val role = TestData.createRole(0, client1.id)
-        apiProcessor.call {
-            request {
-                method = HttpMethod.POST
-                path = "/clients/${client1.id}/roles"
-                body = role
-                doAuth = false
-            }
-            response {
-                status = 401
-            }
-        }
+        TODO("Finish this")
     }
 
     @Test
