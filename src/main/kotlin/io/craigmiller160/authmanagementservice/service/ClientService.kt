@@ -73,6 +73,11 @@ class ClientService (
         }
     }
 
+    fun getClient2(id: Long): ClientDto? {
+        val client = clientRepo.findById(id).orElse(null)
+        return client?.let { ClientDto.fromClient(it) }
+    }
+
     fun createClient(client: Client): Client {
         return clientRepo.save(client)
     }

@@ -9,7 +9,6 @@ type ClientUser {
     email: String!
     firstName: String!
     lastName: String!
-    password: String!
     roles: [Role]!
 }
 
@@ -30,4 +29,5 @@ type Client {
 
 type Query {
     clients: [Client]!
+    client(id: Int): Client
 }

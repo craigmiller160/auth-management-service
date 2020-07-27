@@ -18,4 +18,8 @@ class ClientQueryResolver (
         return clientService.getClients2()
     }
 
+    fun getClient(id: Long): ClientDto? {
+        return clientService.getClient2(id)
+    }
+
 }
