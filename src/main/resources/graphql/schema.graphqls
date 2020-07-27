@@ -8,7 +8,7 @@ type Client {
     allowPassword: Boolean!
     allowAuthCode: Boolean!
     accessTokenTimeoutSecs: Int!
-    refreshTokenTimeoutSecs!
+    refreshTokenTimeoutSecs: Int!
 }
 
 type Query {
