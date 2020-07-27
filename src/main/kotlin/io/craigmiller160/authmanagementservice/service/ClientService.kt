@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.olddto.FullClient
 import io.craigmiller160.authmanagementservice.olddto.FullClientList
 import io.craigmiller160.authmanagementservice.entity.Client
@@ -9,6 +10,7 @@ import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.modelmapper.EnhancedModelMapper
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -41,6 +43,11 @@ class ClientService (
                     }
                 }
         return FullClientList(clients)
+    }
+
+    fun getClients2(): List<ClientDto> {
+        val clients = clientRepo.findAllByOrderByName()
+        return clients.map { ClientDto.fromClient(it) }
     }
 
     @Transactional

@@ -9,7 +9,7 @@ class MapperConfig {
 
     @Bean
     fun modelMapper(): EnhancedModelMapper {
-        return EnhancedModelMapper()
+        return EnhancedModelMapper() // TODO if not used, remove
     }
 
 }
