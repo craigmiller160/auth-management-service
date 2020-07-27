@@ -52,6 +52,11 @@ class UserService (
                  }
     }
 
+    fun getUser2(id: Long): UserDto? {
+        val user = userRepo.findById(id).orElse(null)
+        return user?.let { UserDto.fromUser(it) }
+    }
+
     fun createUser(user: User): FullUser {
         val newUser = userRepo.save(user)
         return FullUser(user, listOf())

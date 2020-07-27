@@ -39,4 +39,5 @@ type Query {
     clients: [Client]!
     client(id: Int): Client
     users: [User]!
+    user(id: Int): User
 }

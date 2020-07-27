@@ -14,4 +14,8 @@ class UserQueryResolver (
         return userService.getUsers2()
     }
 
+    fun getUser(id: Long): UserDto? {
+        return userService.getUser2(id)
+    }
+
 }
