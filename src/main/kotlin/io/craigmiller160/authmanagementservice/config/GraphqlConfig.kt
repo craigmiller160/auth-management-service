@@ -5,4 +5,6 @@ import org.springframework.stereotype.Component
 @Component
 class GraphqlConfig {
 
+    // TODO delete if not needed
+
 }
