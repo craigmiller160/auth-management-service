@@ -27,7 +27,16 @@ type Client {
     users: [ClientUser]!
 }
 
+type User {
+    id: Int
+    email: String!
+    firstName: String!
+    lastName: String!
+    password: String
+}
+
 type Query {
     clients: [Client]!
     client(id: Int): Client
+    users: [User]!
 }
