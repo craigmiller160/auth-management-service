@@ -8,16 +8,18 @@ data class ClientUserDto (
         val firstName: String,
         val lastName: String,
         val password: String,
+        val clientId: Long,
         val roles: List<RoleDto>
 ) {
     companion object {
-        fun fromUser(user: User): ClientUserDto {
+        fun fromUser(user: User, clientId: Long): ClientUserDto {
             return ClientUserDto(
                     id = user.id,
                     email = user.email,
                     firstName = user.firstName,
                     lastName = user.lastName,
                     password = user.password,
+                    clientId = clientId,
                     roles = listOf()
             )
         }

@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.dto.ClientUserDto
+import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.olddto.FullClient
 import io.craigmiller160.authmanagementservice.olddto.FullClientList
@@ -49,7 +50,12 @@ class ClientService (
 
     fun getClientUsers2(clientId: Long): List<ClientUserDto> {
         val users = userRepo.findAllByClientIdOrderByEmail(clientId)
-        return users.map { ClientUserDto.fromUser(it) }
+        return users.map { ClientUserDto.fromUser(it, clientId) }
+    }
+
+    fun getRolesForClientUser2(clientId: Long, userId: Long): List<RoleDto> {
+        val roles = roleRepo.findAllByClientAndUserOrderByName(clientId, userId)
+        return roles.map { RoleDto.fromRole(it) }
     }
 
     fun getClients2(): List<ClientDto> {
