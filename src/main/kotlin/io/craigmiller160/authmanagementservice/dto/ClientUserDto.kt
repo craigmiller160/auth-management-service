@@ -7,7 +7,6 @@ data class ClientUserDto (
         val email: String,
         val firstName: String,
         val lastName: String,
-        val password: String,
         val clientId: Long,
         val roles: List<RoleDto>
 ) {
@@ -18,7 +17,6 @@ data class ClientUserDto (
                     email = user.email,
                     firstName = user.firstName,
                     lastName = user.lastName,
-                    password = user.password,
                     clientId = clientId,
                     roles = listOf()
             )
