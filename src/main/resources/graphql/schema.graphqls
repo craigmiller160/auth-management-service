@@ -1,0 +1,16 @@
+type Client {
+    id: Int
+    name: String!
+    clientKey: String!
+    clientSecret: String
+    enabled: Boolean!
+    allowClientCredentials: Boolean!
+    allowPassword: Boolean!
+    allowAuthCode: Boolean!
+    accessTokenTimeoutSecs: Int!
+    refreshTokenTimeoutSecs!
+}
+
+type Query {
+    allClients: [Client]!
+}
