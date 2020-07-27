@@ -1,6 +1,6 @@
 package io.craigmiller160.authmanagementservice.integration
 
-import io.craigmiller160.authmanagementservice.dto.RoleList
+import io.craigmiller160.authmanagementservice.olddto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.repository.ClientRepository

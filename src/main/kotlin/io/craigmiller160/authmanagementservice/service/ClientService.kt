@@ -1,11 +1,8 @@
 package io.craigmiller160.authmanagementservice.service
 
-import io.craigmiller160.authmanagementservice.dto.ClientList
-import io.craigmiller160.authmanagementservice.dto.FullClient
-import io.craigmiller160.authmanagementservice.dto.FullClientList
-import io.craigmiller160.authmanagementservice.dto.RoleList
+import io.craigmiller160.authmanagementservice.olddto.FullClient
+import io.craigmiller160.authmanagementservice.olddto.FullClientList
 import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRepository

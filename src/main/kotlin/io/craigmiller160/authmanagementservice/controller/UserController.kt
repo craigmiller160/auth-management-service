@@ -1,7 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
-import io.craigmiller160.authmanagementservice.dto.FullUser
-import io.craigmiller160.authmanagementservice.dto.UserList
+import io.craigmiller160.authmanagementservice.olddto.FullUser
+import io.craigmiller160.authmanagementservice.olddto.UserList
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.service.UserService
 import org.springframework.http.ResponseEntity

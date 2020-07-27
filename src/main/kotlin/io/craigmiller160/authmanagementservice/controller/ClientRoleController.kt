@@ -1,6 +1,6 @@
 package io.craigmiller160.authmanagementservice.controller
 
-import io.craigmiller160.authmanagementservice.dto.RoleList
+import io.craigmiller160.authmanagementservice.olddto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.service.ClientRoleService
 import org.springframework.http.ResponseEntity

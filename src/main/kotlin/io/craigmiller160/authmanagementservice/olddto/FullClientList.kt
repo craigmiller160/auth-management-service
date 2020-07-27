@@ -1,4 +1,6 @@
-package io.craigmiller160.authmanagementservice.dto
+package io.craigmiller160.authmanagementservice.olddto
+
+import io.craigmiller160.authmanagementservice.dto.Sanitizer
 
 data class FullClientList(val clients: List<FullClient>): Sanitizer<FullClientList> {
     override fun sanitize(): FullClientList {

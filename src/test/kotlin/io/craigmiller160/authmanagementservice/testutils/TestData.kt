@@ -1,7 +1,5 @@
 package io.craigmiller160.authmanagementservice.testutils
 
-import io.craigmiller160.authmanagementservice.dto.ClientList
-import io.craigmiller160.authmanagementservice.dto.UserList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.Role

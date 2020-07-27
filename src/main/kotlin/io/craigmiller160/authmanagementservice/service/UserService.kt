@@ -1,8 +1,8 @@
 package io.craigmiller160.authmanagementservice.service
 
-import io.craigmiller160.authmanagementservice.dto.FullUser
-import io.craigmiller160.authmanagementservice.dto.FullUserClient
-import io.craigmiller160.authmanagementservice.dto.UserList
+import io.craigmiller160.authmanagementservice.olddto.FullUser
+import io.craigmiller160.authmanagementservice.olddto.FullUserClient
+import io.craigmiller160.authmanagementservice.olddto.UserList
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.ClientUserRole
 import io.craigmiller160.authmanagementservice.entity.User

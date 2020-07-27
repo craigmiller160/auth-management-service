@@ -1,8 +1,7 @@
 package io.craigmiller160.authmanagementservice.integration
 
-import io.craigmiller160.authmanagementservice.dto.ClientList
-import io.craigmiller160.authmanagementservice.dto.FullClient
-import io.craigmiller160.authmanagementservice.dto.FullClientList
+import io.craigmiller160.authmanagementservice.olddto.FullClient
+import io.craigmiller160.authmanagementservice.olddto.FullClientList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
@@ -10,11 +9,7 @@ import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
-import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.authmanagementservice.testutils.TestData
-import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
-import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessorBuilder
-import io.craigmiller160.oauth2.config.OAuthConfig
 import io.craigmiller160.webutils.dto.ErrorResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,11 +18,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.UUID

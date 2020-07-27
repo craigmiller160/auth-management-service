@@ -1,5 +1,6 @@
-package io.craigmiller160.authmanagementservice.dto
+package io.craigmiller160.authmanagementservice.olddto
 
+import io.craigmiller160.authmanagementservice.dto.Sanitizer
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
