@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
+import io.craigmiller160.authmanagementservice.dto.FullClientList
 import io.craigmiller160.authmanagementservice.dto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
@@ -31,9 +32,18 @@ class ClientService (
         return UUID.randomUUID().toString()
     }
 
-    fun getClients(): ClientList {
+    fun getClients(full: Boolean): FullClientList {
         val clients = clientRepo.findAllByOrderByName()
-        return ClientList(clients)
+                .map { client ->
+                    if (full) {
+                        val users = userRepo.findAllByClientIdOrderByEmail(client.id)
+                        val roles = roleRepo.findAllByClientIdOrderByName(client.id)
+                        FullClient(client, users, roles)
+                    } else {
+                        FullClient(client, listOf(), listOf())
+                    }
+                }
+        return FullClientList(clients)
     }
 
     @Transactional

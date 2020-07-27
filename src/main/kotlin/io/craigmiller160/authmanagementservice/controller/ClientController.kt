@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
+import io.craigmiller160.authmanagementservice.dto.FullClientList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.service.ClientService
 import org.springframework.http.ResponseEntity
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -26,8 +28,8 @@ class ClientController (
     }
 
     @GetMapping
-    fun getClients(): ResponseEntity<ClientList> {
-        val clients = clientService.getClients()
+    fun getClients(@RequestParam(name = "full", required = false, defaultValue = "false") full: Boolean): ResponseEntity<FullClientList> {
+        val clients = clientService.getClients(full)
         if (clients.clients.isEmpty()) {
             return ResponseEntity.noContent().build()
         }
