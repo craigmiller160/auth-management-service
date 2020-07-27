@@ -4,6 +4,14 @@ type Role {
     clientId: Int!
 }
 
+type ClientUser {
+    id: Int
+    email: String!
+    firstName: String!
+    lastName: String!
+    password: String!
+}
+
 type Client {
     id: Int
     name: String!
@@ -16,6 +24,7 @@ type Client {
     accessTokenTimeoutSecs: Int!
     refreshTokenTimeoutSecs: Int!
     roles: [Role]!
+    users: [ClientUser]!
 }
 
 type Query {
