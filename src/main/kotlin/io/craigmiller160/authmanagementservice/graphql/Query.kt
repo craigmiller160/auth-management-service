@@ -10,7 +10,7 @@ class Query (
         private val clientRepo: ClientRepository
 ) : GraphQLQueryResolver {
 
-    fun getAllClients(): List<Client> {
+    fun getClients(): List<Client> {
         return clientRepo.findAllByOrderByName()
     }
 
