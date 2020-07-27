@@ -2,20 +2,20 @@ package io.craigmiller160.authmanagementservice.graphql.query
 
 import graphql.kickstart.tools.GraphQLQueryResolver
 import io.craigmiller160.authmanagementservice.dto.UserDto
-import io.craigmiller160.authmanagementservice.service.LegacyUserService
+import io.craigmiller160.authmanagementservice.service.UserService
 import org.springframework.stereotype.Component
 
 @Component
 class UserQueryResolver (
-        private val legacyUserService: LegacyUserService
+        private val userService: UserService
 ) : GraphQLQueryResolver {
 
     fun getUsers(): List<UserDto> {
-        return legacyUserService.getUsers2()
+        return userService.getAllUsers()
     }
 
-    fun getUser(id: Long): UserDto? {
-        return legacyUserService.getUser2(id)
+    fun getUser(userId: Long): UserDto? {
+        return userService.getUser(userId)
     }
 
 }
