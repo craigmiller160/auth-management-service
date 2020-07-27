@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.olddto.FullUser
 import io.craigmiller160.authmanagementservice.olddto.FullUserClient
 import io.craigmiller160.authmanagementservice.olddto.UserList
@@ -30,6 +31,11 @@ class UserService (
     fun getUsers(): UserList {
         val users = userRepo.findAllByOrderByEmail()
         return UserList(users)
+    }
+
+    fun getUsers2(): List<UserDto> {
+        val users = userRepo.findAllByOrderByEmail()
+        return users.map { UserDto.fromUser(it) }
     }
 
     @Transactional
