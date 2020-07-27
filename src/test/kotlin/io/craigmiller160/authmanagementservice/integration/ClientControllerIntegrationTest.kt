@@ -2,6 +2,7 @@ package io.craigmiller160.authmanagementservice.integration
 
 import io.craigmiller160.authmanagementservice.dto.ClientList
 import io.craigmiller160.authmanagementservice.dto.FullClient
+import io.craigmiller160.authmanagementservice.dto.FullClientList
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.entity.User
@@ -173,10 +174,38 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
             request {
                 path = "/clients"
             }
-        }.convert(ClientList::class.java)
-        val clients = clientListResult.clients.sortedBy { it.name }
-        assertEquals(client1.copy(clientSecret = ""), clients[0])
-        assertEquals(client2.copy(clientSecret = ""), clients[1])
+        }.convert(FullClientList::class.java)
+        val clients = clientListResult.clients.sortedBy { it.client.name }
+
+        assertEquals(client1.copy(clientSecret = ""), clients[0].client)
+        assertTrue(clients[0].users.isEmpty())
+        assertTrue(clients[0].roles.isEmpty())
+
+        assertEquals(client2.copy(clientSecret = ""), clients[1].client)
+        assertTrue(clients[1].users.isEmpty())
+        assertTrue(clients[1].roles.isEmpty())
+    }
+
+    @Test
+    fun test_getClients_full() {
+        val clientListResult = apiProcessor.call {
+            request {
+                path = "/clients?full=true"
+            }
+        }.convert(FullClientList::class.java)
+        val clients = clientListResult.clients.sortedBy { it.client.name }
+
+        assertEquals(client1.copy(clientSecret = ""), clients[0].client)
+        val client1Users = clients[0].users.sortedBy { it.email }
+        assertEquals(user1.copy(password = ""), client1Users[0])
+        assertEquals(user2.copy(password = ""), client1Users[1])
+        val client1Roles = clients[0].roles.sortedBy { it.name }
+        assertEquals(role1, client1Roles[0])
+        assertEquals(role2, client1Roles[1])
+
+        assertEquals(client2.copy(clientSecret = ""), clients[1].client)
+        assertTrue(clients[1].users.isEmpty())
+        assertTrue(clients[1].roles.isEmpty())
     }
 
     @Test
