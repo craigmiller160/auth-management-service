@@ -30,6 +30,7 @@
 		<web.utils.version>1.0.0-SNAPSHOT</web.utils.version>
 		<oauth2.utils.version>1.0.0-SNAPSHOT</oauth2.utils.version>
 		<graphql.spring.boot.version>7.0.1</graphql.spring.boot.version>
+		<enhanced.modelmapper.version>1.0.0-SNAPSHOT</enhanced.modelmapper.version>
 	</properties>
 
 	<dependencies>
@@ -53,6 +54,11 @@
 			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>graphql-spring-boot-starter</artifactId>
 			<version>${graphql.spring.boot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.craigmiller160</groupId>
+			<artifactId>enhanced-model-mapper</artifactId>
+			<version>${enhanced.mapper.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
