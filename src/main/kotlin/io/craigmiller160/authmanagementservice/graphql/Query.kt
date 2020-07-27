@@ -10,6 +10,8 @@ class Query (
         private val clientRepo: ClientRepository
 ) : GraphQLQueryResolver {
 
+    // TODO sanitizer does not work here
+
     fun getClients(): List<Client> {
         return clientRepo.findAllByOrderByName()
     }
