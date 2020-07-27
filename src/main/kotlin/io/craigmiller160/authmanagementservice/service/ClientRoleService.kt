@@ -39,6 +39,11 @@ class ClientRoleService (
         return roles.map { RoleDto.fromRole(it) }
     }
 
+    fun getUserRoles2(clientId: Long, userId: Long): List<RoleDto> {
+        val roles = roleRepo.findAllByClientAndUserOrderByName(clientId, userId)
+        return roles.map { RoleDto.fromRole(it) }
+    }
+
     @Transactional
     fun updateRole(clientId: Long, roleId: Long, role: Role): Role {
         roleRepo.findByClientIdAndId(clientId, roleId)
