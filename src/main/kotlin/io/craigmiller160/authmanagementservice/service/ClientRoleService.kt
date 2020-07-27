@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.olddto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Role
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
@@ -31,6 +32,11 @@ class ClientRoleService (
     fun getRoles(clientId: Long): RoleList {
         val roles = roleRepo.findAllByClientIdOrderByName(clientId)
         return RoleList(roles)
+    }
+
+    fun getRoles2(clientId: Long): List<RoleDto> {
+        val roles = roleRepo.findAllByClientAndUserOrderByName(clientId)
+        return roles.map { RoleDto.fromRole(role) }
     }
 
     @Transactional
