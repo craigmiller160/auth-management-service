@@ -1,4 +1,4 @@
-package io.craigmiller160.authmanagementservice.graphql
+package io.craigmiller160.authmanagementservice.graphql.dto
 
 import graphql.kickstart.tools.GraphQLResolver
 import io.craigmiller160.authmanagementservice.dto.UserClientDto
