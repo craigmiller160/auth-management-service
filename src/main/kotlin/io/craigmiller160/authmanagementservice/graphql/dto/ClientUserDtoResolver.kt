@@ -3,16 +3,16 @@ package io.craigmiller160.authmanagementservice.graphql.dto
 import graphql.kickstart.tools.GraphQLResolver
 import io.craigmiller160.authmanagementservice.dto.ClientUserDto
 import io.craigmiller160.authmanagementservice.dto.RoleDto
-import io.craigmiller160.authmanagementservice.service.LegacyClientService
+import io.craigmiller160.authmanagementservice.service.ClientService
 import org.springframework.stereotype.Component
 
 @Component
 class ClientUserDtoResolver (
-        private val legacyClientService: LegacyClientService
+        private val clientService: ClientService
 ) : GraphQLResolver<ClientUserDto> {
 
     fun roles(clientUser: ClientUserDto): List<RoleDto> {
-        return legacyClientService.getRolesForClientUser2(clientUser.clientId, clientUser.id)
+        return clientService.getRolesForClientAndUser(clientUser.clientId, clientUser.id)
     }
 
 }
