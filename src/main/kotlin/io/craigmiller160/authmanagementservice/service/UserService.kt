@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.olddto.FullUser
 import io.craigmiller160.authmanagementservice.olddto.FullUserClient
@@ -55,6 +56,11 @@ class UserService (
     fun getUser2(id: Long): UserDto? {
         val user = userRepo.findById(id).orElse(null)
         return user?.let { UserDto.fromUser(it) }
+    }
+
+    fun getUserClients2(userId: Long): List<UserClientDto> {
+        val clients = clientRepo.findAllByUserOrderByName(userId)
+        return clients.map { UserClientDto.fromClient(it, userId) }
     }
 
     fun createUser(user: User): FullUser {

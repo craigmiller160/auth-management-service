@@ -27,12 +27,21 @@ type Client {
     users: [ClientUser]!
 }
 
+type UserClient {
+    id: Int
+    name: String!
+    clientKey: String!
+    allRoles: [Role]!
+    userRoles: [Role]!
+}
+
 type User {
     id: Int
     email: String!
     firstName: String!
     lastName: String!
     password: String
+    clients: [UserClient]!
 }
 
 type Query {
