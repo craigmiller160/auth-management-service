@@ -4,6 +4,9 @@ import graphql.kickstart.tools.GraphQLResolver
 import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.service.ClientRoleService
+import org.springframework.stereotype.Component
+
+@Component
 
 class ClientDtoResolver (
         private val clientRoleService: ClientRoleService
