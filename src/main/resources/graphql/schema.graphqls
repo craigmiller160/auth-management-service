@@ -1,3 +1,9 @@
+type Role {
+    id: Int
+    name: String!
+    clientId: Int!
+}
+
 type Client {
     id: Int
     name: String!
@@ -9,6 +15,7 @@ type Client {
     allowAuthCode: Boolean!
     accessTokenTimeoutSecs: Int!
     refreshTokenTimeoutSecs: Int!
+    roles: [Role]!
 }
 
 type Query {
