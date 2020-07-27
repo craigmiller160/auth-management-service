@@ -3,7 +3,7 @@ package io.craigmiller160.authmanagementservice.controller
 import io.craigmiller160.authmanagementservice.olddto.FullUser
 import io.craigmiller160.authmanagementservice.olddto.UserList
 import io.craigmiller160.authmanagementservice.entity.User
-import io.craigmiller160.authmanagementservice.service.UserService
+import io.craigmiller160.authmanagementservice.service.LegacyUserService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/users")
 class UserController (
-        private val userService: UserService
+        private val legacyUserService: LegacyUserService
 ) {
 
     // TODO unit tests
 
     @GetMapping
     fun getUsers(): ResponseEntity<UserList> {
-        val users = userService.getUsers()
+        val users = legacyUserService.getUsers()
         if (users.users.isEmpty()) {
             return ResponseEntity.noContent().build()
         }
@@ -33,24 +33,24 @@ class UserController (
 
     @GetMapping("/{id}")
     fun getUser(@PathVariable id: Long): ResponseEntity<FullUser> {
-        return userService.getUser(id)
+        return legacyUserService.getUser(id)
                 ?.let { ResponseEntity.ok(it) }
                 ?: ResponseEntity.noContent().build()
     }
 
     @PostMapping
     fun createUser(@RequestBody user: User): FullUser {
-        return userService.createUser(user)
+        return legacyUserService.createUser(user)
     }
 
     @PutMapping("/{id}")
     fun updateUser(@PathVariable id: Long, @RequestBody user: FullUser): FullUser {
-        return userService.updateUser(id, user)
+        return legacyUserService.updateUser(id, user)
     }
 
     @DeleteMapping("/{id}")
     fun deleteUser(@PathVariable id: Long): FullUser {
-        return userService.deleteUser(id)
+        return legacyUserService.deleteUser(id)
     }
 
 }

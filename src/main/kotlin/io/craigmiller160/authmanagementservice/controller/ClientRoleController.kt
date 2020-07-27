@@ -2,7 +2,7 @@ package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.olddto.RoleList
 import io.craigmiller160.authmanagementservice.entity.Role
-import io.craigmiller160.authmanagementservice.service.ClientRoleService
+import io.craigmiller160.authmanagementservice.service.LegacyClientRoleService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/clients/{clientId}/roles")
 class ClientRoleController (
-        private val clientRoleService: ClientRoleService
+        private val legacyClientRoleService: LegacyClientRoleService
 ) {
 
     @GetMapping
     fun getRoles(@PathVariable clientId: Long): ResponseEntity<RoleList> {
-        val roles = clientRoleService.getRoles(clientId)
+        val roles = legacyClientRoleService.getRoles(clientId)
         if (roles.roles.isEmpty()) {
             return ResponseEntity.noContent().build()
         }
@@ -30,17 +30,17 @@ class ClientRoleController (
 
     @PostMapping
     fun createRole(@PathVariable clientId: Long, @RequestBody role: Role): Role {
-        return clientRoleService.createRole(clientId, role)
+        return legacyClientRoleService.createRole(clientId, role)
     }
 
     @PutMapping("/{roleId}")
     fun updateRole(@PathVariable clientId: Long, @PathVariable roleId: Long, @RequestBody role: Role): Role {
-        return clientRoleService.updateRole(clientId, roleId, role)
+        return legacyClientRoleService.updateRole(clientId, roleId, role)
     }
 
     @DeleteMapping("/{roleId}")
     fun deleteRole(@PathVariable clientId: Long, @PathVariable roleId: Long): Role {
-        return clientRoleService.deleteRole(clientId, roleId)
+        return legacyClientRoleService.deleteRole(clientId, roleId)
     }
 
 }

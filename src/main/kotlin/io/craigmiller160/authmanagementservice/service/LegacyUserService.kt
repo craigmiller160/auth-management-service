@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
-class UserService (
+class LegacyUserService (
         private val userRepo: UserRepository,
         private val clientRepo: ClientRepository,
         private val roleRepo: RoleRepository,

@@ -3,23 +3,23 @@ package io.craigmiller160.authmanagementservice.graphql
 import graphql.kickstart.tools.GraphQLQueryResolver
 import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
-import io.craigmiller160.authmanagementservice.service.ClientService
+import io.craigmiller160.authmanagementservice.service.LegacyClientService
 import org.springframework.stereotype.Component
 
 @Component
 class ClientQueryResolver (
         private val clientRepo: ClientRepository,
-        private val clientService: ClientService
+        private val legacyClientService: LegacyClientService
 ) : GraphQLQueryResolver {
 
     // TODO sanitizer does not work here
 
     fun getClients(): List<ClientDto> {
-        return clientService.getClients2()
+        return legacyClientService.getClients2()
     }
 
     fun getClient(id: Long): ClientDto? {
-        return clientService.getClient2(id)
+        return legacyClientService.getClient2(id)
     }
 
 }

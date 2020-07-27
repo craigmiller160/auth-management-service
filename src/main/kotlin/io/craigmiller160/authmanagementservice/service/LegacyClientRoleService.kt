@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
-class ClientRoleService (
+class LegacyClientRoleService (
         private val roleRepo: RoleRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository
 ) {

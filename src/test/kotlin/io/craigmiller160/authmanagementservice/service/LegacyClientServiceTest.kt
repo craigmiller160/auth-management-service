@@ -2,7 +2,7 @@ package io.craigmiller160.authmanagementservice.service
 
 import org.junit.jupiter.api.Test
 
-class UserServiceTest {
+class LegacyClientServiceTest  {
 
     @Test
     fun test() {

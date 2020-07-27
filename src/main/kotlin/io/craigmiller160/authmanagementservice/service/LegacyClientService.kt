@@ -20,7 +20,7 @@ import java.util.UUID
 import javax.transaction.Transactional
 
 @Service
-class ClientService (
+class LegacyClientService (
         private val clientRepo: ClientRepository,
         private val userRepo: UserRepository,
         private val roleRepo: RoleRepository,

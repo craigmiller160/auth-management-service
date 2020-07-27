@@ -3,7 +3,7 @@ package io.craigmiller160.authmanagementservice.controller
 import io.craigmiller160.authmanagementservice.olddto.FullClient
 import io.craigmiller160.authmanagementservice.olddto.FullClientList
 import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.service.ClientService
+import io.craigmiller160.authmanagementservice.service.LegacyClientService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/clients")
 class ClientController (
-        private val clientService: ClientService
+        private val legacyClientService: LegacyClientService
 ) {
 
     @GetMapping("/guid")
     fun generateGuid(): String {
-        return clientService.generateGuid()
+        return legacyClientService.generateGuid()
     }
 
     @GetMapping
     fun getClients(@RequestParam(name = "full", required = false, defaultValue = "false") full: Boolean): ResponseEntity<FullClientList> {
-        val clients = clientService.getClients(full)
+        val clients = legacyClientService.getClients(full)
         if (clients.clients.isEmpty()) {
             return ResponseEntity.noContent().build()
         }
@@ -37,24 +37,24 @@ class ClientController (
 
     @GetMapping("/{id}")
     fun getClient(@PathVariable id: Long): ResponseEntity<FullClient> {
-        return clientService.getClient(id)
+        return legacyClientService.getClient(id)
                 ?.let { ResponseEntity.ok(it) }
                 ?: ResponseEntity.noContent().build()
     }
 
     @PostMapping
     fun createClient(@RequestBody client: Client): Client {
-        return clientService.createClient(client)
+        return legacyClientService.createClient(client)
     }
 
     @PutMapping("/{id}")
     fun updateClient(@PathVariable id: Long, @RequestBody client: Client): Client {
-        return clientService.updateClient(id, client)
+        return legacyClientService.updateClient(id, client)
     }
 
     @DeleteMapping("/{id}")
     fun deleteClient(@PathVariable id: Long): Client {
-        return clientService.deleteClient(id)
+        return legacyClientService.deleteClient(id)
     }
 
 }
