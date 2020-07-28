@@ -42,9 +42,18 @@ type User {
     clients: [UserClient]!
 }
 
+type RoleInput {
+    name: String!
+    clientId: Int!
+}
+
 type Query {
     clients: [Client]!
     client(id: Int): Client
     users: [User]!
     user(id: Int): User
+}
+
+type Mutation {
+    createRole(name: String, clientId: Int): Role!
 }
