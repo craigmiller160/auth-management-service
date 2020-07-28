@@ -47,6 +47,13 @@ input RoleInput {
     clientId: Int!
 }
 
+input UserInput {
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+}
+
 type Query {
     clients: [Client]!
     client(id: Int): Client
@@ -58,4 +65,6 @@ type Mutation {
     createRole(role: RoleInput): Role!
     updateRole(id: Int, role: RoleInput): Role!
     deleteRole(id: Int): Role!
+
+    createUser(user: UserInput): User!
 }
