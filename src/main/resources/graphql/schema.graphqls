@@ -62,9 +62,11 @@ type Query {
 }
 
 type Mutation {
-    createRole(role: RoleInput): Role!
-    updateRole(id: Int, role: RoleInput): Role!
-    deleteRole(id: Int): Role!
+    createRole(role: RoleInput!): Role!
+    updateRole(id: Int!, role: RoleInput!): Role!
+    deleteRole(id: Int!): Role!
 
-    createUser(user: UserInput): User!
+    createUser(user: UserInput!): User!
+    updateUser(id: Int!, user: UserInput!): User!
+    deleteUser(id: Int!): User!
 }

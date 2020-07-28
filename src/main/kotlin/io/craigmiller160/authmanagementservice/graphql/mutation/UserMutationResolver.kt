@@ -15,4 +15,12 @@ class UserMutationResolver (
         return userService.createUser(userInput)
     }
 
+    fun updateUser(userId: Long, userInput: UserInputDto): UserDto {
+        return userService.updateUser(userId, userInput)
+    }
+
+    fun deleteUser(userId: Long): UserDto {
+        return userService.deleteUser(userId)
+    }
+
 }
