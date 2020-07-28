@@ -26,7 +26,7 @@ import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
-class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
+class ClientControllerIntegrationTest : AbstractApiIntegrationTest() {
 
     @Autowired
     private lateinit var clientRepo: ClientRepository

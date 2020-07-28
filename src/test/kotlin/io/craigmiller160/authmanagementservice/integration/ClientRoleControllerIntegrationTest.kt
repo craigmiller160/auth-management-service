@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
-class ClientRoleControllerIntegrationTest : AbstractControllerIntegrationTest() {
+class ClientRoleControllerIntegrationTest : AbstractApiIntegrationTest() {
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
