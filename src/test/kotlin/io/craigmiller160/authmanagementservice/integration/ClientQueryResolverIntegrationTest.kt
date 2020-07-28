@@ -8,11 +8,13 @@ import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
@@ -50,9 +52,31 @@ class ClientQueryResolverIntegrationTest : AbstractApiIntegrationTest() {
         clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
     }
 
+    @AfterEach
+    fun clean() {
+        clientUserRepo.deleteAll()
+        roleRepo.deleteAll()
+        clientRepo.deleteAll()
+        userRepo.deleteAll()
+    }
+
     @Test
     fun test() {
-
+        val query = """
+            query {
+                clients {
+                    name
+                }
+            }
+        """.trimIndent()
+        val result = apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/graphql"
+                body = query
+            }
+        }
+        println(result.content) // TODO delete this
     }
 
 }
