@@ -2,10 +2,10 @@ package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.dto.RoleInputDto
+import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
 import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import org.springframework.stereotype.Service
-import javax.persistence.EntityNotFoundException
 
 @Service
 class RoleService (
