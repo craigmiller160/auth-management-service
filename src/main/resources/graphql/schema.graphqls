@@ -16,7 +16,6 @@ type Client {
     id: Int
     name: String!
     clientKey: String!
-    clientSecret: String
     enabled: Boolean!
     allowClientCredentials: Boolean!
     allowPassword: Boolean!
@@ -40,7 +39,6 @@ type User {
     email: String!
     firstName: String!
     lastName: String!
-    password: String
     clients: [UserClient]!
 }
 
