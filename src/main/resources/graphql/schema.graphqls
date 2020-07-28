@@ -54,6 +54,18 @@ input UserInput {
     lastName: String!
 }
 
+input ClientInput {
+    name: String!
+    clientKey: String!
+    clientSecret: String!
+    enabled: Boolean!
+    allowClientCredentials: Boolean!
+    allowPassword: Boolean!
+    allowAuthCode: Boolean!
+    accessTokenTimeoutSecs: Int!
+    refreshTokenTimeoutSecs: Int!
+}
+
 type Query {
     clients: [Client]!
     client(id: Int): Client
@@ -69,4 +81,8 @@ type Mutation {
     createUser(user: UserInput!): User!
     updateUser(id: Int!, user: UserInput!): User!
     deleteUser(id: Int!): User!
+
+    createClient(client: ClientInput!): Client!
+    updateClient(id: Int!, client: ClientInput!): Client!
+    deleteClient(id: Int!): Client!
 }
