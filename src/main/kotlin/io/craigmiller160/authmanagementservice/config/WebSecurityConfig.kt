@@ -25,12 +25,10 @@ class WebSecurityConfig (
                     .requiresChannel().anyRequest().requiresSecure()
                     .and()
                     .authorizeRequests()
-                    .anyRequest() // TODO remove this
-                    .permitAll()
-//                    .antMatchers(*jwtFilterConfigurer.defaultInsecurePathPatterns).permitAll()
-//                    .anyRequest().fullyAuthenticated()
-//                    .and()
-//                    .apply(jwtFilterConfigurer)
+                    .antMatchers(*jwtFilterConfigurer.defaultInsecurePathPatterns).permitAll()
+                    .anyRequest().fullyAuthenticated()
+                    .and()
+                    .apply(jwtFilterConfigurer)
                     .and()
                     .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         }
