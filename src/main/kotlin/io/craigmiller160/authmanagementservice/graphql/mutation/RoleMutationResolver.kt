@@ -11,12 +11,8 @@ class RoleMutationResolver (
         private val roleService: RoleService
 ) : GraphQLMutationResolver {
 
-    fun createRole(name: String, clientId: Long): RoleDto {
-        return roleService.createRole(name, clientId)
-    }
-
-    fun createRole2(role: RoleInputDto): RoleDto {
-        return roleService.createRole(role.name, role.clientId) // TODO refactor if this works
+    fun createRole2(roleInput: RoleInputDto): RoleDto {
+        return roleService.createRole(roleInput)
     }
 
 }

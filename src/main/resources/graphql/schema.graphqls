@@ -55,6 +55,5 @@ type Query {
 }
 
 type Mutation {
-    createRole(name: String, clientId: Int): Role!
-    createRole2(role: RoleInput): Role!
+    createRole(role: RoleInput): Role!
 }
