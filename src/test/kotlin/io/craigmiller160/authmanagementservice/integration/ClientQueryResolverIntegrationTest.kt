@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 class ClientQueryResolverIntegrationTest : AbstractApiIntegrationTest() {
 
