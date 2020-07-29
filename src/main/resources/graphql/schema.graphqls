@@ -68,21 +68,24 @@ input ClientInput {
 
 type Query {
     clients: [Client]!
-    client(id: Int): Client
+    client(clientId: Int!): Client
+
     users: [User]!
-    user(id: Int): User
+    user(userId: Int!): User
+
+    rolesForClient(clientId: Int!): [Role]!
 }
 
 type Mutation {
     createRole(role: RoleInput!): Role!
-    updateRole(id: Int!, role: RoleInput!): Role!
-    deleteRole(id: Int!): Role!
+    updateRole(roleId: Int!, role: RoleInput!): Role!
+    deleteRole(roleId: Int!): Role!
 
     createUser(user: UserInput!): User!
-    updateUser(id: Int!, user: UserInput!): User!
-    deleteUser(id: Int!): User!
+    updateUser(userId: Int!, user: UserInput!): User!
+    deleteUser(userId: Int!): User!
 
     createClient(client: ClientInput!): Client!
-    updateClient(id: Int!, client: ClientInput!): Client!
-    deleteClient(id: Int!): Client!
+    updateClient(clientId: Int!, client: ClientInput!): Client!
+    deleteClient(clientId: Int!): Client!
 }
