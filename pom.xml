@@ -56,6 +56,12 @@
 			<version>${graphql.spring.boot.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.graphql-java-kickstart</groupId>
+			<artifactId>graphql-spring-boot-starter-test</artifactId>
+			<version>${graphql.spring.boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.craigmiller160</groupId>
 			<artifactId>enhanced-model-mapper</artifactId>
 			<version>${enhanced.mapper.version}</version>
