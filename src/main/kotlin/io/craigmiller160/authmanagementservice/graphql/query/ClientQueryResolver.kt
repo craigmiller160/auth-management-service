@@ -3,7 +3,6 @@ package io.craigmiller160.authmanagementservice.graphql.query
 import graphql.kickstart.tools.GraphQLQueryResolver
 import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.service.ClientService
-import io.craigmiller160.authmanagementservice.service.LegacyClientService
 import org.springframework.stereotype.Component
 
 @Component
