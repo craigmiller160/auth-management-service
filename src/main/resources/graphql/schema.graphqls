@@ -88,4 +88,6 @@ type Mutation {
     createClient(client: ClientInput!): Client!
     updateClient(clientId: Int!, client: ClientInput!): Client!
     deleteClient(clientId: Int!): Client!
+
+    removeUserFromClient(userId: Int!, clientId: Int!): Boolean!
 }

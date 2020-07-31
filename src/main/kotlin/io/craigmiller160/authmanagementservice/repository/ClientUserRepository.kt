@@ -10,11 +10,15 @@ import javax.transaction.Transactional
 interface ClientUserRepository : JpaRepository<ClientUser,Long> {
 
     @Transactional
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     fun deleteAllByClientId(clientId: Long): Long
 
     @Transactional
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     fun deleteAllByUserId(userId: Long): Long
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    fun deleteAllByUserIdAndClientId(userId: Long, clientId: Long): Long
 
 }
