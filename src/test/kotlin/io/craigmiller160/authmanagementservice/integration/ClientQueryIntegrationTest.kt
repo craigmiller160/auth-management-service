@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.integration
 
+import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
@@ -14,6 +15,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ClientQueryIntegrationTest : AbstractOAuthTest() {
+
+    @Autowired
+    private lateinit var graphqlRestTemplate: GraphQLTestTemplate
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
@@ -32,11 +36,21 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         clientRepo.deleteAll()
     }
 
-    protected lateinit var foo: String
+    protected fun getGraphql(name: String): String {
+        val file = "graphql/$name.graphql"
+        return javaClass.classLoader.getResourceAsStream(file)
+                .use { it?.bufferedReader()?.readText() }
+                ?: throw RuntimeException("Graphql file not found: $file")
+    }
 
     @Test
     fun test() {
-        println("Working")
+        val query = getGraphql("getAllClients")
+        println(query) // TODO delete this
+        println(graphqlRestTemplate) // TODO delete this
+        GraphQLTestTemplate()
+        val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
+        println(response.rawResponse.body) // TODO delete this
     }
 
 }
