@@ -28,7 +28,7 @@ class ClientMutationResolver (
         return clientService.removeUserFromClient(userId, clientId)
     }
 
-    fun addClientToUser(userId: Long, clientId: Long): List<ClientUserDto> {
+    fun addUserToClient(userId: Long, clientId: Long): List<ClientUserDto> {
         return clientService.addClientToUser(userId, clientId)
     }
 
