@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.service
 import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.dto.UserInputDto
+import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
@@ -73,6 +74,22 @@ class UserService (
         clientUserRepo.deleteAllByUserId(userId)
         userRepo.deleteById(userId)
         return UserDto.fromUser(existing)
+    }
+
+    @Transactional
+    fun removeClientFromUser(userId: Long, clientId: Long): List<UserClientDto> {
+        clientUserRoleRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        clientUserRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        return clientRepo.findAllByUserOrderByName(userId)
+                .map { UserClientDto.fromClient(it, userId) }
+    }
+
+    @Transactional
+    fun addClientToUser(userId: Long, clientId: Long): List<UserClientDto> {
+        val clientUser = ClientUser(0, userId, clientId)
+        clientUserRepo.save(clientUser)
+        return clientRepo.findAllByUserOrderByName(userId)
+                .map { UserClientDto.fromClient(it, userId) }
     }
 
 }
