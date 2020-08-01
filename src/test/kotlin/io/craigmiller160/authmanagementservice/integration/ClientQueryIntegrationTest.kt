@@ -1,6 +1,8 @@
 package io.craigmiller160.authmanagementservice.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphql.spring.boot.test.GraphQLTestTemplate
+import graphql.kickstart.execution.GraphQLRequest
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
@@ -10,7 +12,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.HttpMethod
+import org.springframework.http.RequestEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -20,7 +27,13 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
     private lateinit var graphqlRestTemplate: GraphQLTestTemplate
 
     @Autowired
+    private lateinit var restTemplate: TestRestTemplate
+
+    @Autowired
     private lateinit var clientRepo: ClientRepository
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     private lateinit var client1: Client
     private lateinit var client2: Client
@@ -49,6 +62,33 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
         val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
         println(response.rawResponse.body) // TODO delete this
+    }
+
+    @Test
+    fun test2() {
+        val query = getGraphql("getAllClients")
+        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
+        val json = """{"query": "$query", "variables" null, "operationName": null}"""
+        val entity = RequestEntity.post(URI("/graphql"))
+                .header("Authorization", "Bearer $token")
+                .body(json)
+
+        val result = restTemplate.exchange(entity, String::class.java)
+        println(result) // TODO delete this
+    }
+
+    @Test
+    fun test3() {
+        val query = getGraphql("getAllClients")
+        val request = GraphQLRequest(query, null, null)
+        val serializedRequest = objectMapper.writeValueAsString(request)
+        println(serializedRequest) // TODO delete this
+        val entity = RequestEntity.post(URI("/graphql"))
+                .header("Authorization", "Bearer $token")
+                .body(serializedRequest)
+
+        val result = restTemplate.exchange(entity, String::class.java)
+        println(result) // TODO delete this
     }
 
 }
