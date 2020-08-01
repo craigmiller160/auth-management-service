@@ -20,7 +20,7 @@ import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
-class ClientControllerIntegrationTest : AbstractApiIntegrationTest() {
+class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
