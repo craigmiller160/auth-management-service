@@ -10,8 +10,6 @@ class ClientQueryResolver (
         private val clientService: ClientService
 ) : GraphQLQueryResolver {
 
-    // TODO sanitizer does not work here
-
     fun getClients(): List<ClientDto> {
         return clientService.getAllClients()
     }
