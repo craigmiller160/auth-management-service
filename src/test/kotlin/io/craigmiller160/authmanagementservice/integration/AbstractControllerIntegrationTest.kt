@@ -29,7 +29,7 @@ abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
     @BeforeEach
     fun apiProcessorSetup() {
         apiProcessor = ApiProcessorBuilder(mockMvc, objectMapper).build(
-                https = true,
+                https = false,
                 authToken = token
         )
     }
