@@ -16,25 +16,8 @@ import org.springframework.test.web.servlet.MockMvc
 import java.security.KeyPair
 
 @AutoConfigureMockMvc
-abstract class AbstractControllerIntegrationTest {
+abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
 
-    companion object {
-
-        lateinit var keyPair: KeyPair
-        lateinit var jwkSet: JWKSet
-
-        @BeforeAll
-        @JvmStatic
-        fun beforeAll() {
-            keyPair = JwtUtils.createKeyPair()
-            jwkSet = JwtUtils.createJwkSet(keyPair)
-        }
-    }
-
-    @MockBean
-    lateinit var oauthConfig: OAuthConfig
-
-    lateinit var token: String
     lateinit var apiProcessor: ApiProcessor
 
     @Autowired
@@ -44,17 +27,7 @@ abstract class AbstractControllerIntegrationTest {
     private lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
-    fun oauthSetup() {
-        `when`(oauthConfig.jwkSet)
-                .thenReturn(jwkSet)
-        `when`(oauthConfig.clientKey)
-                .thenReturn(JwtUtils.CLIENT_KEY)
-        `when`(oauthConfig.clientName)
-                .thenReturn(JwtUtils.CLIENT_NAME)
-
-        val jwt = JwtUtils.createJwt()
-        token = JwtUtils.signAndSerializeJwt(jwt, keyPair.private)
-
+    fun apiProcessorSetup() {
         apiProcessor = ApiProcessorBuilder(mockMvc, objectMapper).build(
                 https = true,
                 authToken = token
