@@ -1,0 +1,94 @@
+type Role {
+    id: Int
+    name: String!
+    clientId: Int!
+}
+
+type ClientUser {
+    id: Int
+    email: String!
+    firstName: String!
+    lastName: String!
+    roles: [Role]!
+}
+
+type Client {
+    id: Int
+    name: String!
+    clientKey: String!
+    enabled: Boolean!
+    allowClientCredentials: Boolean!
+    allowPassword: Boolean!
+    allowAuthCode: Boolean!
+    accessTokenTimeoutSecs: Int!
+    refreshTokenTimeoutSecs: Int!
+    roles: [Role]!
+    users: [ClientUser]!
+}
+
+type UserClient {
+    id: Int
+    name: String!
+    clientKey: String!
+    allRoles: [Role]!
+    userRoles: [Role]!
+}
+
+type User {
+    id: Int
+    email: String!
+    firstName: String!
+    lastName: String!
+    clients: [UserClient]!
+}
+
+input RoleInput {
+    name: String!
+    clientId: Int!
+}
+
+input UserInput {
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+}
+
+input ClientInput {
+    name: String!
+    clientKey: String!
+    clientSecret: String!
+    enabled: Boolean!
+    allowClientCredentials: Boolean!
+    allowPassword: Boolean!
+    allowAuthCode: Boolean!
+    accessTokenTimeoutSecs: Int!
+    refreshTokenTimeoutSecs: Int!
+}
+
+type Query {
+    clients: [Client]!
+    client(clientId: Int!): Client
+
+    users: [User]!
+    user(userId: Int!): User
+
+    rolesForClient(clientId: Int!): [Role]!
+}
+
+type Mutation {
+    createRole(role: RoleInput!): Role!
+    updateRole(roleId: Int!, role: RoleInput!): Role!
+    deleteRole(roleId: Int!): Role!
+
+    createUser(user: UserInput!): User!
+    updateUser(userId: Int!, user: UserInput!): User!
+    deleteUser(userId: Int!): User!
+
+    createClient(client: ClientInput!): Client!
+    updateClient(clientId: Int!, client: ClientInput!): Client!
+    deleteClient(clientId: Int!): Client!
+
+    removeUserFromClient(userId: Int!, clientId: Int!): [ClientUser]!
+    addUserToClient(userId: Int!, clientId: Int!): [ClientUser]!
+}

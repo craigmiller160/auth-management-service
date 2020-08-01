@@ -1,10 +1,10 @@
 package io.craigmiller160.authmanagementservice.service
 
-import io.craigmiller160.authmanagementservice.dto.ClientList
-import io.craigmiller160.authmanagementservice.dto.FullClient
-import io.craigmiller160.authmanagementservice.dto.RoleList
-import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.Role
+import io.craigmiller160.authmanagementservice.dto.ClientDto
+import io.craigmiller160.authmanagementservice.dto.ClientInputDto
+import io.craigmiller160.authmanagementservice.dto.ClientUserDto
+import io.craigmiller160.authmanagementservice.dto.RoleDto
+import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
@@ -13,65 +13,96 @@ import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import java.util.UUID
 import javax.transaction.Transactional
 
 @Service
 class ClientService (
-        private val clientRepo: ClientRepository,
-        private val userRepo: UserRepository,
         private val roleRepo: RoleRepository,
+        private val userRepo: UserRepository,
+        private val clientRepo: ClientRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository,
         private val clientUserRepo: ClientUserRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
 
-    fun generateGuid(): String {
-        return UUID.randomUUID().toString()
+    fun getRolesForClient(clientId: Long): List<RoleDto> {
+        val roles = roleRepo.findAllByClientIdOrderByName(clientId)
+        return roles.map { RoleDto.fromRole(it) }
     }
 
-    fun getClients(): ClientList {
+    fun getUsersForClient(clientId: Long): List<ClientUserDto> {
+        val users = userRepo.findAllByClientIdOrderByEmail(clientId)
+        return users.map { ClientUserDto.fromUser(it, clientId) }
+    }
+
+    fun getRolesForClientAndUser(clientId: Long, userId: Long): List<RoleDto> {
+        val roles = roleRepo.findAllByClientAndUserOrderByName(clientId, userId)
+        return roles.map { RoleDto.fromRole(it) }
+    }
+
+    fun getAllClients(): List<ClientDto> {
         val clients = clientRepo.findAllByOrderByName()
-        return ClientList(clients)
+        return clients.map { ClientDto.fromClient(it) }
+    }
+
+    fun getClient(clientId: Long): ClientDto? {
+        val client = clientRepo.findById(clientId).orElse(null)
+        return client?.let { ClientDto.fromClient(it) }
+    }
+
+    fun createClient(clientInput: ClientInputDto): ClientDto {
+        val encoded = encoder.encode(clientInput.clientSecret)
+        val client = clientInput.toClient().copy(
+                clientSecret = "{bcrypt}$encoded"
+        )
+        val dbClient = clientRepo.save(client)
+        return ClientDto.fromClient(dbClient)
     }
 
     @Transactional
-    fun getClient(id: Long): FullClient? {
-        val result = clientRepo.findById(id).orElse(null)
-        return result?.let { client ->
-            val users = userRepo.findAllByClientIdOrderByEmail(client.id)
-            val roles = roleRepo.findAllByClientIdOrderByName(client.id)
-            return FullClient(client, users, roles)
-        }
-    }
+    fun updateClient(clientId: Long, clientInput: ClientInputDto): ClientDto {
+        val existing = clientRepo.findById(clientId)
+                .orElseThrow { EntityNotFoundException("No client to update for ID: $clientId") }
 
-    fun createClient(client: Client): Client {
-        return clientRepo.save(client)
-    }
-
-    @Transactional
-    fun updateClient(id: Long, client: Client): Client {
-        val existing = clientRepo.findById(id)
-                .orElseThrow { EntityNotFoundException("Client not found for ID: $id") }
-        val finalClient = client.copy(
-                id = id,
-                clientSecret = if (client.clientSecret.isBlank()) {
-                    "{bcrypt}${encoder.encode(existing.clientSecret)}"
+        val client = clientInput.toClient().copy(
+                id = clientId,
+                clientSecret = if (clientInput.clientSecret.isNotBlank()) {
+                    val encoded = encoder.encode(clientInput.clientSecret)
+                    "{bcrypt}$encoded"
                 } else {
-                    client.clientSecret
+                    existing.clientSecret
                 }
         )
-        return clientRepo.save(finalClient)
+        val dbClient = clientRepo.save(client)
+        return ClientDto.fromClient(dbClient)
     }
 
     @Transactional
-    fun deleteClient(id: Long): Client {
-        val existing = clientRepo.findById(id)
-                .orElseThrow { EntityNotFoundException("Client not found for ID: $id") }
-        clientUserRoleRepo.deleteAllByClientId(id)
-        clientUserRepo.deleteAllByClientId(id)
-        clientRepo.deleteById(id)
-        return existing
+    fun deleteClient(clientId: Long): ClientDto {
+        val existing = clientRepo.findById(clientId)
+                .orElseThrow { EntityNotFoundException("No client to delete for ID: $clientId") }
+
+        clientUserRoleRepo.deleteAllByClientId(clientId)
+        clientUserRepo.deleteAllByClientId(clientId)
+        clientRepo.deleteById(clientId)
+        return ClientDto.fromClient(existing)
     }
+
+    @Transactional
+    fun removeUserFromClient(userId: Long, clientId: Long): List<ClientUserDto> {
+        clientUserRoleRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        clientUserRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        return userRepo.findAllByClientIdOrderByEmail(clientId)
+                .map { ClientUserDto.fromUser(it, clientId) }
+    }
+
+    @Transactional
+    fun addClientToUser(userId: Long, clientId: Long): List<ClientUserDto> {
+        val clientUser = ClientUser(0, userId, clientId)
+        clientUserRepo.save(clientUser)
+        return userRepo.findAllByClientIdOrderByEmail(clientId)
+                .map { ClientUserDto.fromUser(it, clientId) }
+    }
+
 }

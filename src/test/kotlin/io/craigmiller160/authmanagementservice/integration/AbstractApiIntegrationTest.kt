@@ -14,7 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import java.security.KeyPair
 
 @AutoConfigureMockMvc
-abstract class AbstractControllerIntegrationTest {
+abstract class AbstractApiIntegrationTest {
 
     companion object {
 
