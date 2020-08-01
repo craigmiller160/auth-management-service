@@ -14,8 +14,8 @@ abstract class AbstractOAuthTest {
 
     companion object {
 
-        lateinit var keyPair: KeyPair
-        lateinit var jwkSet: JWKSet
+        protected lateinit var keyPair: KeyPair
+        protected lateinit var jwkSet: JWKSet
 
         @BeforeAll
         @JvmStatic
@@ -25,10 +25,10 @@ abstract class AbstractOAuthTest {
         }
     }
 
-    lateinit var token: String
+    protected lateinit var token: String
 
     @MockBean
-    lateinit var oauthConfig: OAuthConfig
+    protected lateinit var oauthConfig: OAuthConfig
 
     @BeforeEach
     fun oauthSetup() {

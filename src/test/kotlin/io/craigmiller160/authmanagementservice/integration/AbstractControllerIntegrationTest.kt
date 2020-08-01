@@ -18,7 +18,7 @@ import java.security.KeyPair
 @AutoConfigureMockMvc
 abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
 
-    lateinit var apiProcessor: ApiProcessor
+    protected lateinit var apiProcessor: ApiProcessor
 
     @Autowired
     private lateinit var mockMvc: MockMvc

@@ -32,6 +32,8 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         clientRepo.deleteAll()
     }
 
+    protected lateinit var foo: String
+
     @Test
     fun test() {
         println("Working")

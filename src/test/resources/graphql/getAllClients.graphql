@@ -1,0 +1,11 @@
+query {
+    clients {
+        id
+        name
+        clientKey
+        enabled
+        allowAuthCode
+        allowClientCredentials
+        allowPassword
+    }
+}
