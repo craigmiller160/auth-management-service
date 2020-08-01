@@ -45,10 +45,8 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
 
     @Test
     fun test() {
-        val query = getGraphql("getAllClients")
-        println(query) // TODO delete this
-        println(graphqlRestTemplate) // TODO delete this
-        GraphQLTestTemplate()
+        val query = getGraphql("getAllClients") // TODO probably don't need this
+        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
         val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
         println(response.rawResponse.body) // TODO delete this
     }
