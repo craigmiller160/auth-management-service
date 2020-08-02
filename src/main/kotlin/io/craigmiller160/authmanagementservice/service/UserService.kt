@@ -1,12 +1,16 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.dto.UserInputDto
+import io.craigmiller160.authmanagementservice.entity.ClientUser
+import io.craigmiller160.authmanagementservice.entity.ClientUserRole
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
+import io.craigmiller160.authmanagementservice.repository.RoleRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -17,7 +21,8 @@ class UserService (
         private val userRepo: UserRepository,
         private val clientRepo: ClientRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository,
-        private val clientUserRepo: ClientUserRepository
+        private val clientUserRepo: ClientUserRepository,
+        private val roleRepo: RoleRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
@@ -73,6 +78,37 @@ class UserService (
         clientUserRepo.deleteAllByUserId(userId)
         userRepo.deleteById(userId)
         return UserDto.fromUser(existing)
+    }
+
+    @Transactional
+    fun removeClientFromUser(userId: Long, clientId: Long): List<UserClientDto> {
+        clientUserRoleRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        clientUserRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        return clientRepo.findAllByUserOrderByName(userId)
+                .map { UserClientDto.fromClient(it, userId) }
+    }
+
+    @Transactional
+    fun addClientToUser(userId: Long, clientId: Long): List<UserClientDto> {
+        val clientUser = ClientUser(0, userId, clientId)
+        clientUserRepo.save(clientUser)
+        return clientRepo.findAllByUserOrderByName(userId)
+                .map { UserClientDto.fromClient(it, userId) }
+    }
+
+    @Transactional
+    fun removeRoleFromUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        clientUserRoleRepo.deleteByClientIdAndUserIdAndRoleId(clientId, userId, roleId)
+        return roleRepo.findAllByClientAndUserOrderByName(clientId, userId)
+                .map { RoleDto.fromRole(it) }
+    }
+
+    @Transactional
+    fun addRoleToUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        val clientUserRole = ClientUserRole(0, clientId, userId, roleId)
+        clientUserRoleRepo.save(clientUserRole)
+        return roleRepo.findAllByClientAndUserOrderByName(clientId, userId)
+                .map { RoleDto.fromRole(it) }
     }
 
 }

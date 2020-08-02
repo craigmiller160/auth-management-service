@@ -91,4 +91,10 @@ type Mutation {
 
     removeUserFromClient(userId: Int!, clientId: Int!): [ClientUser]!
     addUserToClient(userId: Int!, clientId: Int!): [ClientUser]!
+
+    removeClientFromUser(userId: Int!, clientId: Int!): [UserClient]!
+    addClientToUser(userId: Int!, clientId: Int!): [UserClient]!
+
+    removeRoleFromUser(userId: Int!, clientId: Int!, roleId: Int!): [Role]!
+    addRoleToUser(userId: Int!, clientId: Int!, roleId: Int!): [Role]!
 }

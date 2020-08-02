@@ -1,6 +1,8 @@
 package io.craigmiller160.authmanagementservice.graphql.mutation
 
 import graphql.kickstart.tools.GraphQLMutationResolver
+import io.craigmiller160.authmanagementservice.dto.RoleDto
+import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.dto.UserInputDto
 import io.craigmiller160.authmanagementservice.service.UserService
@@ -21,6 +23,22 @@ class UserMutationResolver (
 
     fun deleteUser(userId: Long): UserDto {
         return userService.deleteUser(userId)
+    }
+
+    fun removeClientFromUser(userId: Long, clientId: Long): List<UserClientDto> {
+        return userService.removeClientFromUser(userId, clientId)
+    }
+
+    fun addClientToUser(userId: Long, clientId: Long): List<UserClientDto> {
+        return userService.addClientToUser(userId, clientId)
+    }
+
+    fun removeRoleFromUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        return userService.removeRoleFromUser(userId, clientId, roleId)
+    }
+
+    fun addRoleToUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        return userService.addRoleToUser(userId, clientId, roleId)
     }
 
 }

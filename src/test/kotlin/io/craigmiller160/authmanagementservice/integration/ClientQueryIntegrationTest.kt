@@ -56,39 +56,39 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
                 ?: throw RuntimeException("Graphql file not found: $file")
     }
 
-    @Test
-    fun test() {
-        val query = getGraphql("getAllClients") // TODO probably don't need this
-        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
-        val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
-        println(response.rawResponse.body) // TODO delete this
-    }
-
-    @Test
-    fun test2() {
-        val query = getGraphql("getAllClients")
-        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
-        val json = """{"query": "$query", "variables" null, "operationName": null}"""
-        val entity = RequestEntity.post(URI("/graphql"))
-                .header("Authorization", "Bearer $token")
-                .body(json)
-
-        val result = restTemplate.exchange(entity, String::class.java)
-        println(result) // TODO delete this
-    }
-
-    @Test
-    fun test3() {
-        val query = getGraphql("getAllClients")
-        val request = GraphQLRequest(query, null, null)
-        val serializedRequest = objectMapper.writeValueAsString(request)
-        println(serializedRequest) // TODO delete this
-        val entity = RequestEntity.post(URI("/graphql"))
-                .header("Authorization", "Bearer $token")
-                .body(serializedRequest)
-
-        val result = restTemplate.exchange(entity, String::class.java)
-        println(result) // TODO delete this
-    }
+//    @Test
+//    fun test() {
+//        val query = getGraphql("getAllClients") // TODO probably don't need this
+//        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
+//        val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
+//        println(response.rawResponse.body) // TODO delete this
+//    }
+//
+//    @Test
+//    fun test2() {
+//        val query = getGraphql("getAllClients")
+//        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
+//        val json = """{"query": "$query", "variables" null, "operationName": null}"""
+//        val entity = RequestEntity.post(URI("/graphql"))
+//                .header("Authorization", "Bearer $token")
+//                .body(json)
+//
+//        val result = restTemplate.exchange(entity, String::class.java)
+//        println(result) // TODO delete this
+//    }
+//
+//    @Test
+//    fun test3() {
+//        val query = getGraphql("getAllClients")
+//        val request = GraphQLRequest(query, null, null)
+//        val serializedRequest = objectMapper.writeValueAsString(request)
+//        println(serializedRequest) // TODO delete this
+//        val entity = RequestEntity.post(URI("/graphql"))
+//                .header("Authorization", "Bearer $token")
+//                .body(serializedRequest)
+//
+//        val result = restTemplate.exchange(entity, String::class.java)
+//        println(result) // TODO delete this
+//    }
 
 }
