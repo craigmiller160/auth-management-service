@@ -93,7 +93,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 hasProperty("tokenId", equalTo(userToken1Id)),
                 hasProperty("clientId", equalTo(client1.id)),
                 hasProperty("userId", equalTo(user.id)),
-                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp))
+                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp)),
+                hasProperty("clientName", equalTo(client1.name)),
+                hasProperty("userEmail", equalTo(user.email))
         ))
     }
 
@@ -135,7 +137,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 hasProperty("tokenId", nullValue()),
                 hasProperty("clientId", equalTo(client1.id)),
                 hasProperty("userId", equalTo(user.id)),
-                hasProperty("lastAuthenticated", nullValue())
+                hasProperty("lastAuthenticated", nullValue()),
+                hasProperty("clientName", equalTo(client1.name)),
+                hasProperty("userEmail", equalTo(user.email))
         ))
 
         val tokens = refreshTokenRepo.findAll()
@@ -188,13 +192,17 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                                 hasProperty("tokenId", equalTo(userToken1Id)),
                                 hasProperty("clientId", equalTo(client1.id)),
                                 hasProperty("userId", equalTo(user.id)),
-                                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp))
+                                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp)),
+                                hasProperty("clientName", equalTo(client1.name)),
+                                hasProperty("userEmail", equalTo(user.email))
                         ),
                         allOf(
                                 hasProperty("tokenId", equalTo(userToken2Id)),
                                 hasProperty("clientId", equalTo(client2.id)),
                                 hasProperty("userId", equalTo(user.id)),
-                                hasProperty("lastAuthenticated", equalTo(userRefreshToken2.timestamp))
+                                hasProperty("lastAuthenticated", equalTo(userRefreshToken2.timestamp)),
+                                hasProperty("clientName", equalTo(client2.name)),
+                                hasProperty("userEmail", equalTo(user.email))
                         )
                 )
         ))
