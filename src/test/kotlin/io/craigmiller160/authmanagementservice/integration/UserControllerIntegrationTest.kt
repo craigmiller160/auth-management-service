@@ -53,7 +53,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
             request {
                 path = "/users/auth/$clientId/$userId"
             }
-        }.convert(UserAuthDetailsDto::class.java)
+        }
 
         assertThat(result, allOf(
                 hasProperty("tokenId", equalTo(userTokenId)),
