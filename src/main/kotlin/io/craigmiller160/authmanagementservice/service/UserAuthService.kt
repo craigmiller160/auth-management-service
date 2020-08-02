@@ -10,11 +10,23 @@ class UserAuthService (
 ) {
 
     fun getUserAuthDetails(clientId: Long, userId: Long): UserAuthDetailsDto {
-        TODO("Finish this")
+        val refreshToken = refreshTokenRepo.findByClientIdAndUserId(clientId, userId)
+        return UserAuthDetailsDto(
+                tokenId = refreshToken?.refreshToken,
+                clientId = clientId,
+                userId = userId,
+                lastAuthenticated = refreshToken?.timestamp
+        )
     }
 
     fun clearUserAuth(clientId: Long, userId: Long): UserAuthDetailsDto {
-        TODO("Finish this")
+        refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
+        return UserAuthDetailsDto(
+                tokenId = null,
+                clientId = clientId,
+                userId = userId,
+                lastAuthenticated = null
+        )
     }
 
 }

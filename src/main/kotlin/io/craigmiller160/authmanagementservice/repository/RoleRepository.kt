@@ -16,7 +16,7 @@ interface RoleRepository : JpaRepository<Role,Long> {
     fun findByClientIdAndId(clientId: Long, id: Long): Role?
 
     @Transactional
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     fun deleteByClientIdAndId(clientId: Long, id: Long): Int
 
     @Query("""
