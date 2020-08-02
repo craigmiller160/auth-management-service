@@ -1,8 +1,15 @@
 package io.craigmiller160.authmanagementservice.integration
 
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
+import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
+import io.craigmiller160.authmanagementservice.entity.User
+import io.craigmiller160.authmanagementservice.repository.ClientRepository
+import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalTo
@@ -26,11 +33,20 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     @Autowired
     private lateinit var refreshTokenRepo: RefreshTokenRepository
 
+    @Autowired
+    private lateinit var userRepo: UserRepository
+
+    @Autowired
+    private lateinit var clientRepo: ClientRepository
+
+    @Autowired
+    private lateinit var clientUserRepo: ClientUserRepository
+
     private lateinit var userRefreshToken: RefreshToken
     private lateinit var clientRefreshToken: RefreshToken
+    private lateinit var client: Client
+    private lateinit var user: User
 
-    private val clientId = 1L
-    private val userId = 2L
     private val userTokenId = "ABC"
     private val clientTokenId = "DEF"
     private val userToken = "GHI"
@@ -38,27 +54,35 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @BeforeEach
     fun setup() {
-        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, clientId, userId, LocalDateTime.now()))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, clientId, null, LocalDateTime.now()))
+        client = clientRepo.save(TestData.createClient(1))
+        user = userRepo.save(TestData.createUser(1))
+        val clientUser = ClientUser(0, user.id, client.id)
+        clientUserRepo.save(clientUser)
+
+        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, LocalDateTime.now()))
+        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, LocalDateTime.now()))
     }
 
     @AfterEach
     fun clean() {
         refreshTokenRepo.deleteAll()
+        clientUserRepo.deleteAll()
+        userRepo.deleteAll()
+        clientRepo.deleteAll()
     }
 
     @Test
     fun test_getAuthDetails() {
         val result = apiProcessor.call {
             request {
-                path = "/users/auth/$clientId/$userId"
+                path = "/users/auth/${client.id}/${user.id}"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", equalTo(userTokenId)),
-                hasProperty("clientId", equalTo(clientId)),
-                hasProperty("userId", equalTo(userId)),
+                hasProperty("clientId", equalTo(client.id)),
+                hasProperty("userId", equalTo(user.id)),
                 hasProperty("lastAuthenticated", equalTo(userRefreshToken.timestamp))
         ))
     }
@@ -67,7 +91,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails_userNotExists() {
         apiProcessor.call {
             request {
-                path = "/users/auth/$clientId/1000"
+                path = "/users/auth/${client.id}/1000"
             }
             response {
                 status = 400
@@ -79,7 +103,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/users/auth/$clientId/$userId"
+                path = "/users/auth/${client.id}/${user.id}"
                 doAuth = false
             }
             response {
@@ -93,14 +117,14 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val result = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/$clientId/$userId/clear"
+                path = "/users/auth/${client.id}/${user.id}/clear"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", nullValue()),
-                hasProperty("clientId", equalTo(clientId)),
-                hasProperty("userId", equalTo(userId)),
+                hasProperty("clientId", equalTo(client.id)),
+                hasProperty("userId", equalTo(user.id)),
                 hasProperty("lastAuthenticated", nullValue())
         ))
 
@@ -114,7 +138,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/$clientId/1000/clear"
+                path = "/users/auth/${client.id}/1000/clear"
             }
             response {
                 status = 400
@@ -127,7 +151,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/$clientId/$userId/clear"
+                path = "/users/auth/${client.id}/${user.id}/clear"
                 doAuth = false
             }
             response {
