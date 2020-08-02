@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.integration
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import org.apache.tomcat.util.http.parser.HttpParser
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalTo
@@ -89,6 +90,18 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
+    fun test_getClientAuthDetails_clientNotExist() {
+        apiProcessor.call {
+            request {
+                path = "/clients/auth/1000"
+            }
+            response {
+                status = 400
+            }
+        }
+    }
+
+    @Test
     fun test_getClientAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
@@ -119,6 +132,19 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val tokens = refreshTokenRepo.findAll()
         assertEquals(1, tokens.size)
         assertEquals(userRefreshToken, tokens[0])
+    }
+
+    @Test
+    fun test_clearClientAuthDetails_clientNotExist() {
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients/auth/1000/clear"
+            }
+            response {
+                status = 400
+            }
+        }
     }
 
     @Test
