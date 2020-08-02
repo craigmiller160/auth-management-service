@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsListDto
 import io.craigmiller160.authmanagementservice.service.UserAuthService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,7 +23,7 @@ class UserController (
     }
 
     @GetMapping("/auth/{userId}")
-    fun getAllUserAuthDetails(@PathVariable userId: Long): List<UserAuthDetailsDto> {
+    fun getAllUserAuthDetails(@PathVariable userId: Long): UserAuthDetailsListDto {
         return userAuthService.getAllUserAuthDetails(userId)
     }
 

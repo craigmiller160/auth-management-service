@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.integration
 
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsListDto
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
@@ -12,8 +13,10 @@ import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -170,17 +173,56 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @Test
     fun test_getAllUserAuthDetails() {
-        TODO("Finish this")
+        val result = apiProcessor.call {
+            request {
+                path = "/users/auth/${user.id}"
+            }
+        }.convert(UserAuthDetailsListDto::class.java)
+
+        val authDetails = result.authDetails
+        assertEquals(2, authDetails.size)
+        assertThat(authDetails, allOf(
+                hasSize(2),
+                containsInAnyOrder(
+                        allOf(
+                                hasProperty("tokenId", equalTo(userToken1Id)),
+                                hasProperty("clientId", equalTo(client1.id)),
+                                hasProperty("userId", equalTo(user.id)),
+                                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp))
+                        ),
+                        allOf(
+                                hasProperty("tokenId", equalTo(userToken2Id)),
+                                hasProperty("clientId", equalTo(client2.id)),
+                                hasProperty("userId", equalTo(user.id)),
+                                hasProperty("lastAuthenticated", equalTo(userRefreshToken2.timestamp))
+                        )
+                )
+        ))
     }
 
     @Test
     fun test_getAllUserAuthDetails_noUser() {
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                path = "/users/auth/1000"
+            }
+            response {
+                status = 404
+            }
+        }
     }
 
     @Test
     fun test_getAllUserAuthDetails_unauthorized() {
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                path = "/users/auth/${user.id}"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
 }

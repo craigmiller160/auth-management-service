@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsListDto
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
@@ -28,7 +29,7 @@ class UserAuthService (
     }
 
     @Transactional
-    fun getAllUserAuthDetails(userId: Long): List<UserAuthDetailsDto> {
+    fun getAllUserAuthDetails(userId: Long): UserAuthDetailsListDto {
         TODO("Finish this")
     }
 
