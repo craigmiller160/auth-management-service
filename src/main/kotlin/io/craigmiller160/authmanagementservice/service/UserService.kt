@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.service
 
+import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.dto.UserInputDto
@@ -90,6 +91,16 @@ class UserService (
         clientUserRepo.save(clientUser)
         return clientRepo.findAllByUserOrderByName(userId)
                 .map { UserClientDto.fromClient(it, userId) }
+    }
+
+    @Transactional
+    fun removeRoleFromUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        TODO("Finish this")
+    }
+
+    @Transactional
+    fun addRoleToUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        TODO("Finish this")
     }
 
 }

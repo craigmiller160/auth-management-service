@@ -33,12 +33,12 @@ class UserMutationResolver (
         return userService.addClientToUser(userId, clientId)
     }
 
-    fun removeRoleFromUser(userId: Long, roleId: Long): List<RoleDto> {
-        TODO("Finish this")
+    fun removeRoleFromUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        return userService.removeRoleFromUser(userId, clientId, roleId)
     }
 
-    fun addRoleToUser(userId: Long, roleId: Long): List<RoleDto> {
-        TODO("Finish this")
+    fun addRoleToUser(userId: Long, clientId: Long, roleId: Long): List<RoleDto> {
+        return userService.addRoleToUser(userId, clientId, roleId)
     }
 
 }
