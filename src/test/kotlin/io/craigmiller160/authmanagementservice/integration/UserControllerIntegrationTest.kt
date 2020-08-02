@@ -16,7 +16,8 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasProperty
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -42,25 +43,31 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     @Autowired
     private lateinit var clientUserRepo: ClientUserRepository
 
-    private lateinit var userRefreshToken: RefreshToken
+    private lateinit var userRefreshToken1: RefreshToken
+    private lateinit var userRefreshToken2: RefreshToken
     private lateinit var clientRefreshToken: RefreshToken
-    private lateinit var client: Client
+    private lateinit var client1: Client
+    private lateinit var client2: Client
     private lateinit var user: User
 
-    private val userTokenId = "ABC"
+    private val userToken1Id = "ABC"
+    private val userToken2Id = "MNO"
     private val clientTokenId = "DEF"
-    private val userToken = "GHI"
+    private val userToken1 = "GHI"
+    private val userToken2 = "PQR"
     private val clientToken = "JKL"
 
     @BeforeEach
     fun setup() {
-        client = clientRepo.save(TestData.createClient(1))
+        client1 = clientRepo.save(TestData.createClient(1))
+        client2 = clientRepo.save(TestData.createClient(2))
         user = userRepo.save(TestData.createUser(1))
-        val clientUser = ClientUser(0, user.id, client.id)
-        clientUserRepo.save(clientUser)
+        clientUserRepo.save(ClientUser(0, user.id, client1.id))
+        clientUserRepo.save(ClientUser(0, user.id, client2.id))
 
-        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, LocalDateTime.now()))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, LocalDateTime.now()))
+        userRefreshToken1 = refreshTokenRepo.save(RefreshToken(userToken1Id, userToken1, client1.id, user.id, LocalDateTime.now()))
+        userRefreshToken2 = refreshTokenRepo.save(RefreshToken(userToken2Id, userToken2, client2.id, user.id, LocalDateTime.now()))
+        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client1.id, null, LocalDateTime.now()))
     }
 
     @AfterEach
@@ -75,15 +82,15 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails() {
         val result = apiProcessor.call {
             request {
-                path = "/users/auth/${user.id}/${client.id}"
+                path = "/users/auth/${user.id}/${client1.id}"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
-                hasProperty("tokenId", equalTo(userTokenId)),
-                hasProperty("clientId", equalTo(client.id)),
+                hasProperty("tokenId", equalTo(userToken1Id)),
+                hasProperty("clientId", equalTo(client1.id)),
                 hasProperty("userId", equalTo(user.id)),
-                hasProperty("lastAuthenticated", equalTo(userRefreshToken.timestamp))
+                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp))
         ))
     }
 
@@ -103,7 +110,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/users/auth/${user.id}/${client.id}"
+                path = "/users/auth/${user.id}/${client1.id}"
                 doAuth = false
             }
             response {
@@ -117,20 +124,21 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val result = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/${user.id}/${client.id}/revoke"
+                path = "/users/auth/${user.id}/${client1.id}/revoke"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", nullValue()),
-                hasProperty("clientId", equalTo(client.id)),
+                hasProperty("clientId", equalTo(client1.id)),
                 hasProperty("userId", equalTo(user.id)),
                 hasProperty("lastAuthenticated", nullValue())
         ))
 
         val tokens = refreshTokenRepo.findAll()
-        Assertions.assertEquals(1, tokens.size)
-        Assertions.assertEquals(clientRefreshToken, tokens[0])
+        assertEquals(2, tokens.size)
+        assertTrue(tokens.contains(clientRefreshToken))
+        assertTrue(tokens.contains(userRefreshToken2))
     }
 
     @Test
@@ -151,7 +159,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/${user.id}/${client.id}/revoke"
+                path = "/users/auth/${user.id}/${client1.id}/revoke"
                 doAuth = false
             }
             response {

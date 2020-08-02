@@ -16,6 +16,8 @@ class UserController (
 
     @GetMapping("/auth/{userId}/{clientId}")
     fun getUserAuthDetails(@PathVariable clientId: Long, @PathVariable userId: Long): UserAuthDetailsDto {
+        println("Client $clientId") // TODO delete this
+        println("User $userId") // TODO delete this
         return userAuthService.getUserAuthDetails(clientId, userId)
     }
 
