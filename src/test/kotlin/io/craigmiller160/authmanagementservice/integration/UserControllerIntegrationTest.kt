@@ -1,13 +1,20 @@
 package io.craigmiller160.authmanagementservice.integration
 
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
 
@@ -41,22 +48,62 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @Test
     fun test_getAuthDetails() {
-        TODO("Finish this")
+        val result = apiProcessor.call {
+            request {
+                path = "/users/auth/$clientId/$userId"
+            }
+        }.convert(UserAuthDetailsDto::class.java)
+
+        assertThat(result, allOf(
+                hasProperty("tokenId", equalTo(userTokenId)),
+                hasProperty("clientId", equalTo(clientId)),
+                hasProperty("userId", equalTo(userId)),
+                hasProperty("lastAuthenticated", equalTo(userRefreshToken.timestamp))
+        ))
     }
 
     @Test
     fun test_getAuthDetails_unauthorized() {
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                path = "/users/auth/$clientId/$userId"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
     @Test
     fun test_clearAuthDetails() {
-        TODO("Finish this")
+        val result = apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/users/auth/$clientId/$userId"
+            }
+        }.convert(UserAuthDetailsDto::class.java)
+
+        assertThat(result, allOf(
+                hasProperty("tokenId", nullValue()),
+                hasProperty("clientId", equalTo(clientId)),
+                hasProperty("userId", equalTo(userId)),
+                hasProperty("lastAuthenticated", nullValue())
+        ))
     }
 
     @Test
     fun test_clearAuthDetails_unauthorized() {
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/users/auth/$clientId/$userId"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
     }
 
 }
