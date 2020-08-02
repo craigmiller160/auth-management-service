@@ -1,18 +1,23 @@
 package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
+import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
 class UserAuthService (
-        private val refreshTokenRepo: RefreshTokenRepository
+        private val refreshTokenRepo: RefreshTokenRepository,
+        private val userRepo: UserRepository
 ) {
 
     @Transactional
     fun getUserAuthDetails(clientId: Long, userId: Long): UserAuthDetailsDto {
-        // TODO validate that the user exists first
+        userRepo.findByClientAndUser(clientId, userId)
+                ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
+
         val refreshToken = refreshTokenRepo.findByClientIdAndUserId(clientId, userId)
         return UserAuthDetailsDto(
                 tokenId = refreshToken?.id,
@@ -24,7 +29,9 @@ class UserAuthService (
 
     @Transactional
     fun clearUserAuth(clientId: Long, userId: Long): UserAuthDetailsDto {
-        // TODO validate that the user exists first
+        userRepo.findByClientAndUser(clientId, userId)
+                ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
+
         refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
         return UserAuthDetailsDto(
                 tokenId = null,
