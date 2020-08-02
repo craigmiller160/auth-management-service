@@ -26,9 +26,9 @@ class ClientController (
         return clientAuthService.getClientAuthDetails(clientId)
     }
 
-    @PostMapping("/auth/{clientId}/clear")
-    fun clearClientAuthDetails(@PathVariable clientId: Long): ClientAuthDetailsDto {
-        return clientAuthService.clearClientAuthDetails(clientId)
+    @PostMapping("/auth/{clientId}/revoke")
+    fun revokeClientAuthAccess(@PathVariable clientId: Long): ClientAuthDetailsDto {
+        return clientAuthService.revokeClientAuthAccess(clientId)
     }
 
 }

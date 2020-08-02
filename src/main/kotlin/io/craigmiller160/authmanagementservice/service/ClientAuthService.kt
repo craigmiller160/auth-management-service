@@ -25,7 +25,7 @@ class ClientAuthService (
         )
     }
 
-    fun clearClientAuthDetails(clientId: Long): ClientAuthDetailsDto {
+    fun revokeClientAuthAccess(clientId: Long): ClientAuthDetailsDto {
         val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
         refreshTokenRepo.deleteByClientIdAndUserIdIsNull(clientId)

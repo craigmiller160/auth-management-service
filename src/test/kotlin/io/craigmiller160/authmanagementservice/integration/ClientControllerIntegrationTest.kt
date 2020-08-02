@@ -137,11 +137,11 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_clearClientAuthDetails() {
+    fun test_revokeClientAuthAccess() {
         val result = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/auth/${client.id}/clear"
+                path = "/clients/auth/${client.id}/revoke"
             }
         }.convert(ClientAuthDetailsDto::class.java)
 
@@ -158,11 +158,11 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_clearClientAuthDetails_clientNotExist() {
+    fun test_revokeClientAuthAccess_clientNotExist() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/auth/1000/clear"
+                path = "/clients/auth/1000/revoke"
             }
             response {
                 status = 400
@@ -171,11 +171,11 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_clearClientAuthDetails_unauthorized() {
+    fun test_revokeClientAuthAccess_unauthorized() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/auth/${client.id}/clear"
+                path = "/clients/auth/${client.id}/revoke"
                 doAuth = false
             }
             response {
