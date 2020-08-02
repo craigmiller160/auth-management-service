@@ -64,6 +64,18 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
+    fun test_getAuthDetails_userNotExists() {
+        apiProcessor.call {
+            request {
+                path = "/users/auth/$clientId/1000"
+            }
+            response {
+                status = 400
+            }
+        }
+    }
+
+    @Test
     fun test_getAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
@@ -95,6 +107,19 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val tokens = refreshTokenRepo.findAll()
         Assertions.assertEquals(1, tokens.size)
         Assertions.assertEquals(clientRefreshToken, tokens[0])
+    }
+
+    @Test
+    fun test_clearAuthDetails_userNotExists() {
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/users/auth/$clientId/1000/clear"
+            }
+            response {
+                status = 400
+            }
+        }
     }
 
     @Test
