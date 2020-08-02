@@ -106,6 +106,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         assertThat(result, allOf(
                 hasProperty("tokenId", equalTo(clientTokenId)),
                 hasProperty("clientId", equalTo(client.id)),
+                hasProperty("clientName", equalTo(client.name)),
                 hasProperty("lastAuthenticated", equalTo(clientRefreshToken.timestamp))
         ))
     }
@@ -147,6 +148,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         assertThat(result, allOf(
                 hasProperty("tokenId", nullValue()),
                 hasProperty("clientId", equalTo(client.id)),
+                hasProperty("clientName", equalTo(client.name)),
                 hasProperty("lastAuthenticated", nullValue())
         ))
 

@@ -13,24 +13,26 @@ class ClientAuthService (
 ) {
 
     fun getClientAuthDetails(clientId: Long): ClientAuthDetailsDto {
-        clientRepo.findById(clientId)
+        val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
 
         val refreshToken = refreshTokenRepo.findByClientIdAndUserIdIsNull(clientId)
         return ClientAuthDetailsDto(
                 tokenId = refreshToken?.id,
                 clientId = clientId,
+                clientName = client.name,
                 lastAuthenticated = refreshToken?.timestamp
         )
     }
 
     fun clearClientAuthDetails(clientId: Long): ClientAuthDetailsDto {
-        clientRepo.findById(clientId)
+        val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
         refreshTokenRepo.deleteByClientIdAndUserIdIsNull(clientId)
         return ClientAuthDetailsDto(
                 tokenId = null,
                 clientId = clientId,
+                clientName = client.name,
                 lastAuthenticated = null
         )
     }
