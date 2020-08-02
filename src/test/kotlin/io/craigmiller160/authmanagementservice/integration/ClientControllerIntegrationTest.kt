@@ -1,21 +1,24 @@
 package io.craigmiller160.authmanagementservice.integration
 
-import io.craigmiller160.authmanagementservice.entity.Client
-import io.craigmiller160.authmanagementservice.entity.Role
-import io.craigmiller160.authmanagementservice.entity.User
-import io.craigmiller160.authmanagementservice.repository.ClientRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
-import io.craigmiller160.authmanagementservice.repository.RoleRepository
-import io.craigmiller160.authmanagementservice.repository.UserRepository
-import io.craigmiller160.authmanagementservice.testutils.TestData
+import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.entity.RefreshToken
+import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.LocalDateTime
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -23,41 +26,27 @@ import java.util.UUID
 class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @Autowired
-    private lateinit var clientRepo: ClientRepository
+    private lateinit var refreshTokenRepo: RefreshTokenRepository
 
-    @Autowired
-    private lateinit var userRepo: UserRepository
+    private lateinit var userRefreshToken: RefreshToken
+    private lateinit var clientRefreshToken: RefreshToken
 
-    @Autowired
-    private lateinit var roleRepo: RoleRepository
-
-    @Autowired
-    private lateinit var clientUserRepo: ClientUserRepository
-
-    private lateinit var client1: Client
-    private lateinit var client2: Client
-    private lateinit var user1: User
-    private lateinit var user2: User
-    private lateinit var role1: Role
-    private lateinit var role2: Role
+    private val clientId = 1L
+    private val userId = 2L
+    private val userTokenId = "ABC"
+    private val clientTokenId = "DEF"
+    private val userToken = "GHI"
+    private val clientToken = "JKL"
 
     @BeforeEach
     fun setup() {
-        client1 = clientRepo.save(TestData.createClient(1))
-        client2 = clientRepo.save(TestData.createClient(2))
-        role1 = roleRepo.save(TestData.createRole(1, client1.id))
-        role2 = roleRepo.save(TestData.createRole(2, client1.id))
-        user1 = userRepo.save(TestData.createUser(1))
-        user2 = userRepo.save(TestData.createUser(2))
-        clientUserRepo.save(TestData.createClientUser(client1.id, user1.id))
-        clientUserRepo.save(TestData.createClientUser(client1.id, user2.id))
+        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, clientId, userId, LocalDateTime.now()))
+        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, clientId, null, LocalDateTime.now()))
     }
 
     @AfterEach
     fun clean() {
-        clientRepo.deleteAll()
-        userRepo.deleteAll()
-        roleRepo.deleteAll()
+        refreshTokenRepo.deleteAll()
     }
 
     @Test
@@ -76,6 +65,68 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 path = "/clients/guid"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
+    }
+
+    @Test
+    fun test_getClientAuthDetails() {
+        val result = apiProcessor.call {
+            request {
+                path = "/clients/auth/$clientId"
+            }
+        }.convert(ClientAuthDetailsDto::class.java)
+
+        assertThat(result, allOf(
+                hasProperty("tokenId", equalTo(clientTokenId)),
+                hasProperty("clientId", equalTo(clientId)),
+                hasProperty("lastAuthenticated", equalTo(clientRefreshToken.timestamp))
+        ))
+    }
+
+    @Test
+    fun test_getClientAuthDetails_unauthorized() {
+        apiProcessor.call {
+            request {
+                path = "/clients/auth/$clientId"
+                doAuth = false
+            }
+            response {
+                status = 401
+            }
+        }
+    }
+
+    @Test
+    fun test_clearClientAuthDetails() {
+        val result = apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients/auth/$clientId/clear"
+            }
+        }.convert(ClientAuthDetailsDto::class.java)
+
+        assertThat(result, allOf(
+                hasProperty("tokenId", nullValue()),
+                hasProperty("clientId", equalTo(clientId)),
+                hasProperty("lastAuthenticated", nullValue())
+        ))
+
+        val tokens = refreshTokenRepo.findAll()
+        assertEquals(1, tokens.size)
+        assertEquals(userRefreshToken, tokens[0])
+    }
+
+    @Test
+    fun test_clearClientAuthDetails_unauthorized() {
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/clients/auth/$clientId/clear"
                 doAuth = false
             }
             response {

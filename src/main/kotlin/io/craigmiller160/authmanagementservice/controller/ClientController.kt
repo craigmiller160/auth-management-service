@@ -24,7 +24,7 @@ class ClientController (
         TODO("Finish this")
     }
 
-    @PostMapping("/auth/{clientId}")
+    @PostMapping("/auth/{clientId}/clear")
     fun clearClientAuthDetails(@PathVariable clientId: Long): ClientAuthDetailsDto {
         TODO("Finish this")
     }

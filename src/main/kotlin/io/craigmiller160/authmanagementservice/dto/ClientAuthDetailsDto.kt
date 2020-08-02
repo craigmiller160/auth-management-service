@@ -3,5 +3,7 @@ package io.craigmiller160.authmanagementservice.dto
 import java.time.LocalDateTime
 
 data class ClientAuthDetailsDto (
-        val lastAuthenticated: LocalDateTime
+        val tokenId: String?,
+        val clientId: Long,
+        val lastAuthenticated: LocalDateTime?
 )

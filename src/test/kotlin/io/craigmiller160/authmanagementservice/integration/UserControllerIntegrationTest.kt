@@ -9,6 +9,7 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasProperty
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -80,7 +81,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val result = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/$clientId/$userId"
+                path = "/users/auth/$clientId/$userId/clear"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
@@ -90,6 +91,10 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 hasProperty("userId", equalTo(userId)),
                 hasProperty("lastAuthenticated", nullValue())
         ))
+
+        val tokens = refreshTokenRepo.findAll()
+        Assertions.assertEquals(1, tokens.size)
+        Assertions.assertEquals(clientRefreshToken, tokens[0])
     }
 
     @Test
@@ -97,7 +102,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/$clientId/$userId"
+                path = "/users/auth/$clientId/$userId/clear"
                 doAuth = false
             }
             response {
