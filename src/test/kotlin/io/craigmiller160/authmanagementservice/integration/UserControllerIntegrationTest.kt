@@ -75,7 +75,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails() {
         val result = apiProcessor.call {
             request {
-                path = "/users/auth/${client.id}/${user.id}"
+                path = "/users/auth/${user.id}/${client.id}"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
@@ -91,7 +91,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails_userNotExists() {
         apiProcessor.call {
             request {
-                path = "/users/auth/${client.id}/1000"
+                path = "/users/auth/${user.id}/1000"
             }
             response {
                 status = 400
@@ -103,7 +103,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/users/auth/${client.id}/${user.id}"
+                path = "/users/auth/${user.id}/${client.id}"
                 doAuth = false
             }
             response {
@@ -113,11 +113,11 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_clearAuthDetails() {
+    fun test_revokeUserAuthAccess() {
         val result = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/${client.id}/${user.id}/clear"
+                path = "/users/auth/${user.id}/${client.id}/revoke"
             }
         }.convert(UserAuthDetailsDto::class.java)
 
@@ -134,11 +134,11 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_clearAuthDetails_userNotExists() {
+    fun test_revokeUserAuthAccess_userNotExists() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/${client.id}/1000/clear"
+                path = "/users/auth/${user.id}/1000/revoke"
             }
             response {
                 status = 400
@@ -147,11 +147,11 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_clearAuthDetails_unauthorized() {
+    fun test_revokeUserAuthAccess_unauthorized() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/users/auth/${client.id}/${user.id}/clear"
+                path = "/users/auth/${user.id}/${client.id}/revoke"
                 doAuth = false
             }
             response {

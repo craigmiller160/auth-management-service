@@ -28,7 +28,12 @@ class UserAuthService (
     }
 
     @Transactional
-    fun clearUserAuth(clientId: Long, userId: Long): UserAuthDetailsDto {
+    fun getAllUserAuthDetails(userId: Long): List<UserAuthDetailsDto> {
+        TODO("Finish this")
+    }
+
+    @Transactional
+    fun revokeUserAuthAccess(clientId: Long, userId: Long): UserAuthDetailsDto {
         userRepo.findByClientAndUser(clientId, userId)
                 ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
 

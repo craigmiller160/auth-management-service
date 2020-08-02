@@ -14,14 +14,19 @@ class UserController (
         private val userAuthService: UserAuthService
 ) {
 
-    @GetMapping("/auth/{clientId}/{userId}")
+    @GetMapping("/auth/{userId}/{clientId}")
     fun getUserAuthDetails(@PathVariable clientId: Long, @PathVariable userId: Long): UserAuthDetailsDto {
         return userAuthService.getUserAuthDetails(clientId, userId)
     }
 
-    @PostMapping("/auth/{clientId}/{userId}/clear")
-    fun clearUserAuth(@PathVariable clientId: Long, @PathVariable userId: Long): UserAuthDetailsDto {
-        return userAuthService.clearUserAuth(clientId, userId)
+    @GetMapping("/auth/{userId}")
+    fun getAllUserAuthDetails(@PathVariable userId: Long): List<UserAuthDetailsDto> {
+        return userAuthService.getAllUserAuthDetails(userId)
+    }
+
+    @PostMapping("/auth/{userId}/{clientId}/revoke")
+    fun revokeUserAuthAccess(@PathVariable clientId: Long, @PathVariable userId: Long): UserAuthDetailsDto {
+        return userAuthService.revokeUserAuthAccess(clientId, userId)
     }
 
 }
