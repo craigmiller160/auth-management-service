@@ -29,4 +29,8 @@ interface ClientUserRoleRepository : JpaRepository<ClientUserRole,Long> {
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     fun deleteAllByUserIdAndClientId(userId: Long, clientId: Long): Long
 
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    fun deleteByClientIdAndUserIdAndRoleId(clientId: Long, userId: Long, roleId: Long): Long
+
 }
