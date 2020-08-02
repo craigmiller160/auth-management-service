@@ -160,4 +160,19 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }
     }
 
+    @Test
+    fun test_getAllUserAuthDetails() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getAllUserAuthDetails_noUser() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun test_getAllUserAuthDetails_unauthorized() {
+        TODO("Finish this")
+    }
+
 }
