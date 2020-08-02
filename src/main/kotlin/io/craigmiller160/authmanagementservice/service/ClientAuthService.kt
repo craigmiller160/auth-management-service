@@ -1,10 +1,10 @@
 package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
 import org.springframework.stereotype.Service
-import javax.persistence.EntityNotFoundException
 
 @Service
 class ClientAuthService (

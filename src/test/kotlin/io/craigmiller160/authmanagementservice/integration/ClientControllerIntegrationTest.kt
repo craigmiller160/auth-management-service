@@ -1,8 +1,15 @@
 package io.craigmiller160.authmanagementservice.integration
 
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
+import io.craigmiller160.authmanagementservice.entity.User
+import io.craigmiller160.authmanagementservice.repository.ClientRepository
+import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.apache.tomcat.util.http.parser.HttpParser
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
@@ -29,11 +36,20 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     @Autowired
     private lateinit var refreshTokenRepo: RefreshTokenRepository
 
+    @Autowired
+    private lateinit var userRepo: UserRepository
+
+    @Autowired
+    private lateinit var clientRepo: ClientRepository
+
+    @Autowired
+    private lateinit var clientUserRepo: ClientUserRepository
+
     private lateinit var userRefreshToken: RefreshToken
     private lateinit var clientRefreshToken: RefreshToken
+    private lateinit var client: Client
+    private lateinit var user: User
 
-    private val clientId = 1L
-    private val userId = 2L
     private val userTokenId = "ABC"
     private val clientTokenId = "DEF"
     private val userToken = "GHI"
@@ -41,8 +57,13 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @BeforeEach
     fun setup() {
-        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, clientId, userId, LocalDateTime.now()))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, clientId, null, LocalDateTime.now()))
+        client = clientRepo.save(TestData.createClient(1))
+        user = userRepo.save(TestData.createUser(1))
+        val clientUser = ClientUser(0, user.id, client.id)
+        clientUserRepo.save(clientUser)
+
+        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, LocalDateTime.now()))
+        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, LocalDateTime.now()))
     }
 
     @AfterEach
@@ -78,13 +99,13 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClientAuthDetails() {
         val result = apiProcessor.call {
             request {
-                path = "/clients/auth/$clientId"
+                path = "/clients/auth/${client.id}"
             }
         }.convert(ClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", equalTo(clientTokenId)),
-                hasProperty("clientId", equalTo(clientId)),
+                hasProperty("clientId", equalTo(client.id)),
                 hasProperty("lastAuthenticated", equalTo(clientRefreshToken.timestamp))
         ))
     }
@@ -105,7 +126,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClientAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/clients/auth/$clientId"
+                path = "/clients/auth/${client.id}"
                 doAuth = false
             }
             response {
@@ -119,13 +140,13 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val result = apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/auth/$clientId/clear"
+                path = "/clients/auth/${client.id}/clear"
             }
         }.convert(ClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", nullValue()),
-                hasProperty("clientId", equalTo(clientId)),
+                hasProperty("clientId", equalTo(client.id)),
                 hasProperty("lastAuthenticated", nullValue())
         ))
 
@@ -152,7 +173,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 method = HttpMethod.POST
-                path = "/clients/auth/$clientId/clear"
+                path = "/clients/auth/${client.id}/clear"
                 doAuth = false
             }
             response {
