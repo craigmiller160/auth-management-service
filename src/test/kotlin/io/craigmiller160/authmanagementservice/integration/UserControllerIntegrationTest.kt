@@ -215,7 +215,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 path = "/users/auth/1000"
             }
             response {
-                status = 404
+                status = 400
             }
         }
     }

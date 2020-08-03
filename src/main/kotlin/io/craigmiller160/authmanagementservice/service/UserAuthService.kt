@@ -36,12 +36,21 @@ class UserAuthService (
 
     @Transactional
     fun getAllUserAuthDetails(userId: Long): UserAuthDetailsListDto {
-//        val user = userRepo.findByClientAndUser(clientId, userId)
-//                ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
-//        val client = clientRepo.findById(clientId)
-//                .orElseThrow { EntityNotFoundException("No client found for id $clientId") }
-
-        TODO("Finish this")
+        val user = userRepo.findById(userId)
+                .orElseThrow { EntityNotFoundException("No user found for id $userId") }
+        val authDetails = clientRepo.findAllByUserOrderByName(userId)
+                .map { client ->
+                    val refreshToken = refreshTokenRepo.findByClientIdAndUserId(client.id, userId)
+                    UserAuthDetailsDto(
+                            tokenId = refreshToken?.id,
+                            clientId = client.id,
+                            clientName = client.name,
+                            userId = userId,
+                            userEmail = user.email,
+                            lastAuthenticated = refreshToken?.timestamp
+                    )
+                }
+        return UserAuthDetailsListDto(authDetails)
     }
 
     @Transactional
