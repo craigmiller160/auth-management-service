@@ -25,7 +25,7 @@ class WebSecurityConfig (
         http?.let {
             it.csrf().disable()
                     .authorizeRequests()
-                    .antMatchers(*jwtFilterConfigurer.defaultInsecurePathPatterns).permitAll()
+                    .antMatchers(*jwtFilterConfigurer.getInsecurePathPatterns()).permitAll()
                     .anyRequest().fullyAuthenticated()
                     .and()
                     .apply(jwtFilterConfigurer)
