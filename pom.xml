@@ -30,6 +30,7 @@
 		<web.utils.version>1.0.0-SNAPSHOT</web.utils.version>
 		<oauth2.utils.version>1.0.0-SNAPSHOT</oauth2.utils.version>
 		<graphql.spring.boot.version>7.1.0</graphql.spring.boot.version>
+		<api.test.processor.version>1.0.0-SNAPSHOT</api.test.processor.version>
 	</properties>
 
 	<dependencies>
@@ -63,6 +64,11 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.craigmiller160</groupId>
+			<artifactId>api-test-processor</artifactId>
+			<version>${api.test.processor.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
