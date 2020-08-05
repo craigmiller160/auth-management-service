@@ -2,9 +2,8 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
+import io.craigmiller160.apitestprocessor.ApiTestProcessor
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
-import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessor
-import io.craigmiller160.authmanagementservice.testutils.integration.ApiProcessorBuilder
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +17,7 @@ import java.security.KeyPair
 @AutoConfigureMockMvc
 abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
 
-    protected lateinit var apiProcessor: ApiProcessor
+    protected lateinit var apiProcessor: ApiTestProcessor
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -28,8 +27,10 @@ abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
 
     @BeforeEach
     fun apiProcessorSetup() {
-        apiProcessor = ApiProcessorBuilder(mockMvc, objectMapper).build(
-                https = false,
+        apiProcessor = ApiTestProcessor(
+                mockMvc = mockMvc,
+                objectMapper = objectMapper,
+                isSecure = false,
                 authToken = token
         )
     }
