@@ -21,20 +21,20 @@ abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
     protected lateinit var apiProcessor: ApiTestProcessor
 
     @Autowired
-    private lateinit var mockMvc: MockMvc
+    private lateinit var provMockMvc: MockMvc
 
     @Autowired
-    private lateinit var objectMapper: ObjectMapper
+    private lateinit var provObjMapper: ObjectMapper
 
     @BeforeEach
     fun apiProcessorSetup() {
-        apiProcessor = ApiTestProcessor(
-                mockMvc = mockMvc,
-                objectMapper = objectMapper,
-                isSecure = false
-        ) {
-            type = AuthType.BEARER
-            bearerToken = token
+        apiProcessor = ApiTestProcessor {
+            this.mockMvc = provMockMvc
+            this.objectMapper = provObjMapper
+            auth {
+                type = AuthType.BEARER
+                bearerToken = token
+            }
         }
     }
 
