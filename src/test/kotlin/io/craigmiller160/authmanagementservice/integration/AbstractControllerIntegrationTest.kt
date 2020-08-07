@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.integration
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.apitestprocessor.ApiTestProcessor
+import io.craigmiller160.apitestprocessor.config.AuthType
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
 import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.BeforeAll
@@ -30,9 +31,11 @@ abstract class AbstractControllerIntegrationTest : AbstractOAuthTest() {
         apiProcessor = ApiTestProcessor(
                 mockMvc = mockMvc,
                 objectMapper = objectMapper,
-                isSecure = false,
-                authToken = token
-        )
+                isSecure = false
+        ) {
+            type = AuthType.BEARER
+            bearerToken = token
+        }
     }
 
 }
