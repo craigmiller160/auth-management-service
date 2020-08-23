@@ -6,7 +6,8 @@ data class UserDto (
         val id: Long,
         val email: String,
         val firstName: String,
-        val lastName: String
+        val lastName: String,
+        val enabled: Boolean
 ) {
     companion object {
         fun fromUser(user: User): UserDto {
@@ -14,7 +15,8 @@ data class UserDto (
                     id = user.id,
                     email = user.email,
                     firstName = user.firstName,
-                    lastName = user.lastName
+                    lastName = user.lastName,
+                    enabled = user.enabled
             )
         }
     }

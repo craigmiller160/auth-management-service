@@ -9,6 +9,7 @@ type ClientUser {
     email: String!
     firstName: String!
     lastName: String!
+    enabled: Boolean!
     roles: [Role]!
 }
 
@@ -39,6 +40,7 @@ type User {
     email: String!
     firstName: String!
     lastName: String!
+    enabled: Boolean!
     clients: [UserClient]!
 }
 
@@ -52,6 +54,7 @@ input UserInput {
     password: String!
     firstName: String!
     lastName: String!
+    enabled: Boolean!
 }
 
 input ClientInput {

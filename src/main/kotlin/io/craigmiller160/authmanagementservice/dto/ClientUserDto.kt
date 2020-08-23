@@ -8,6 +8,7 @@ data class ClientUserDto (
         val firstName: String,
         val lastName: String,
         val clientId: Long,
+        val enabled: Boolean,
         val roles: List<RoleDto>
 ) {
     companion object {
@@ -18,6 +19,7 @@ data class ClientUserDto (
                     firstName = user.firstName,
                     lastName = user.lastName,
                     clientId = clientId,
+                    enabled = user.enabled,
                     roles = listOf()
             )
         }
