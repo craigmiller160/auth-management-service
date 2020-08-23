@@ -1,5 +1,6 @@
 package io.craigmiller160.authmanagementservice.integration
 
+import io.craigmiller160.apitestprocessor.config.AuthType
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsListDto
 import io.craigmiller160.authmanagementservice.entity.Client
@@ -116,7 +117,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 path = "/users/auth/${user.id}/${client1.id}"
-                doAuth = false
+                overrideAuth {
+                    type = AuthType.NONE
+                }
             }
             response {
                 status = 401
@@ -167,7 +170,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
             request {
                 method = HttpMethod.POST
                 path = "/users/auth/${user.id}/${client1.id}/revoke"
-                doAuth = false
+                overrideAuth {
+                    type = AuthType.NONE
+                }
             }
             response {
                 status = 401
@@ -225,7 +230,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 path = "/users/auth/${user.id}"
-                doAuth = false
+                overrideAuth {
+                    type = AuthType.NONE
+                }
             }
             response {
                 status = 401
