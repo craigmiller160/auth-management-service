@@ -16,7 +16,8 @@ data class User (
         val email: String,
         val firstName: String,
         val lastName: String,
-        val password: String
+        val password: String,
+        val enabled: Boolean
 ) : Sanitizer<User> {
         override fun sanitize(): User {
                 return this.copy(password = "")

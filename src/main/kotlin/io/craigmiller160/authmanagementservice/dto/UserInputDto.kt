@@ -6,7 +6,8 @@ data class UserInputDto (
         val email: String,
         val password: String,
         val firstName: String,
-        val lastName: String
+        val lastName: String,
+        val enabled: Boolean
 ) {
     fun toUser(): User {
         return User(
@@ -14,7 +15,8 @@ data class UserInputDto (
                 email = this.email,
                 password = this.password,
                 firstName = this.firstName,
-                lastName = this.lastName
+                lastName = this.lastName,
+                enabled = this.enabled
         )
     }
 }
