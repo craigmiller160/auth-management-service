@@ -69,6 +69,9 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     @AfterEach
     fun clean() {
+        clientUserRepo.deleteAll()
+        clientRepo.deleteAll()
+        userRepo.deleteAll()
         refreshTokenRepo.deleteAll()
     }
 
