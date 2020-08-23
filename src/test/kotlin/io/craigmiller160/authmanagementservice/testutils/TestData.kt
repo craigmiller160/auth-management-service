@@ -12,7 +12,8 @@ object TestData {
             email = "craig_$id@gmail.com",
             firstName = "Craig_$id",
             lastName = "Miller_$id",
-            password = "password"
+            password = "password",
+            enabled = true
     )
 
     fun createRole(id: Long, clientId: Long) = Role(
