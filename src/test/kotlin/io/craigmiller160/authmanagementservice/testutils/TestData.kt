@@ -34,9 +34,6 @@ object TestData {
             clientKey = "Key_$id",
             clientSecret = "Secret_$id",
             enabled = true,
-            allowClientCredentials = false,
-            allowPassword = false,
-            allowAuthCode = false,
             accessTokenTimeoutSecs = 0,
             refreshTokenTimeoutSecs = 0
     )
