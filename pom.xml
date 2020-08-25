@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.craigmiller160</groupId>
 	<artifactId>auth-management-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>auth-management-service</name>
 	<description>Authorization Management Service</description>
 
@@ -22,9 +22,9 @@
 	</repositories>
 
 	<properties>
-		<oauth2.utils.version>1.0.0-SNAPSHOT</oauth2.utils.version>
-		<api.test.processor.version>1.0.0-SNAPSHOT</api.test.processor.version>
-		<web.utils.version>1.0.0-SNAPSHOT</web.utils.version>
+		<oauth2.utils.version>1.0.0</oauth2.utils.version>
+		<api.test.processor.version>1.0.0</api.test.processor.version>
+		<web.utils.version>1.0.0</web.utils.version>
 		<java.version>11</java.version>
 		<kotlin.version>1.3.72</kotlin.version>
 		<postgres.version>42.2.9</postgres.version>
@@ -161,6 +161,42 @@
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>sql</directory>
+							<includes>
+								<include>create-schema.sql</include>
+								<include>drop-schema.sql</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>copy-artifact</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<ant antfile="${basedir}/deploy/build.xml" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
