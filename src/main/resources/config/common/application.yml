@@ -13,6 +13,7 @@ spring:
     url: jdbc:postgresql://${spring.datasource.host}:${spring.datasource.port}/oauth2_server
 
 oauth2:
+  client-name: auth-management-service
   cookie-name: auth-management-token
   cookie-max-age-secs: 86400
 

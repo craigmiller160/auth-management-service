@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-management-service-configmap
+data:
+  spring.profiles.active: prod
+  spring.config.location: classpath:/config/common/,classpath:/config/prod/
+  spring.datasource.host: postgres-service
+  spring.datasource.port: "5432"
+  spring.datasource.username: user
+  spring.datasource.password: password
+  auth-server-host: https://sso-oauth2-server-service:8443
+  auth-code-redirect-uri: https://sso-oauth2-server-service:8443/api/oauth/authcode/code
+  post-auth-redirect: TODO
+  client-key: TODO
+  client-secret: TODO
