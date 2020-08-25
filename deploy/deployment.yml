@@ -19,7 +19,7 @@ spec:
             - containerPort: 8443
           envFrom:
             - configMapRef:
-                name: auth-management-service
+                name: auth-management-service-configmap
           livenessProbe:
             httpGet:
               path: /actuator/health
