@@ -28,3 +28,12 @@ Use the run script, not the normal maven command:
 ```
 sh run.sh
 ```
+
+## Deploying
+
+First, build with a special command that deploys the artifact to the staging location. Then, run the deploy script to deploy to kubernetes. Make sure the version number is unique.
+
+```
+mvn clean verify
+sh deploy.sh
+```
