@@ -9,8 +9,8 @@ data:
   spring.datasource.port: "5432"
   spring.datasource.username: user
   spring.datasource.password: password
-  auth-server-host: https://sso-oauth2-server-service:8443
-  auth-code-redirect-uri: https://TODO/api/oauth/authcode/code
-  post-auth-redirect: TODO
-  client-key: TODO
-  client-secret: TODO
+  oauth2.auth-server-host: https://sso-oauth2-server-service:8443
+  oauth2.auth-code-redirect-uri: https://TODO/api/oauth/authcode/code
+  oauth2.post-auth-redirect: TODO
+  oauth2.client-key: TODO
+  oauth2.client-secret: TODO
