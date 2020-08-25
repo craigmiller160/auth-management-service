@@ -8,7 +8,7 @@
 
     <target name="copy" depends="clean">
         <copy todir="deploy/build">
-            <fileset dir="target" includes="sso-oauth2-server-*.jar" />
+            <fileset dir="target" includes="auth-management-service-*.jar" />
         </copy>
     </target>
 </project>
