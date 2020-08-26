@@ -10,7 +10,7 @@ data:
   spring.datasource.username: user
   spring.datasource.password: password
   oauth2.auth-server-host: https://sso-oauth2-server-service:8443
-  oauth2.auth-code-redirect-uri: https://TODO/api/oauth/authcode/code
-  oauth2.post-auth-redirect: TODO
+  oauth2.auth-code-redirect-uri: https://auth-management-ui/api/oauth/authcode/code
+  oauth2.post-auth-redirect: https://auth-management-ui
   oauth2.client-key: TODO
   oauth2.client-secret: TODO
