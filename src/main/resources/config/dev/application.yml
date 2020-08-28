@@ -14,6 +14,7 @@ spring:
 
 oauth2:
   auth-server-host: https://localhost:7003
+  auth-login-base-uri: "/oauth2"
   auth-code-redirect-uri: https://localhost:3000/api/oauth/authcode/code
   post-auth-redirect: https://localhost:3000
   client-key: a4cc4fef-564e-44c1-82af-45572f124c1a
