@@ -13,7 +13,6 @@ spring:
     url: jdbc:postgresql://${spring.datasource.host}:${spring.datasource.port}/oauth2_server
 
 oauth2:
-  # TODO is there some way to not need the next three?
   auth-login-base-uri: "/oauth2"
   auth-code-redirect-uri: "/api/oauth/authcode/code"
   post-auth-redirect: "/"
