@@ -4,8 +4,5 @@ query {
         name
         clientKey
         enabled
-        allowAuthCode
-        allowClientCredentials
-        allowPassword
     }
 }
