@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate
 @Configuration
 class ClientConfig {
 
-    // TODO try to eliminate this global overridden rest template... or work with it better, not sure. see if tests will work now
     @Bean
     fun restTemplate(authRestTemplateBuilder: RestTemplateBuilder): RestTemplate {
         return authRestTemplateBuilder.build()
