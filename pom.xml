@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.craigmiller160</groupId>
 	<artifactId>auth-management-service</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT.2</version>
 	<name>auth-management-service</name>
 	<description>Authorization Management Service</description>
 
@@ -22,7 +22,7 @@
 	</repositories>
 
 	<properties>
-		<oauth2.utils.version>1.0.0</oauth2.utils.version>
+		<oauth2.utils.version>1.1.0-SNAPSHOT</oauth2.utils.version>
 		<api.test.processor.version>1.0.0</api.test.processor.version>
 		<web.utils.version>1.0.0</web.utils.version>
 		<java.version>11</java.version>
