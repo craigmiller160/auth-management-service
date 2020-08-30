@@ -50,7 +50,7 @@ class UserAuthService (
                             lastAuthenticated = refreshToken?.timestamp
                     )
                 }
-        return UserAuthDetailsListDto(authDetails)
+        return UserAuthDetailsListDto(user.email, authDetails)
     }
 
     @Transactional
