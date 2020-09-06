@@ -148,8 +148,15 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
 
     @Test
     fun `mutation - client - deleteClient`() {
-        // TODO test clearing all related relationships too
-        TODO("Finish this")
+        val result = execute("mutation_client_deleteClient", DeleteClientResponse::class.java)
+
+        val expected = ClientDto.fromClient(client1)
+        assertEquals(expected, result.deleteClient)
+
+        assertEquals(0, clientRepo.count())
+        assertEquals(0, roleRepo.count())
+        assertEquals(1, userRepo.count())
+        assertEquals(0, userRepo.findAllByClientIdOrderByEmail(client1.id).size)
     }
 
     @Test
@@ -171,8 +178,8 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
             val updateClient: ClientDto
     )
 
-    class RemoveClientResponse (
-            val removeClient: ClientDto
+    class DeleteClientResponse (
+            val deleteClient: ClientDto
     )
 
 }
