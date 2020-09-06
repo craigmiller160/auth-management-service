@@ -42,13 +42,11 @@ class ClientService (
     }
 
     fun getAllClients(): List<ClientDto> {
-        // TODO add URI handling
         val clients = clientRepo.findAllByOrderByName()
         return clients.map { ClientDto.fromClient(it) }
     }
 
     fun getClient(clientId: Long): ClientDto? {
-        // TODO add URI handling
         val client = clientRepo.findById(clientId).orElse(null)
         return client?.let { ClientDto.fromClient(it) }
     }
