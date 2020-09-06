@@ -9,6 +9,7 @@ import io.craigmiller160.authmanagementservice.integration.AbstractOAuthTest
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -50,16 +51,20 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         val response = graphqlRestTemplate.postForResource("graphql/query_clients_baseClientOnly.graphql")
         val body = response.rawResponse.body
         val result = objectMapper.readValue(body, object: TypeReference<Response<ClientsResponse>>(){})
-        println(result.data.clients[0].name) // TODO delete this
+        val client1Dto = ClientDto.fromClient(client1)
+        val client2Dto = ClientDto.fromClient(client2)
+
+        assertEquals(client1Dto, result.data.clients[0])
+        assertEquals(client2Dto, result.data.clients[1])
     }
 
     @Test
-    fun `query - clients - with roles and base users`() {
+    fun `query - single client - with roles and base users`() {
         TODO("Finish this")
     }
 
     @Test
-    fun `query - clients - with roles and users with roles`() {
+    fun `query - single client - with roles and users with roles`() {
         TODO("Finish this")
     }
 
