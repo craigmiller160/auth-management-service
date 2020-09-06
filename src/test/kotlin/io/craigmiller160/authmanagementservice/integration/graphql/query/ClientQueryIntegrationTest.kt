@@ -1,9 +1,8 @@
-package io.craigmiller160.authmanagementservice.integration
+package io.craigmiller160.authmanagementservice.integration.graphql.query
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphql.spring.boot.test.GraphQLTestTemplate
-import graphql.kickstart.execution.GraphQLRequest
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.integration.AbstractOAuthTest
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
@@ -12,12 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.http.HttpMethod
-import org.springframework.http.RequestEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

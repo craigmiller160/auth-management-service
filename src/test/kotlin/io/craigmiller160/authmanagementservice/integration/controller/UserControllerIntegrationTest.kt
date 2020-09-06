@@ -1,4 +1,4 @@
-package io.craigmiller160.authmanagementservice.integration
+package io.craigmiller160.authmanagementservice.integration.controller
 
 import io.craigmiller160.apitestprocessor.config.AuthType
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
