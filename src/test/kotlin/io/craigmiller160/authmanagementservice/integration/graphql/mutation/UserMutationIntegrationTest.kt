@@ -33,7 +33,9 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
 
     private lateinit var user1: User
     private lateinit var client1: Client
+    private lateinit var client2: Client
     private lateinit var role1: Role
+    private lateinit var role2: Role
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/user"
@@ -43,7 +45,9 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
     fun setup() {
         user1 = userRepo.save(TestData.createUser(1))
         client1 = clientRepo.save(TestData.createClient(1))
+        client2 = clientRepo.save(TestData.createClient(2))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
+        role2 = roleRepo.save(TestData.createRole(2, client1.id))
 
         clientUserRepo.save(ClientUser(0, user1.id, client1.id))
         clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
@@ -143,32 +147,68 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
         assertEquals(expected, result.deleteUser)
 
         assertEquals(0, userRepo.count())
-        assertEquals(1, clientRepo.count())
-        assertEquals(1, roleRepo.count())
-        assertEquals(1, roleRepo.findAllByClientIdOrderByName(client1.id).size)
+        assertEquals(2, clientRepo.count())
+        assertEquals(2, roleRepo.count())
+        assertEquals(2, roleRepo.findAllByClientIdOrderByName(client1.id).size)
         assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
         assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
     }
 
     @Test
     fun `mutation - user - removeClientFromUser`() {
-        // TODO test user roles impact too
-        TODO("Finish this")
+        val result = execute("mutation_user_removeClientFromUser", RemoveClientFromUserResponse::class.java)
+
+        assertEquals(listOf<UserClientDto>(), result.removeClientFromUser)
+
+        assertEquals(1, userRepo.count())
+        assertEquals(2, clientRepo.count())
+        assertEquals(2, roleRepo.count())
+        assertEquals(2, roleRepo.findAllByClientIdOrderByName(client1.id).size)
+        assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
+        assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
     }
 
     @Test
     fun `mutation - user - addClientToUser`() {
-        TODO("Finish this")
+        val result = execute("mutation_user_addClientToUser", AddClientToUserResponse::class.java)
+
+        val clientDto1 = UserClientDto.fromClient(client1, 0)
+        val clientDto2 = UserClientDto.fromClient(client2, 0)
+
+        assertEquals(listOf(clientDto1, clientDto2), result.addClientToUser)
+
+        assertEquals(1, userRepo.count())
+        assertEquals(2, clientRepo.count())
+        assertEquals(2, roleRepo.count())
+        assertEquals(2, clientRepo.findAllByUserOrderByName(user1.id).size)
     }
 
     @Test
     fun `mutation - user - removeRoleFromUser`() {
-        TODO("Finish this")
+        val result = execute("mutation_user_removeRoleFromUser", RemoveRoleFromUserResponse::class.java)
+
+        assertEquals(listOf<RoleDto>(), result.removeRoleFromUser)
+
+        assertEquals(1, userRepo.count())
+        assertEquals(2, clientRepo.count())
+        assertEquals(2, roleRepo.count())
+        assertEquals(1, clientRepo.findAllByUserOrderByName(user1.id).size)
+        assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
     }
 
     @Test
     fun `mutation - user - addRoleToUser`() {
-        TODO("Finish this")
+        val result = execute("mutation_user_addRoleToUser", AddRoleToUserResponse::class.java)
+
+        val roleDto1 = RoleDto.fromRole(role1)
+        val roleDto2 = RoleDto.fromRole(role2)
+        assertEquals(listOf(roleDto1, roleDto2), result.addRoleToUser)
+
+        assertEquals(1, userRepo.count())
+        assertEquals(2, clientRepo.count())
+        assertEquals(2, roleRepo.count())
+        assertEquals(1, clientRepo.findAllByUserOrderByName(user1.id).size)
+        assertEquals(2, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
     }
 
     class CreateUserResponse (

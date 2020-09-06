@@ -1,0 +1,7 @@
+mutation {
+    removeRoleFromUser(clientId: 1, userId: 1, roleId: 1) {
+        id
+        clientId
+        name
+    }
+}

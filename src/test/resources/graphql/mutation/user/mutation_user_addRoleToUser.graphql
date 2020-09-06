@@ -1,0 +1,7 @@
+mutation {
+    addRoleToUser(clientId: 1, userId: 1, roleId: 2) {
+        id
+        clientId
+        name
+    }
+}
