@@ -1,13 +1,9 @@
 package io.craigmiller160.authmanagementservice.integration.graphql.query
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.dto.ClientUserDto
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.entity.*
-import io.craigmiller160.authmanagementservice.integration.AbstractOAuthTest
 import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
 import io.craigmiller160.authmanagementservice.repository.*
 import io.craigmiller160.authmanagementservice.testutils.TestData
@@ -18,7 +14,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -39,9 +34,6 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
 
     @Autowired
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     private lateinit var client1: Client
     private lateinit var client2: Client
@@ -89,7 +81,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     @Test
     fun `query - clients - base client only`() {
         val response = graphqlRestTemplate.postForResource("graphql/query_clients_baseClientOnly.graphql")
-        val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientsResponse>>(){})
+        val result = parseResponse(response, ClientsResponse::class.java)
 
         assertEquals(baseClient1Dto, result.data.clients[0])
         assertEquals(baseClient2Dto, result.data.clients[1])
@@ -98,7 +90,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     @Test
     fun `query - single client - with roles and base users`() {
         val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndBaseUsers.graphql")
-        val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
+        val result = parseResponse(response, ClientResponse::class.java)
 
         assertEquals(fullClient1Dto.copy(
                 users = fullClient1Dto.users.map { it.copy(roles = listOf()) }
@@ -108,7 +100,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     @Test
     fun `query - single client - with roles and users with roles`() {
         val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndUsersWithRoles.graphql")
-        val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
+        val result = parseResponse(response, ClientResponse::class.java)
 
         assertEquals(fullClient1Dto, result.data.client)
     }
@@ -116,7 +108,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     @Test
     fun `query - single client - base client only`() {
         val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_baseClientOnly.graphql")
-        val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
+        val result = parseResponse(response, ClientResponse::class.java)
 
         assertEquals(baseClient1Dto, result.data.client)
     }
