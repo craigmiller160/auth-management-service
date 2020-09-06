@@ -1,9 +1,9 @@
 package io.craigmiller160.authmanagementservice.integration.graphql.mutation
 
 import io.craigmiller160.authmanagementservice.dto.ClientDto
-import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.*
 import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
-import io.craigmiller160.authmanagementservice.repository.ClientRepository
+import io.craigmiller160.authmanagementservice.repository.*
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -22,10 +22,20 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
+    @Autowired
+    private lateinit var userRepo: UserRepository
+    @Autowired
+    private lateinit var roleRepo: RoleRepository
+    @Autowired
+    private lateinit var clientUserRepo: ClientUserRepository
+    @Autowired
+    private lateinit var clientUserRoleRepo: ClientUserRoleRepository
 
     private val passwordEncoder = BCryptPasswordEncoder()
 
     private lateinit var client1: Client
+    private lateinit var role1: Role
+    private lateinit var user1: User
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/client"
@@ -34,10 +44,18 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
+        role1 = roleRepo.save(TestData.createRole(1, client1.id))
+        user1 = userRepo.save(TestData.createUser(1))
+
+        clientUserRepo.save(ClientUser(0, user1.id, client1.id))
+        clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
     }
 
     @AfterEach
     fun clean() {
+        clientUserRoleRepo.deleteAll()
+        clientUserRepo.deleteAll()
+        userRepo.deleteAll()
         clientRepo.deleteAll()
     }
 
