@@ -35,4 +35,25 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
         TODO("Finish this")
     }
 
+    @Test
+    fun `mutation - user - removeClientFromUser`() {
+        // TODO test user roles impact too
+        TODO("Finish this")
+    }
+
+    @Test
+    fun `mutation - user - addClientToUser`() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun `mutation - user - removeRoleFromUser`() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun `mutation - user - addRoleToUser`() {
+        TODO("Finish this")
+    }
+
 }
