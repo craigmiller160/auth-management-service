@@ -1,6 +1,9 @@
 package io.craigmiller160.authmanagementservice.integration.graphql.query
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphql.spring.boot.test.GraphQLTestTemplate
+import io.craigmiller160.authmanagementservice.dto.ClientDto
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.integration.AbstractOAuthTest
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
@@ -23,6 +26,9 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
     @Autowired
     private lateinit var clientRepo: ClientRepository
 
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
     private lateinit var client1: Client
     private lateinit var client2: Client
 
@@ -30,6 +36,8 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
         client2 = clientRepo.save(TestData.createClient(2))
+
+        graphqlRestTemplate.addHeader("Authorization", "Bearer $token") // TODO adding it each time???
     }
 
     @AfterEach
@@ -37,24 +45,12 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         clientRepo.deleteAll()
     }
 
-    protected fun getGraphql(name: String): String {
-        val file = "graphql/$name.graphql"
-        return javaClass.classLoader.getResourceAsStream(file)
-                .use { it?.bufferedReader()?.readText() }
-                ?: throw RuntimeException("Graphql file not found: $file")
-    }
-
-    @Test
-    fun test() {
-        val query = getGraphql("getAllClients") // TODO probably don't need this
-        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
-        val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
-        println(response.rawResponse.body) // TODO delete this
-    }
-
     @Test
     fun `query - clients - base client only`() {
-        TODO("Finish this")
+        val response = graphqlRestTemplate.postForResource("graphql/query_clients_baseClientOnly.graphql")
+        val body = response.rawResponse.body
+        val result = objectMapper.readValue(body, object: TypeReference<Response<ClientsResponse>>(){})
+        println(result.data.clients[0].name) // TODO delete this
     }
 
     @Test
@@ -71,5 +67,13 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
     fun `query - single client - base client only`() {
         TODO("Finish this")
     }
+
+    class ClientsResponse (
+            val clients: List<ClientDto>
+    )
+
+    class Response<T> (
+            val data: T
+    )
 
 }
