@@ -76,12 +76,52 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
 
     @Test
     fun `mutation - user - updateUser`() {
-        TODO("Finish this")
+        val result = execute("mutation_user_updateUser", UpdateUserResponse::class.java)
+
+        val expected = UserDto(
+                id = 1,
+                email = "update@gmail.com",
+                firstName = "Updated",
+                lastName = "User",
+                enabled = true
+        )
+        assertEquals(expected, result.updateUser)
+
+        val expectedDb = User(
+                id = 1,
+                email = "update@gmail.com",
+                firstName = "Updated",
+                lastName = "User",
+                enabled = true,
+                password = "password"
+        )
+        assertEquals(expectedDb, userRepo.findById(1).get())
     }
 
     @Test
     fun `mutation - user - updateUser with password`() {
-        TODO("Finish this")
+        val result = execute("mutation_user_updateUserWithPassword", UpdateUserResponse::class.java)
+
+        val expected = UserDto(
+                id = 1,
+                email = "update@gmail.com",
+                firstName = "Updated",
+                lastName = "User",
+                enabled = true
+        )
+        assertEquals(expected, result.updateUser)
+
+        val expectedDb = User(
+                id = 1,
+                email = "update@gmail.com",
+                firstName = "Updated",
+                lastName = "User",
+                enabled = true,
+                password = ""
+        )
+        val actualDb = userRepo.findById(1).get()
+        assertEquals(expectedDb, actualDb.copy(password = ""))
+        validateHash("NewPassword", actualDb.password)
     }
 
     @Test
