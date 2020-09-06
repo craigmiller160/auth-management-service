@@ -4,5 +4,7 @@ query {
         name
         clientKey
         enabled
+        accessTokenTimeoutSecs
+        refreshTokenTimeoutSecs
     }
 }

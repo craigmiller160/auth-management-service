@@ -1,0 +1,7 @@
+mutation {
+    deleteRole(roleId: 1) {
+        id
+        name
+        clientId
+    }
+}

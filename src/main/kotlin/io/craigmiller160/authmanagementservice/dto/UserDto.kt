@@ -7,7 +7,8 @@ data class UserDto (
         val email: String,
         val firstName: String,
         val lastName: String,
-        val enabled: Boolean
+        val enabled: Boolean,
+        val clients: List<UserClientDto> = listOf()
 ) {
     companion object {
         fun fromUser(user: User): UserDto {

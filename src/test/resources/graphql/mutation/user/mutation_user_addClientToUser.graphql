@@ -1,0 +1,7 @@
+mutation {
+    addClientToUser(clientId: 2, userId: 1) {
+        id
+        name
+        clientKey
+    }
+}

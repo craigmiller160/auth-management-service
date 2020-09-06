@@ -1,0 +1,7 @@
+mutation {
+    removeClientFromUser(clientId: 1, userId: 1) {
+        id
+        name
+        clientKey
+    }
+}

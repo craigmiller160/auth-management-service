@@ -1,0 +1,15 @@
+mutation {
+    updateUser(userId: 1, user: {
+        email: "update@gmail.com",
+        firstName: "Updated",
+        lastName: "User",
+        password: "",
+        enabled: true
+    }) {
+        id
+        email
+        firstName
+        lastName
+        enabled
+    }
+}

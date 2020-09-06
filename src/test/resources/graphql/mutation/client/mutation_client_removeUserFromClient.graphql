@@ -1,0 +1,9 @@
+mutation {
+    removeUserFromClient(userId: 1, clientId: 1) {
+        id
+        email
+        firstName
+        lastName
+        enabled
+    }
+}

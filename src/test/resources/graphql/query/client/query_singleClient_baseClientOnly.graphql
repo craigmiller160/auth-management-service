@@ -1,0 +1,10 @@
+query {
+    client(clientId: 1) {
+        id
+        name
+        clientKey
+        enabled
+        accessTokenTimeoutSecs
+        refreshTokenTimeoutSecs
+    }
+}

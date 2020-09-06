@@ -1,0 +1,24 @@
+query {
+    user(userId: 1) {
+        id
+        email
+        firstName
+        lastName
+        enabled
+        clients {
+            id
+            name
+            clientKey
+            allRoles {
+                id
+                clientId
+                name
+            }
+            userRoles {
+                id
+                clientId
+                name
+            }
+        }
+    }
+}

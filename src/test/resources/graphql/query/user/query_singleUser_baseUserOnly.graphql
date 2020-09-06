@@ -1,0 +1,9 @@
+query {
+    user(userId: 1) {
+        id
+        email
+        firstName
+        lastName
+        enabled
+    }
+}

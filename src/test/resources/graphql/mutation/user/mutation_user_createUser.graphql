@@ -1,0 +1,15 @@
+mutation {
+    createUser(user: {
+        email: "new@gmail.com",
+        password: "NewPass",
+        firstName: "New",
+        lastName: "User",
+        enabled: true
+    }) {
+        id
+        email
+        firstName
+        lastName
+        enabled
+    }
+}
