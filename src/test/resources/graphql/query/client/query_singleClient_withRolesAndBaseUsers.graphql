@@ -6,6 +6,7 @@ query {
         enabled
         accessTokenTimeoutSecs
         refreshTokenTimeoutSecs
+        authCodeTimeoutSecs
         roles {
             id
             clientId
