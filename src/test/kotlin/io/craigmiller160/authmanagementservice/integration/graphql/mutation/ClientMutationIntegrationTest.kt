@@ -102,7 +102,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
                 refreshTokenTimeoutSecs = 400,
-                authCodeTimeoutSecs = 10
+                authCodeTimeoutSecs = 20
         )
         assertEquals(expected, result.updateClient)
 
@@ -114,7 +114,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
                 refreshTokenTimeoutSecs = 400,
-                authCodeTimeoutSecs = 10,
+                authCodeTimeoutSecs = 20,
                 clientRedirectUris = listOf()
         )
         assertEquals(expectedDb, clientRepo.findById(1).get())
@@ -131,7 +131,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
                 refreshTokenTimeoutSecs = 400,
-                authCodeTimeoutSecs = 10
+                authCodeTimeoutSecs = 20
         )
         assertEquals(expected, result.updateClient)
 
@@ -143,7 +143,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
                 refreshTokenTimeoutSecs = 400,
-                authCodeTimeoutSecs = 10,
+                authCodeTimeoutSecs = 20,
                 clientRedirectUris = listOf()
         )
         val actualDb = clientRepo.findById(1).get()

@@ -5,7 +5,8 @@ mutation {
         clientSecret: "NewSecret",
         enabled: true,
         accessTokenTimeoutSecs: 100,
-        refreshTokenTimeoutSecs: 200
+        refreshTokenTimeoutSecs: 200,
+        authCodeTimeoutSecs: 10
     }) {
         id
         name
@@ -13,5 +14,6 @@ mutation {
         enabled
         accessTokenTimeoutSecs
         refreshTokenTimeoutSecs
+        authCodeTimeoutSecs
     }
 }

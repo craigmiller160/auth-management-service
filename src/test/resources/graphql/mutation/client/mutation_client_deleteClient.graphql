@@ -6,5 +6,6 @@ mutation {
         enabled
         accessTokenTimeoutSecs
         refreshTokenTimeoutSecs
+        authCodeTimeoutSecs
     }
 }
