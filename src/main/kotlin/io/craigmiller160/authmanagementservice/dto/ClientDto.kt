@@ -11,7 +11,8 @@ data class ClientDto (
         val refreshTokenTimeoutSecs: Int,
         val authCodeTimeoutSecs: Int,
         val roles: List<RoleDto>,
-        val users: List<UserDto>
+        val users: List<UserDto>,
+        val redirectUris: List<String>
 ) {
     companion object {
         fun fromClient(client: Client): ClientDto {
@@ -23,6 +24,7 @@ data class ClientDto (
                     accessTokenTimeoutSecs = client.accessTokenTimeoutSecs,
                     refreshTokenTimeoutSecs = client.refreshTokenTimeoutSecs,
                     authCodeTimeoutSecs = client.authCodeTimeoutSecs,
+                    redirectUris = client.getRedirectUris(),
                     roles = listOf(),
                     users = listOf()
             )

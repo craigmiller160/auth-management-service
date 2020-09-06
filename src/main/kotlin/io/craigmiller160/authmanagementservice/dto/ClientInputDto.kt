@@ -9,7 +9,8 @@ data class ClientInputDto (
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
         val refreshTokenTimeoutSecs: Int,
-        val authCodeTimeoutSecs: Int
+        val authCodeTimeoutSecs: Int,
+        val redirectUris: List<String>
 ) {
     fun toClient(): Client {
         return Client(
@@ -20,7 +21,8 @@ data class ClientInputDto (
                 enabled = this.enabled,
                 accessTokenTimeoutSecs = this.accessTokenTimeoutSecs,
                 refreshTokenTimeoutSecs = this.refreshTokenTimeoutSecs,
-                authCodeTimeoutSecs = this.authCodeTimeoutSecs
+                authCodeTimeoutSecs = this.authCodeTimeoutSecs,
+                clientRedirectUris = listOf() // TODO fix this
         )
     }
 }
