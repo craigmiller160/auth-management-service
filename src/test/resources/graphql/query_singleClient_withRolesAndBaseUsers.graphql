@@ -1,0 +1,22 @@
+query {
+    client(clientId: 1) {
+        id
+        name
+        clientKey
+        enabled
+        accessTokenTimeoutSecs
+        refreshTokenTimeoutSecs
+        roles {
+            id
+            clientId
+            name
+        }
+        users {
+            id
+            email
+            firstName
+            lastName
+            enabled
+        }
+    }
+}

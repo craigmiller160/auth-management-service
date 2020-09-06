@@ -9,7 +9,7 @@ data class ClientUserDto (
         val lastName: String,
         val clientId: Long,
         val enabled: Boolean,
-        val roles: List<RoleDto>
+        val roles: List<RoleDto> = listOf()
 ) {
     companion object {
         fun fromUser(user: User, clientId: Long): ClientUserDto {

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.craigmiller160.authmanagementservice.dto.ClientDto
-import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.dto.ClientUserDto
+import io.craigmiller160.authmanagementservice.dto.RoleDto
+import io.craigmiller160.authmanagementservice.entity.*
 import io.craigmiller160.authmanagementservice.integration.AbstractOAuthTest
-import io.craigmiller160.authmanagementservice.repository.ClientRepository
+import io.craigmiller160.authmanagementservice.repository.*
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,33 +26,72 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 class ClientQueryIntegrationTest : AbstractOAuthTest() {
 
     @Autowired
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     private lateinit var graphqlRestTemplate: GraphQLTestTemplate
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
 
     @Autowired
+    private lateinit var userRepo: UserRepository
+
+    @Autowired
+    private lateinit var roleRepo: RoleRepository
+
+    @Autowired
+    private lateinit var clientUserRepo: ClientUserRepository
+
+    @Autowired
+    private lateinit var clientUserRoleRepo: ClientUserRoleRepository
+
+    @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     private lateinit var client1: Client
     private lateinit var client2: Client
-    private lateinit var client1Dto: ClientDto
-    private lateinit var client2Dto: ClientDto
+    private lateinit var baseClient1Dto: ClientDto
+    private lateinit var baseClient2Dto: ClientDto
+    private lateinit var fullClient1Dto: ClientDto
+    private lateinit var user1: User
+    private lateinit var role1: Role
+    private lateinit var role2: Role
 
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
         client2 = clientRepo.save(TestData.createClient(2))
+        user1 = userRepo.save(TestData.createUser(1))
+        role1 = roleRepo.save(TestData.createRole(1, client1.id))
+        role2 = roleRepo.save(TestData.createRole(2, client1.id))
 
-        client1Dto = ClientDto.fromClient(client1)
-        client2Dto = ClientDto.fromClient(client2)
+        val clientUser = ClientUser(0, user1.id, client1.id)
+        clientUserRepo.save(clientUser)
+
+        val clientUserRole = ClientUserRole(0, client1.id, user1.id, role1.id)
+        clientUserRoleRepo.save(clientUserRole)
+
+        baseClient1Dto = ClientDto.fromClient(client1)
+        baseClient2Dto = ClientDto.fromClient(client2)
+
+        val clientUserDto = ClientUserDto.fromUser(user1, 0)
+        val role1Dto = RoleDto.fromRole(role1)
+        val role2Dto = RoleDto.fromRole(role2)
+        @Suppress("SpringJavaInjectionPointsAutowiringInspection")
+        fullClient1Dto = baseClient1Dto.copy(
+                roles = listOf(role1Dto, role2Dto),
+                users = listOf(clientUserDto) // TODO missing role
+        )
 
         graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
     }
 
     @AfterEach
     fun clean() {
+        clientUserRoleRepo.deleteAll()
+        clientUserRepo.deleteAll()
         clientRepo.deleteAll()
+        userRepo.deleteAll()
     }
 
     @Test
@@ -58,13 +99,16 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         val response = graphqlRestTemplate.postForResource("graphql/query_clients_baseClientOnly.graphql")
         val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientsResponse>>(){})
 
-        assertEquals(client1Dto, result.data.clients[0])
-        assertEquals(client2Dto, result.data.clients[1])
+        assertEquals(baseClient1Dto, result.data.clients[0])
+        assertEquals(baseClient2Dto, result.data.clients[1])
     }
 
     @Test
     fun `query - single client - with roles and base users`() {
-        TODO("Finish this")
+        val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndBaseUsers.graphql")
+        val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
+
+        assertEquals(fullClient1Dto, result.data.client)
     }
 
     @Test
@@ -77,7 +121,7 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_baseClientOnly.graphql")
         val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
 
-        assertEquals(client1Dto, result.data.client)
+        assertEquals(baseClient1Dto, result.data.client)
     }
 
     class ClientsResponse (

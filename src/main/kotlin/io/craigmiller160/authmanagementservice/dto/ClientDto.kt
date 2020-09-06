@@ -10,7 +10,7 @@ data class ClientDto (
         val accessTokenTimeoutSecs: Int,
         val refreshTokenTimeoutSecs: Int,
         val roles: List<RoleDto> = listOf(),
-        val users: List<UserDto> = listOf()
+        val users: List<ClientUserDto> = listOf()
 ) {
     companion object {
         fun fromClient(client: Client): ClientDto {
