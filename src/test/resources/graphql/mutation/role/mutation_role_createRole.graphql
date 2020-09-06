@@ -1,0 +1,10 @@
+mutation {
+    createRole(role: {
+        clientId: 1,
+        name: "New Role"
+    }) {
+        id
+        clientId
+        name
+    }
+}
