@@ -1,0 +1,17 @@
+mutation {
+    updateClient(clientId: 1, client: {
+        name: "Updated Client",
+        clientKey: "UpdateKey",
+        clientSecret: "",
+        enabled: true,
+        accessTokenTimeoutSecs: 300,
+        refreshTokenTimeoutSecs: 400
+    }) {
+        id
+        name
+        clientKey
+        enabled
+        accessTokenTimeoutSecs
+        refreshTokenTimeoutSecs
+    }
+}

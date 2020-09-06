@@ -34,8 +34,8 @@ object TestData {
             clientKey = "Key_$id",
             clientSecret = "Secret_$id",
             enabled = true,
-            accessTokenTimeoutSecs = 0,
-            refreshTokenTimeoutSecs = 0,
+            accessTokenTimeoutSecs = 100,
+            refreshTokenTimeoutSecs = 200,
             authCodeTimeoutSecs = 0,
             clientRedirectUris = listOf()
     )

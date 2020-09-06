@@ -1,4 +1,4 @@
-package io.craigmiller160.authmanagementservice.integration
+package io.craigmiller160.authmanagementservice.integration.controller
 
 import io.craigmiller160.apitestprocessor.config.AuthType
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
@@ -11,7 +11,6 @@ import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
-import org.apache.tomcat.util.http.parser.HttpParser
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalTo

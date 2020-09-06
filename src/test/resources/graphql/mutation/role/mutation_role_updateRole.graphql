@@ -1,0 +1,10 @@
+mutation {
+    updateRole(roleId: 1, role: {
+        clientId: 1,
+        name: "Updated Role"
+    }) {
+        id
+        name
+        clientId
+    }
+}

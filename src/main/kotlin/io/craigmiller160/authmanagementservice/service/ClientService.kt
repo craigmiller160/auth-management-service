@@ -85,6 +85,7 @@ class ClientService (
 
         clientUserRoleRepo.deleteAllByClientId(clientId)
         clientUserRepo.deleteAllByClientId(clientId)
+        roleRepo.deleteByClientId(clientId)
         clientRepo.deleteById(clientId)
         return ClientDto.fromClient(existing)
     }
