@@ -77,10 +77,9 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         val clientUserDto = ClientUserDto.fromUser(user1, 0)
         val role1Dto = RoleDto.fromRole(role1)
         val role2Dto = RoleDto.fromRole(role2)
-        @Suppress("SpringJavaInjectionPointsAutowiringInspection")
         fullClient1Dto = baseClient1Dto.copy(
                 roles = listOf(role1Dto, role2Dto),
-                users = listOf(clientUserDto) // TODO missing role
+                users = listOf(clientUserDto.copy(roles = listOf(role1Dto)))
         )
 
         graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
@@ -108,12 +107,17 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndBaseUsers.graphql")
         val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
 
-        assertEquals(fullClient1Dto, result.data.client)
+        assertEquals(fullClient1Dto.copy(
+                users = fullClient1Dto.users.map { it.copy(roles = listOf()) }
+        ), result.data.client)
     }
 
     @Test
     fun `query - single client - with roles and users with roles`() {
-        TODO("Finish this")
+        val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndUsersWithRoles.graphql")
+        val result = objectMapper.readValue(response.rawResponse.body, object: TypeReference<Response<ClientResponse>>(){})
+
+        assertEquals(fullClient1Dto, result.data.client)
     }
 
     @Test
