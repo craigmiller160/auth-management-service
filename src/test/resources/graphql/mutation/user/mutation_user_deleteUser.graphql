@@ -1,0 +1,9 @@
+mutation {
+    deleteUser(userId: 1) {
+        id
+        email
+        firstName
+        lastName
+        enabled
+    }
+}

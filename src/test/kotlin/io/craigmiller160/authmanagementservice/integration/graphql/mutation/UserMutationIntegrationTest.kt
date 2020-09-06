@@ -3,7 +3,7 @@ package io.craigmiller160.authmanagementservice.integration.graphql.mutation
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
-import io.craigmiller160.authmanagementservice.entity.User
+import io.craigmiller160.authmanagementservice.entity.*
 import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
 import io.craigmiller160.authmanagementservice.repository.*
 import io.craigmiller160.authmanagementservice.testutils.TestData
@@ -32,6 +32,8 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
 
     private lateinit var user1: User
+    private lateinit var client1: Client
+    private lateinit var role1: Role
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/user"
@@ -40,10 +42,19 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
     @BeforeEach
     fun setup() {
         user1 = userRepo.save(TestData.createUser(1))
+        client1 = clientRepo.save(TestData.createClient(1))
+        role1 = roleRepo.save(TestData.createRole(1, client1.id))
+
+        clientUserRepo.save(ClientUser(0, user1.id, client1.id))
+        clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
     }
 
     @AfterEach
     fun clean() {
+        clientUserRoleRepo.deleteAll()
+        clientUserRepo.deleteAll()
+        roleRepo.deleteAll()
+        clientRepo.deleteAll()
         userRepo.deleteAll()
     }
 
@@ -126,8 +137,17 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
 
     @Test
     fun `mutation - user - deleteUser`() {
-        // TODO test breaking relationships
-        TODO("Finish this")
+        val result = execute("mutation_user_deleteUser", DeleteUserResponse::class.java)
+
+        val expected = UserDto.fromUser(user1)
+        assertEquals(expected, result.deleteUser)
+
+        assertEquals(0, userRepo.count())
+        assertEquals(1, clientRepo.count())
+        assertEquals(1, roleRepo.count())
+        assertEquals(1, roleRepo.findAllByClientIdOrderByName(client1.id).size)
+        assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
+        assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
     }
 
     @Test
