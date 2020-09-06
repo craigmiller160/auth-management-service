@@ -48,13 +48,16 @@ class RoleQueryIntegrationTest : AbstractGraphqlTest() {
         clientRepo.deleteAll()
     }
 
+    override fun getGraphqlBasePath(): String {
+        return "graphql/query/role"
+    }
+
     @Test
     fun `query - roles - for client`() {
-        val response = graphqlRestTemplate.postForResource("graphql/query_roles_forClient.graphql")
-        val result = parseResponse(response, RolesResponse::class.java)
+        val result = execute("query_roles_forClient", RolesResponse::class.java)
 
-        assertEquals(role1Dto, result.data.rolesForClient[0])
-        assertEquals(role2Dto, result.data.rolesForClient[1])
+        assertEquals(role1Dto, result.rolesForClient[0])
+        assertEquals(role2Dto, result.rolesForClient[1])
     }
 
     class RolesResponse(

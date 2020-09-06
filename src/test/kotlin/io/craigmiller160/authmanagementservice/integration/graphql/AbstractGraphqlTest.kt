@@ -23,8 +23,7 @@ abstract class AbstractGraphqlTest : AbstractOAuthTest() {
         graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
     }
 
-    // TODO make abstract
-    protected open fun getGraphqlBasePath(): String = ""
+    protected abstract fun getGraphqlBasePath(): String
 
     private fun trailingSlash(value: String): String {
         if (value.endsWith("/")) {
@@ -41,8 +40,7 @@ abstract class AbstractGraphqlTest : AbstractOAuthTest() {
         return result.data
     }
 
-    // TODO make private
-    protected fun <T> parseResponse(response: GraphQLResponse, type: Class<T>): Response<T> {
+    private fun <T> parseResponse(response: GraphQLResponse, type: Class<T>): Response<T> {
         return objectMapper.readValue(
                 response.rawResponse.body,
                 objectMapper.typeFactory.constructParametricType(Response::class.java, type)

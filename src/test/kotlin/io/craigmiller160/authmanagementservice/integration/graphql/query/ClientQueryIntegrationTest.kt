@@ -78,39 +78,39 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
         userRepo.deleteAll()
     }
 
+    override fun getGraphqlBasePath(): String {
+        return "graphql/query/client"
+    }
+
     @Test
     fun `query - clients - base client only`() {
-        val response = graphqlRestTemplate.postForResource("graphql/query_clients_baseClientOnly.graphql")
-        val result = parseResponse(response, ClientsResponse::class.java)
+        val result = execute("query_clients_baseClientOnly", ClientsResponse::class.java)
 
-        assertEquals(baseClient1Dto, result.data.clients[0])
-        assertEquals(baseClient2Dto, result.data.clients[1])
+        assertEquals(baseClient1Dto, result.clients[0])
+        assertEquals(baseClient2Dto, result.clients[1])
     }
 
     @Test
     fun `query - single client - with roles and base users`() {
-        val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndBaseUsers.graphql")
-        val result = parseResponse(response, ClientResponse::class.java)
+        val result = execute("query_singleClient_withRolesAndBaseUsers", ClientResponse::class.java)
 
         assertEquals(fullClient1Dto.copy(
                 users = fullClient1Dto.users.map { it.copy(roles = listOf()) }
-        ), result.data.client)
+        ), result.client)
     }
 
     @Test
     fun `query - single client - with roles and users with roles`() {
-        val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_withRolesAndUsersWithRoles.graphql")
-        val result = parseResponse(response, ClientResponse::class.java)
+        val result = execute("query_singleClient_withRolesAndUsersWithRoles", ClientResponse::class.java)
 
-        assertEquals(fullClient1Dto, result.data.client)
+        assertEquals(fullClient1Dto, result.client)
     }
 
     @Test
     fun `query - single client - base client only`() {
-        val response = graphqlRestTemplate.postForResource("graphql/query_singleClient_baseClientOnly.graphql")
-        val result = parseResponse(response, ClientResponse::class.java)
+        val result = execute("query_singleClient_baseClientOnly", ClientResponse::class.java)
 
-        assertEquals(baseClient1Dto, result.data.client)
+        assertEquals(baseClient1Dto, result.client)
     }
 
     class ClientsResponse (
