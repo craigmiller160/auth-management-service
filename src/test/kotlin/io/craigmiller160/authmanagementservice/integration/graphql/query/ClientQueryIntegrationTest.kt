@@ -8,6 +8,7 @@ import io.craigmiller160.authmanagementservice.dto.ClientUserDto
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.entity.*
 import io.craigmiller160.authmanagementservice.integration.AbstractOAuthTest
+import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
 import io.craigmiller160.authmanagementservice.repository.*
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
@@ -22,12 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class ClientQueryIntegrationTest : AbstractOAuthTest() {
-
-    @Autowired
-    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    private lateinit var graphqlRestTemplate: GraphQLTestTemplate
+class ClientQueryIntegrationTest : AbstractGraphqlTest() {
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
@@ -56,7 +52,6 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
     private lateinit var role1: Role
     private lateinit var role2: Role
 
-    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
@@ -81,8 +76,6 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
                 roles = listOf(role1Dto, role2Dto),
                 users = listOf(clientUserDto.copy(roles = listOf(role1Dto)))
         )
-
-        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
     }
 
     @AfterEach
@@ -134,10 +127,6 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
 
     class ClientResponse (
             val client: ClientDto
-    )
-
-    class Response<T> (
-            val data: T
     )
 
 }
