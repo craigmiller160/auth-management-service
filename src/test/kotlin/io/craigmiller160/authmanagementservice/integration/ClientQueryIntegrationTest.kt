@@ -27,13 +27,7 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
     private lateinit var graphqlRestTemplate: GraphQLTestTemplate
 
     @Autowired
-    private lateinit var restTemplate: TestRestTemplate
-
-    @Autowired
     private lateinit var clientRepo: ClientRepository
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     private lateinit var client1: Client
     private lateinit var client2: Client
@@ -63,32 +57,25 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
         val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
         println(response.rawResponse.body) // TODO delete this
     }
-//
-//    @Test
-//    fun test2() {
-//        val query = getGraphql("getAllClients")
-//        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
-//        val json = """{"query": "$query", "variables" null, "operationName": null}"""
-//        val entity = RequestEntity.post(URI("/graphql"))
-//                .header("Authorization", "Bearer $token")
-//                .body(json)
-//
-//        val result = restTemplate.exchange(entity, String::class.java)
-//        println(result) // TODO delete this
-//    }
-//
-//    @Test
-//    fun test3() {
-//        val query = getGraphql("getAllClients")
-//        val request = GraphQLRequest(query, null, null)
-//        val serializedRequest = objectMapper.writeValueAsString(request)
-//        println(serializedRequest) // TODO delete this
-//        val entity = RequestEntity.post(URI("/graphql"))
-//                .header("Authorization", "Bearer $token")
-//                .body(serializedRequest)
-//
-//        val result = restTemplate.exchange(entity, String::class.java)
-//        println(result) // TODO delete this
-//    }
+
+    @Test
+    fun `query - clients - base client only`() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun `query - clients - with roles and base users`() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun `query - clients - with roles and users with roles`() {
+        TODO("Finish this")
+    }
+
+    @Test
+    fun `query - single client - base client only`() {
+        TODO("Finish this")
+    }
 
 }
