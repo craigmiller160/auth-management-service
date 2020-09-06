@@ -59,12 +59,24 @@ class RoleMutationIntegrationTest : AbstractGraphqlTest() {
 
     @Test
     fun `mutation - role - updateRole`() {
-        TODO("Finish this")
+        val result = execute("mutation_role_updateRole", UpdateRoleResponse::class.java)
+
+        val expected = RoleDto(1, "Updated Role", client1.id)
+        assertEquals(expected, result.updateRole)
+
+        assertEquals(1, roleRepo.count())
+        val expectedDb = Role(1, "Updated Role", client1.id)
+        assertEquals(expectedDb, roleRepo.findById(1).get())
     }
 
     @Test
     fun `mutation - role - deleteRole`() {
-        TODO("Finish this")
+        val result = execute("mutation_role_deleteRole", DeleteRoleResponse::class.java)
+
+        val expected = RoleDto(1, "Role_1", client1.id)
+        assertEquals(expected, result.deleteRole)
+
+        assertEquals(0, roleRepo.count())
     }
 
     class CreateRoleResponse (
