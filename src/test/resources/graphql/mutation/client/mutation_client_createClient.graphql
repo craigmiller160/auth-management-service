@@ -1,0 +1,17 @@
+mutation {
+    createClient(client: {
+        name: "New Client",
+        clientKey: "NewKey",
+        clientSecret: "NewSecret",
+        enabled: true,
+        accessTokenTimeoutSecs: 100,
+        refreshTokenTimeoutSecs: 200
+    }) {
+        id
+        name
+        clientKey
+        enabled
+        accessTokenTimeoutSecs
+        refreshTokenTimeoutSecs
+    }
+}
