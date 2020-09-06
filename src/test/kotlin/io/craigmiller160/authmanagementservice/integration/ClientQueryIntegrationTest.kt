@@ -56,13 +56,13 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
                 ?: throw RuntimeException("Graphql file not found: $file")
     }
 
-//    @Test
-//    fun test() {
-//        val query = getGraphql("getAllClients") // TODO probably don't need this
-//        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
-//        val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
-//        println(response.rawResponse.body) // TODO delete this
-//    }
+    @Test
+    fun test() {
+        val query = getGraphql("getAllClients") // TODO probably don't need this
+        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
+        val response = graphqlRestTemplate.postForResource("graphql/getAllClients.graphql")
+        println(response.rawResponse.body) // TODO delete this
+    }
 //
 //    @Test
 //    fun test2() {
