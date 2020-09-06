@@ -1,7 +1,12 @@
 package io.craigmiller160.authmanagementservice.integration.graphql.query
 
+import io.craigmiller160.authmanagementservice.dto.UserDto
+import io.craigmiller160.authmanagementservice.entity.User
+import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
 import io.craigmiller160.authmanagementservice.repository.*
+import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -11,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserQueryIntegrationTest {
+class UserQueryIntegrationTest : AbstractGraphqlTest() {
 
     @Autowired
     private lateinit var clientRepo: ClientRepository
@@ -28,9 +33,18 @@ class UserQueryIntegrationTest {
     @Autowired
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
 
+    private lateinit var user1: User
+    private lateinit var user2: User
+    private lateinit var baseUser1Dto: UserDto
+    private lateinit var baseUser2Dto: UserDto
+
     @BeforeEach
     fun setup() {
+        user1 = userRepo.save(TestData.createUser(1))
+        user2 = userRepo.save(TestData.createUser(2))
 
+        baseUser1Dto = UserDto.fromUser(user1)
+        baseUser2Dto = UserDto.fromUser(user2)
     }
 
     @AfterEach
@@ -44,7 +58,11 @@ class UserQueryIntegrationTest {
 
     @Test
     fun `query - users - base user only`() {
-        TODO("Finish this")
+        val response = graphqlRestTemplate.postForResource("graphql/query_users_baseUserOnly.graphql")
+        val result = parseResponse(response, UsersResponse::class.java)
+
+        assertEquals(baseUser1Dto, result.data.users[0])
+        assertEquals(baseUser2Dto, result.data.users[1])
     }
 
     @Test
@@ -61,5 +79,9 @@ class UserQueryIntegrationTest {
     fun `query - single user - with clients and roles`() {
         TODO("Finish this")
     }
+
+    class UsersResponse (
+            val users: List<UserDto>
+    )
 
 }
