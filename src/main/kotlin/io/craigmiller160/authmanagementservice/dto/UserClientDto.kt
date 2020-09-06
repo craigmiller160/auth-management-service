@@ -7,8 +7,8 @@ data class UserClientDto (
         val name: String,
         val clientKey: String,
         val userId: Long,
-        val allRoles: List<RoleDto>,
-        val userRoles: List<RoleDto>
+        val allRoles: List<RoleDto> = listOf(),
+        val userRoles: List<RoleDto> = listOf()
 ) {
     companion object {
         fun fromClient(client: Client, userId: Long): UserClientDto {
