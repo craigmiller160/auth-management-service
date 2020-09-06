@@ -76,12 +76,56 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
 
     @Test
     fun `mutation - client - updateClient`() {
-        TODO("Finish this")
+        val result = execute("mutation_client_updateClient", UpdateClientResponse::class.java)
+
+        val expected = ClientDto(
+                id = 1,
+                name = "Updated Client",
+                clientKey = "UpdateKey",
+                enabled = true,
+                accessTokenTimeoutSecs = 300,
+                refreshTokenTimeoutSecs = 400
+        )
+        assertEquals(expected, result.updateClient)
+
+        val expectedDb = Client(
+                id = client1.id,
+                name = "Updated Client",
+                clientKey = "UpdateKey",
+                clientSecret = "Secret_1",
+                enabled = true,
+                accessTokenTimeoutSecs = 300,
+                refreshTokenTimeoutSecs = 400
+        )
+        assertEquals(expectedDb, clientRepo.findById(1).get())
     }
 
     @Test
     fun `mutation - client - updateClient with secret`() {
-        TODO("Finish this")
+        val result = execute("mutation_client_updateClientWithSecret", UpdateClientResponse::class.java)
+
+        val expected = ClientDto(
+                id = 1,
+                name = "Updated Client",
+                clientKey = "UpdateKey",
+                enabled = true,
+                accessTokenTimeoutSecs = 300,
+                refreshTokenTimeoutSecs = 400
+        )
+        assertEquals(expected, result.updateClient)
+
+        val expectedDb = Client(
+                id = client1.id,
+                name = "Updated Client",
+                clientKey = "UpdateKey",
+                clientSecret = "",
+                enabled = true,
+                accessTokenTimeoutSecs = 300,
+                refreshTokenTimeoutSecs = 400
+        )
+        val actualDb = clientRepo.findById(1).get()
+        assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
+        validateSecret("UpdateSecret", actualDb.clientSecret)
     }
 
     @Test
