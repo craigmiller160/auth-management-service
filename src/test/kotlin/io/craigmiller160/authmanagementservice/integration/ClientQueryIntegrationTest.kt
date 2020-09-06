@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -34,6 +35,10 @@ class ClientQueryIntegrationTest : AbstractOAuthTest() {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
+
+//    @Autowired
+//    @Qualifier("authRestTemplateBuilder")
+//    private lateinit var builder: RestTemplateBuilder
 
     private lateinit var client1: Client
     private lateinit var client2: Client
