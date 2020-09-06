@@ -32,8 +32,6 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     @Autowired
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
 
-    private val passwordEncoder = BCryptPasswordEncoder()
-
     private lateinit var client1: Client
     private lateinit var role1: Role
     private lateinit var user1: User
@@ -62,11 +60,6 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
         clientRepo.deleteAll()
     }
 
-    private fun validateSecret(expected: String, actualHash: String) {
-        val secretHash = actualHash.replace("{bcrypt}", "")
-        assertTrue(passwordEncoder.matches(expected, secretHash))
-    }
-
     @Test
     fun `mutation - client - createClient`() {
         val result = execute("mutation_client_createClient", CreateClientResponse::class.java)
@@ -92,7 +85,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
         )
         val actualDb = clientRepo.findById(2).get()
         assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
-        validateSecret("NewSecret", actualDb.clientSecret)
+        validateHash("NewSecret", actualDb.clientSecret)
     }
 
     @Test
@@ -146,7 +139,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
         )
         val actualDb = clientRepo.findById(1).get()
         assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
-        validateSecret("UpdateSecret", actualDb.clientSecret)
+        validateHash("UpdateSecret", actualDb.clientSecret)
     }
 
     @Test
