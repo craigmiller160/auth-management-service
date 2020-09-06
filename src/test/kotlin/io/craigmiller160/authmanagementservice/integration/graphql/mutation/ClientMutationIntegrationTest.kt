@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.integration.graphql.mutation
 
 import io.craigmiller160.authmanagementservice.dto.ClientDto
+import io.craigmiller160.authmanagementservice.dto.ClientUserDto
 import io.craigmiller160.authmanagementservice.entity.*
 import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
 import io.craigmiller160.authmanagementservice.repository.*
@@ -36,6 +37,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     private lateinit var client1: Client
     private lateinit var role1: Role
     private lateinit var user1: User
+    private lateinit var user2: User
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/client"
@@ -46,6 +48,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
         client1 = clientRepo.save(TestData.createClient(1))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
         user1 = userRepo.save(TestData.createUser(1))
+        user2 = userRepo.save(TestData.createUser(2))
 
         clientUserRepo.save(ClientUser(0, user1.id, client1.id))
         clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
@@ -155,19 +158,38 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
 
         assertEquals(0, clientRepo.count())
         assertEquals(0, roleRepo.count())
-        assertEquals(1, userRepo.count())
+        assertEquals(2, userRepo.count())
         assertEquals(0, userRepo.findAllByClientIdOrderByEmail(client1.id).size)
     }
 
     @Test
     fun `mutation - client - removeUserFromClient`() {
-        // TODO test removal of roles too
-        TODO("Finish this")
+        val result = execute("mutation_client_removeUserFromClient", RemoveUserFromClientResponse::class.java)
+
+        assertEquals(listOf<ClientUserDto>(), result.removeUserFromClient)
+
+        assertEquals(1, clientRepo.count())
+        assertEquals(2, userRepo.count())
+        assertEquals(1, roleRepo.count())
+        assertEquals(0, userRepo.findAllByClientIdOrderByEmail(client1.id).size)
+        assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
+        assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
     }
 
     @Test
     fun `mutation - client - addUserToClient`() {
-        TODO("Finish this")
+        val result = execute("mutation_client_addUserToClient", AddUserToClientResponse::class.java)
+
+        val expected1 = ClientUserDto.fromUser(user1, 0)
+        val expected2 = ClientUserDto.fromUser(user2, 0)
+        assertEquals(listOf(expected1, expected2), result.addUserToClient)
+
+        assertEquals(1, clientRepo.count())
+        assertEquals(2, userRepo.count())
+        assertEquals(1, roleRepo.count())
+        assertEquals(2, userRepo.findAllByClientIdOrderByEmail(client1.id).size)
+        assertEquals(1, clientRepo.findAllByUserOrderByName(user2.id).size)
+        assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user2.id).size)
     }
 
     class CreateClientResponse (
@@ -180,6 +202,14 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
 
     class DeleteClientResponse (
             val deleteClient: ClientDto
+    )
+
+    class RemoveUserFromClientResponse (
+            val removeUserFromClient: List<ClientUserDto>
+    )
+
+    class AddUserToClientResponse (
+            val addUserToClient: List<ClientUserDto>
     )
 
 }
