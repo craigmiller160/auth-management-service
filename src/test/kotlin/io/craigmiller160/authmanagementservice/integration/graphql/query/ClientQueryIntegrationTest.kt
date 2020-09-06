@@ -47,6 +47,9 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
+        client1 = clientRepo.save(
+                client1.copy(clientRedirectUris = listOf(ClientRedirectUri(0, client1.id, "uri_1")))
+        )
         client2 = clientRepo.save(TestData.createClient(2))
         user1 = userRepo.save(TestData.createUser(1))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
