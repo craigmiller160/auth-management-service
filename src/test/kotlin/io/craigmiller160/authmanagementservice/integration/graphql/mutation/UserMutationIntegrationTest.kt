@@ -1,5 +1,7 @@
 package io.craigmiller160.authmanagementservice.integration.graphql.mutation
 
+import io.craigmiller160.authmanagementservice.dto.RoleDto
+import io.craigmiller160.authmanagementservice.dto.UserClientDto
 import io.craigmiller160.authmanagementservice.dto.UserDto
 import io.craigmiller160.authmanagementservice.entity.User
 import io.craigmiller160.authmanagementservice.integration.graphql.AbstractGraphqlTest
@@ -111,6 +113,30 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
 
     class CreateUserResponse (
             val createUser: UserDto
+    )
+
+    class UpdateUserResponse (
+            val updateUser: UserDto
+    )
+
+    class DeleteUserResponse (
+            val deleteUser: UserDto
+    )
+
+    class RemoveClientFromUserResponse (
+            val removeClientFromUser: List<UserClientDto>
+    )
+
+    class AddClientToUserResponse (
+            val addClientToUser: List<UserClientDto>
+    )
+
+    class RemoveRoleFromUserResponse (
+            val removeRoleFromUser: List<RoleDto>
+    )
+
+    class AddRoleToUserResponse (
+            val addRoleToUser: List<RoleDto>
     )
 
 }
