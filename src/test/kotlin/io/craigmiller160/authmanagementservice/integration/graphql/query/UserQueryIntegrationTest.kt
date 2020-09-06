@@ -56,13 +56,16 @@ class UserQueryIntegrationTest : AbstractGraphqlTest() {
         userRepo.deleteAll()
     }
 
+    override fun getGraphqlBasePath(): String {
+        return "graphql/query/user"
+    }
+
     @Test
     fun `query - users - base user only`() {
-        val response = graphqlRestTemplate.postForResource("graphql/query_users_baseUserOnly.graphql")
-        val result = parseResponse(response, UsersResponse::class.java)
+        val result = execute("query_users_baseUserOnly", UsersResponse::class.java)
 
-        assertEquals(baseUser1Dto, result.data.users[0])
-        assertEquals(baseUser2Dto, result.data.users[1])
+        assertEquals(baseUser1Dto, result.users[0])
+        assertEquals(baseUser2Dto, result.users[1])
     }
 
     @Test

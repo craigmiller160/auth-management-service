@@ -23,6 +23,25 @@ abstract class AbstractGraphqlTest : AbstractOAuthTest() {
         graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
     }
 
+    // TODO make abstract
+    protected open fun getGraphqlBasePath(): String = ""
+
+    private fun trailingSlash(value: String): String {
+        if (value.endsWith("/")) {
+            return value
+        }
+
+        return "$value/"
+    }
+
+    protected fun <T> execute(graphqlName: String, type: Class<T>): T {
+        val graphqlFile = "${trailingSlash(getGraphqlBasePath())}$graphqlName.graphql"
+        val response = graphqlRestTemplate.postForResource(graphqlFile)
+        val result = parseResponse(response, type)
+        return result.data
+    }
+
+    // TODO make private
     protected fun <T> parseResponse(response: GraphQLResponse, type: Class<T>): Response<T> {
         return objectMapper.readValue(
                 response.rawResponse.body,
