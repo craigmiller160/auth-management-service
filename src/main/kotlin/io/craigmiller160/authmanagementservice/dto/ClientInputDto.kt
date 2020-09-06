@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.dto
 
 import io.craigmiller160.authmanagementservice.entity.Client
+import io.craigmiller160.authmanagementservice.entity.ClientRedirectUri
 
 data class ClientInputDto (
         val name: String,
@@ -9,11 +10,16 @@ data class ClientInputDto (
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
         val refreshTokenTimeoutSecs: Int,
-        val authCodeTimeoutSecs: Int
+        val authCodeTimeoutSecs: Int,
+        val redirectUris: List<String>
 ) {
-    fun toClient(): Client {
+
+    fun getClientRedirectUris(clientId: Long = 0): List<ClientRedirectUri> =
+            redirectUris.map { ClientRedirectUri(0, clientId, it) }
+
+    fun toClient(clientId: Long = 0): Client {
         return Client(
-                id = 0,
+                id = clientId,
                 name = this.name,
                 clientKey = this.clientKey,
                 clientSecret = this.clientSecret,
@@ -21,7 +27,7 @@ data class ClientInputDto (
                 accessTokenTimeoutSecs = this.accessTokenTimeoutSecs,
                 refreshTokenTimeoutSecs = this.refreshTokenTimeoutSecs,
                 authCodeTimeoutSecs = this.authCodeTimeoutSecs,
-                clientRedirectUris = listOf() // TODO fix this
+                clientRedirectUris = listOf()
         )
     }
 }

@@ -6,7 +6,10 @@ mutation {
         enabled: true,
         accessTokenTimeoutSecs: 100,
         refreshTokenTimeoutSecs: 200,
-        authCodeTimeoutSecs: 10
+        authCodeTimeoutSecs: 10,
+        redirectUris: [
+            "uri_1"
+        ]
     }) {
         id
         name
@@ -15,5 +18,6 @@ mutation {
         accessTokenTimeoutSecs
         refreshTokenTimeoutSecs
         authCodeTimeoutSecs
+        redirectUris
     }
 }

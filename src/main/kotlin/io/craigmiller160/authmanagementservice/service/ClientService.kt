@@ -42,11 +42,13 @@ class ClientService (
     }
 
     fun getAllClients(): List<ClientDto> {
+        // TODO add URI handling
         val clients = clientRepo.findAllByOrderByName()
         return clients.map { ClientDto.fromClient(it) }
     }
 
     fun getClient(clientId: Long): ClientDto? {
+        // TODO add URI handling
         val client = clientRepo.findById(clientId).orElse(null)
         return client?.let { ClientDto.fromClient(it) }
     }
@@ -57,13 +59,18 @@ class ClientService (
                 clientSecret = "{bcrypt}$encoded"
         )
         val dbClient = clientRepo.save(client)
-        return ClientDto.fromClient(dbClient)
+        val dbClientWithUris = clientRepo.save(
+                dbClient.copy(clientRedirectUris = clientInput.getClientRedirectUris(dbClient.id))
+        )
+        return ClientDto.fromClient(dbClientWithUris)
     }
 
     @Transactional
     fun updateClient(clientId: Long, clientInput: ClientInputDto): ClientDto {
         val existing = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client to update for ID: $clientId") }
+
+        // TODO add URI handling
 
         val client = clientInput.toClient().copy(
                 id = clientId,
@@ -80,6 +87,7 @@ class ClientService (
 
     @Transactional
     fun deleteClient(clientId: Long): ClientDto {
+        // TODO add URI handling
         val existing = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client to delete for ID: $clientId") }
 
