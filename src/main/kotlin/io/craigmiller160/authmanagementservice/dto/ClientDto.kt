@@ -9,6 +9,7 @@ data class ClientDto (
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
         val refreshTokenTimeoutSecs: Int,
+        val authCodeTimeoutSecs: Int,
         val roles: List<RoleDto>,
         val users: List<UserDto>
 ) {
@@ -21,6 +22,7 @@ data class ClientDto (
                     enabled = client.enabled,
                     accessTokenTimeoutSecs = client.accessTokenTimeoutSecs,
                     refreshTokenTimeoutSecs = client.refreshTokenTimeoutSecs,
+                    authCodeTimeoutSecs = client.authCodeTimeoutSecs,
                     roles = listOf(),
                     users = listOf()
             )

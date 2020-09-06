@@ -8,7 +8,8 @@ data class ClientInputDto (
         val clientSecret: String,
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
-        val refreshTokenTimeoutSecs: Int
+        val refreshTokenTimeoutSecs: Int,
+        val authCodeTimeoutSecs: Int
 ) {
     fun toClient(): Client {
         return Client(
@@ -18,7 +19,8 @@ data class ClientInputDto (
                 clientSecret = this.clientSecret,
                 enabled = this.enabled,
                 accessTokenTimeoutSecs = this.accessTokenTimeoutSecs,
-                refreshTokenTimeoutSecs = this.refreshTokenTimeoutSecs
+                refreshTokenTimeoutSecs = this.refreshTokenTimeoutSecs,
+                authCodeTimeoutSecs = this.authCodeTimeoutSecs
         )
     }
 }

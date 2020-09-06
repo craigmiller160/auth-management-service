@@ -18,7 +18,8 @@ data class Client (
         val clientSecret: String,
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
-        val refreshTokenTimeoutSecs: Int
+        val refreshTokenTimeoutSecs: Int,
+        val authCodeTimeoutSecs: Int
 ) : Sanitizer<Client> {
         override fun sanitize(): Client {
                 return this.copy(clientSecret = "")
