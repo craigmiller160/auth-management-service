@@ -38,6 +38,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     private lateinit var role1: Role
     private lateinit var user1: User
     private lateinit var user2: User
+    private lateinit var clientRedirectUri: ClientRedirectUri
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/client"
@@ -46,7 +47,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
-        clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
+        clientRedirectUri = clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
         user1 = userRepo.save(TestData.createUser(1))
         user2 = userRepo.save(TestData.createUser(2))
@@ -173,7 +174,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     fun `mutation - client - deleteClient`() {
         val result = execute("mutation_client_deleteClient", DeleteClientResponse::class.java)
 
-        val expected = ClientDto.fromClient(client1)
+        val expected = ClientDto.fromClient(client1, listOf(clientRedirectUri))
         assertEquals(expected, result.deleteClient)
 
         assertEquals(0, clientRepo.count())

@@ -40,12 +40,19 @@ class ClientService (
 
     fun getAllClients(): List<ClientDto> {
         val clients = clientRepo.findAllByOrderByName()
-        return clients.map { ClientDto.fromClient(it) }
+
+        return clients.map {
+            val redirectUris = clientRedirectUriRepo.findAllByClientId(it.id)
+            ClientDto.fromClient(it, redirectUris)
+        }
     }
 
     fun getClient(clientId: Long): ClientDto? {
         val client = clientRepo.findById(clientId).orElse(null)
-        return client?.let { ClientDto.fromClient(it) }
+        return client?.let {
+            val redirectUris = clientRedirectUriRepo.findAllByClientId(it.id)
+            ClientDto.fromClient(it, redirectUris)
+        }
     }
 
     fun createClient(clientInput: ClientInputDto): ClientDto {
@@ -78,20 +85,21 @@ class ClientService (
         val dbClient = clientRepo.save(client)
         clientRedirectUriRepo.deleteAllByClientId(clientId)
         val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
-        return ClientDto.fromClient(dbClient)
+        return ClientDto.fromClient(dbClient, dbRedirectUris)
     }
 
     @Transactional
     fun deleteClient(clientId: Long): ClientDto {
         val existing = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client to delete for ID: $clientId") }
+        val existingUris = clientRedirectUriRepo.findAllByClientId(clientId)
 
         clientUserRoleRepo.deleteAllByClientId(clientId)
         clientUserRepo.deleteAllByClientId(clientId)
         roleRepo.deleteByClientId(clientId)
         clientRedirectUriRepo.deleteAllByClientId(clientId)
         clientRepo.deleteById(clientId)
-        return ClientDto.fromClient(existing)
+        return ClientDto.fromClient(existing, existingUris)
     }
 
     @Transactional

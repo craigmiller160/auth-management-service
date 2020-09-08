@@ -46,11 +46,12 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     private lateinit var user1: User
     private lateinit var role1: Role
     private lateinit var role2: Role
+    private lateinit var clientRedirectUri: ClientRedirectUri
 
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
-        clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
+        clientRedirectUri = clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
         client2 = clientRepo.save(TestData.createClient(2))
         user1 = userRepo.save(TestData.createUser(1))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
@@ -62,7 +63,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
         val clientUserRole = ClientUserRole(0, client1.id, user1.id, role1.id)
         clientUserRoleRepo.save(clientUserRole)
 
-        baseClient1Dto = ClientDto.fromClient(client1)
+        baseClient1Dto = ClientDto.fromClient(client1, listOf(clientRedirectUri))
         baseClient2Dto = ClientDto.fromClient(client2)
 
         val clientUserDto = ClientUserDto.fromUser(user1, 0)
