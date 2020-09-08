@@ -26,8 +26,7 @@ data class ClientInputDto (
                 enabled = this.enabled,
                 accessTokenTimeoutSecs = this.accessTokenTimeoutSecs,
                 refreshTokenTimeoutSecs = this.refreshTokenTimeoutSecs,
-                authCodeTimeoutSecs = this.authCodeTimeoutSecs,
-                clientRedirectUris = listOf()
+                authCodeTimeoutSecs = this.authCodeTimeoutSecs
         )
     }
 }

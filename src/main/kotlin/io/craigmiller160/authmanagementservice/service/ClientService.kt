@@ -6,11 +6,7 @@ import io.craigmiller160.authmanagementservice.dto.ClientUserDto
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
-import io.craigmiller160.authmanagementservice.repository.ClientRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
-import io.craigmiller160.authmanagementservice.repository.RoleRepository
-import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.authmanagementservice.repository.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -21,7 +17,8 @@ class ClientService (
         private val userRepo: UserRepository,
         private val clientRepo: ClientRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository,
-        private val clientUserRepo: ClientUserRepository
+        private val clientUserRepo: ClientUserRepository,
+        private val clientRedirectUriRepo: ClientRedirectUriRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
@@ -57,10 +54,10 @@ class ClientService (
                 clientSecret = "{bcrypt}$encoded"
         )
         val dbClient = clientRepo.save(client)
-        val dbClientWithUris = clientRepo.save(
-                dbClient.copy(clientRedirectUris = clientInput.getClientRedirectUris(dbClient.id))
-        )
-        return ClientDto.fromClient(dbClientWithUris)
+        val redirectUris = clientInput.getClientRedirectUris(dbClient.id)
+        clientRedirectUriRepo.deleteAllByClientId(dbClient.id)
+        val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
+        return ClientDto.fromClient(dbClient, dbRedirectUris)
     }
 
     @Transactional
@@ -75,10 +72,12 @@ class ClientService (
                     "{bcrypt}$encoded"
                 } else {
                     existing.clientSecret
-                },
-                clientRedirectUris = clientInput.getClientRedirectUris(clientId)
+                }
         )
+        val redirectUris = clientInput.getClientRedirectUris(clientId)
         val dbClient = clientRepo.save(client)
+        clientRedirectUriRepo.deleteAllByClientId(clientId)
+        val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
         return ClientDto.fromClient(dbClient)
     }
 
@@ -90,6 +89,7 @@ class ClientService (
         clientUserRoleRepo.deleteAllByClientId(clientId)
         clientUserRepo.deleteAllByClientId(clientId)
         roleRepo.deleteByClientId(clientId)
+        clientRedirectUriRepo.deleteAllByClientId(clientId)
         clientRepo.deleteById(clientId)
         return ClientDto.fromClient(existing)
     }

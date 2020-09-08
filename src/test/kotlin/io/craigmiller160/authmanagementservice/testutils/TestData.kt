@@ -36,8 +36,7 @@ object TestData {
             enabled = true,
             accessTokenTimeoutSecs = 100,
             refreshTokenTimeoutSecs = 200,
-            authCodeTimeoutSecs = 10,
-            clientRedirectUris = listOf()
+            authCodeTimeoutSecs = 10
     )
 
 }

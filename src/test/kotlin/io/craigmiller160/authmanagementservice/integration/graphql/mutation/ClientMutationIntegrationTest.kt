@@ -46,9 +46,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
-        client1 = clientRepo.save(
-                client1.copy(clientRedirectUris = listOf(ClientRedirectUri(0, client1.id, "uri_1")))
-        )
+        clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
         user1 = userRepo.save(TestData.createUser(1))
         user2 = userRepo.save(TestData.createUser(2))
@@ -90,11 +88,13 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 100,
                 refreshTokenTimeoutSecs = 200,
-                authCodeTimeoutSecs = 10,
-                clientRedirectUris = listOf(ClientRedirectUri(2, 2, "uri_1"))
+                authCodeTimeoutSecs = 10
         )
+        val expectedDbUris = listOf(ClientRedirectUri(2, 2, "uri_1"))
         val actualDb = clientRepo.findById(2).get()
+        val actualDbUris = clientRedirectUriRepo.findAllByClientId(2)
         assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
+        assertEquals(expectedDbUris, actualDbUris)
         validateHash("NewSecret", actualDb.clientSecret)
     }
 
@@ -122,13 +122,14 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
                 refreshTokenTimeoutSecs = 400,
-                authCodeTimeoutSecs = 20,
-                clientRedirectUris = listOf(
-                        ClientRedirectUri(2, client1.id, "uri_2"),
-                        ClientRedirectUri(3, client1.id, "uri_3")
-                )
+                authCodeTimeoutSecs = 20
+        )
+        val expectedDbUris = listOf(
+                ClientRedirectUri(2, client1.id, "uri_2"),
+                ClientRedirectUri(3, client1.id, "uri_3")
         )
         assertEquals(expectedDb, clientRepo.findById(1).get())
+        assertEquals(expectedDbUris, clientRedirectUriRepo.findAllByClientId(1))
     }
 
     @Test
@@ -155,14 +156,16 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
                 refreshTokenTimeoutSecs = 400,
-                authCodeTimeoutSecs = 20,
-                clientRedirectUris = listOf(
-                        ClientRedirectUri(2, client1.id, "uri_2"),
-                        ClientRedirectUri(3, client1.id, "uri_3")
-                )
+                authCodeTimeoutSecs = 20
+        )
+        val expectedDbUris = listOf(
+                ClientRedirectUri(2, client1.id, "uri_2"),
+                ClientRedirectUri(3, client1.id, "uri_3")
         )
         val actualDb = clientRepo.findById(1).get()
+        val actualDbUris = clientRedirectUriRepo.findAllByClientId(1)
         assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
+        assertEquals(expectedDbUris, actualDbUris)
         validateHash("UpdateSecret", actualDb.clientSecret)
     }
 
