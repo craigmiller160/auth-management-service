@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.entity
 import io.craigmiller160.authmanagementservice.dto.Sanitizer
 import javax.persistence.*
 
+@Suppress("JpaDataSourceORMInspection")
 @Entity
 @Table(name = "clients")
 data class Client (
@@ -15,15 +16,8 @@ data class Client (
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
         val refreshTokenTimeoutSecs: Int,
-        val authCodeTimeoutSecs: Int,
-
-        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "clientId")
-        val clientRedirectUris: List<ClientRedirectUri>
+        val authCodeTimeoutSecs: Int
 ) : Sanitizer<Client> {
-
-        fun getRedirectUris(): List<String> {
-                return clientRedirectUris.map { it.redirectUri }
-        }
 
         override fun sanitize(): Client {
                 return this.copy(clientSecret = "")
