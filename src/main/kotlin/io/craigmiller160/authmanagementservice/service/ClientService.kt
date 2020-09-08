@@ -63,6 +63,7 @@ class ClientService (
         val dbClient = clientRepo.save(client)
         val redirectUris = clientInput.getClientRedirectUris(dbClient.id)
         clientRedirectUriRepo.deleteAllByClientId(dbClient.id)
+        clientRedirectUriRepo.flush()
         val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
         return ClientDto.fromClient(dbClient, dbRedirectUris)
     }
@@ -84,6 +85,7 @@ class ClientService (
         val redirectUris = clientInput.getClientRedirectUris(clientId)
         val dbClient = clientRepo.save(client)
         clientRedirectUriRepo.deleteAllByClientId(clientId)
+        clientRedirectUriRepo.flush()
         val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
         return ClientDto.fromClient(dbClient, dbRedirectUris)
     }
