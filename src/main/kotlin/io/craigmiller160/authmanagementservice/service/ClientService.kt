@@ -55,6 +55,7 @@ class ClientService (
         }
     }
 
+    @Transactional
     fun createClient(clientInput: ClientInputDto): ClientDto {
         val encoded = encoder.encode(clientInput.clientSecret)
         val client = clientInput.toClient().copy(

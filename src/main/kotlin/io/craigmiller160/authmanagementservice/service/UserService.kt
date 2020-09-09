@@ -42,6 +42,7 @@ class UserService (
         return clients.map { UserClientDto.fromClient(it, userId) }
     }
 
+    @Transactional
     fun createUser(userInput: UserInputDto): UserDto {
         val encoded = encoder.encode(userInput.password)
         val user = userInput.toUser().copy(
