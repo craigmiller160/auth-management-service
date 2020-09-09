@@ -121,8 +121,15 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
 
     @Test
     fun `query - rolesForClient`() {
-        TODO("Finish this")
+        val result = execute("query_rolesForClient", RolesForClientResponse::class.java)
+        assertEquals(2, result.rolesForClient.size)
+        assertEquals(RoleDto.fromRole(role1), result.rolesForClient[0])
+        assertEquals(RoleDto.fromRole(role2), result.rolesForClient[1])
     }
+
+    class RolesForClientResponse (
+            val rolesForClient: List<RoleDto>
+    )
 
     class ClientsResponse (
             val clients: List<ClientDto>
