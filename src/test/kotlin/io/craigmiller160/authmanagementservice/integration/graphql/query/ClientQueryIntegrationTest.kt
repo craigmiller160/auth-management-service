@@ -119,6 +119,11 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
         assertEquals(baseClient1Dto, result.client)
     }
 
+    @Test
+    fun `query - rolesForClient`() {
+        TODO("Finish this")
+    }
+
     class ClientsResponse (
             val clients: List<ClientDto>
     )

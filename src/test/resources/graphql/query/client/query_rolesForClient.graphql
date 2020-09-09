@@ -1,0 +1,7 @@
+query {
+    rolesForClient(clientId: 1) {
+        id
+        clientId
+        name
+    }
+}
