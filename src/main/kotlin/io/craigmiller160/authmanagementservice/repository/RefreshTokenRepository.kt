@@ -11,7 +11,7 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
     fun findByClientIdAndUserId(clientId: Long, userId: Long): RefreshToken?
 
-    fun findByClientId(clientId: Long): List<RefreshToken>
+    fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)

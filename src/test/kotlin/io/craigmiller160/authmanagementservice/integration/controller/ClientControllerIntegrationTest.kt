@@ -3,6 +3,7 @@ package io.craigmiller160.authmanagementservice.integration.controller
 import io.craigmiller160.apitestprocessor.config.AuthType
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.dto.OldClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
@@ -13,10 +14,7 @@ import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
 import io.craigmiller160.authmanagementservice.repository.UserRepository
 import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasProperty
-import org.hamcrest.Matchers.nullValue
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -107,13 +105,23 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
             request {
                 path = "/clients/auth/${client.id}"
             }
+            response {
+                print = true
+            }
         }.convert(ClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
-                hasProperty("tokenId", equalTo(clientTokenId)),
-                hasProperty("clientId", equalTo(client.id)),
                 hasProperty("clientName", equalTo(client.name)),
-                hasProperty("lastAuthenticated", equalTo(clientRefreshToken.timestamp))
+                hasProperty("userAuthDetails", containsInAnyOrder<UserAuthDetailsDto>(
+                        allOf(
+                                hasProperty("tokenId", equalTo(userRefreshToken.id)),
+                                hasProperty("clientId", equalTo(client.id)),
+                                hasProperty("clientName", equalTo(client.name)),
+                                hasProperty("userId", equalTo(user.id)),
+                                hasProperty("userEmail", nullValue()), // TODO not null
+                                hasProperty("lastAuthenticated", notNullValue())
+                        )
+                ))
         ))
     }
 

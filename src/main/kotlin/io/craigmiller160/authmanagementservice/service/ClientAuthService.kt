@@ -17,7 +17,8 @@ class ClientAuthService (
         val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client for ID $clientId") }
 
-        val tokens = refreshTokenRepo.findByClientId(clientId)
+        val tokens = refreshTokenRepo.findByClientIdAndUserIdIsNotNull(clientId)
+        // TODO do need to lookup user email
         val authDetails = tokens.map { UserAuthDetailsDto(
                 tokenId = it.id,
                 clientId = clientId,
@@ -26,6 +27,7 @@ class ClientAuthService (
                 userEmail = null,
                 lastAuthenticated = it.timestamp
         ) }
+        println(authDetails) // TODO delete this
         return ClientAuthDetailsDto(
                 clientName = client.name,
                 userAuthDetails = authDetails

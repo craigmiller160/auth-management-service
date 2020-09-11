@@ -22,7 +22,6 @@ class ClientController (
         return guidService.generateGuid()
     }
 
-    // TODO update tests for this
     @GetMapping("/auth/{clientId}")
     fun getAuthDetailsForClient(@PathVariable clientId: Long): ClientAuthDetailsDto {
         return clientAuthService.getAuthDetailsForClient(clientId)
