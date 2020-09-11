@@ -6,6 +6,7 @@ import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class ClientAuthService (
@@ -13,6 +14,7 @@ class ClientAuthService (
         private val refreshTokenRepo: RefreshTokenRepository
 ) {
 
+    @Transactional
     fun getAuthDetailsForClient(clientId: Long): ClientAuthDetailsDto {
         val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client for ID $clientId") }

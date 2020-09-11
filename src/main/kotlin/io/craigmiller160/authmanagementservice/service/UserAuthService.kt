@@ -17,58 +17,34 @@ class UserAuthService (
 ) {
 
     @Transactional
-    fun getUserAuthDetails(clientId: Long, userId: Long): UserAuthDetailsDto {
-        val user = userRepo.findByClientAndUser(clientId, userId)
-                ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
-        val client = clientRepo.findById(clientId)
-                .orElseThrow { EntityNotFoundException("No client found for id $clientId") }
-
-        val refreshToken = refreshTokenRepo.findByClientIdAndUserId(clientId, userId)
-        return UserAuthDetailsDto(
-                tokenId = refreshToken?.id,
-                clientId = clientId,
-                clientName = client.name,
-                userId = userId,
-                userEmail = user.email,
-                lastAuthenticated = refreshToken?.timestamp
-        )
-    }
-
-    @Transactional
     fun getAllUserAuthDetails(userId: Long): UserAuthDetailsListDto {
         val user = userRepo.findById(userId)
                 .orElseThrow { EntityNotFoundException("No user found for id $userId") }
         val authDetails = clientRepo.findAllByUserOrderByName(userId)
-                .map { client ->
+                .mapNotNull { client ->
                     val refreshToken = refreshTokenRepo.findByClientIdAndUserId(client.id, userId)
-                    UserAuthDetailsDto(
-                            tokenId = refreshToken?.id,
-                            clientId = client.id,
-                            clientName = client.name,
-                            userId = userId,
-                            userEmail = user.email,
-                            lastAuthenticated = refreshToken?.timestamp
-                    )
+                    refreshToken?.let {
+                        UserAuthDetailsDto(
+                                tokenId = it.id,
+                                clientId = client.id,
+                                clientName = client.name,
+                                userId = userId,
+                                userEmail = user.email,
+                                lastAuthenticated = it.timestamp
+                        )
+                    }
                 }
         return UserAuthDetailsListDto(user.email, authDetails)
     }
 
     @Transactional
-    fun revokeUserAuthAccess(clientId: Long, userId: Long): UserAuthDetailsDto {
+    fun revokeUserAuthAccess(clientId: Long, userId: Long) {
         val user = userRepo.findByClientAndUser(clientId, userId)
                 ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
         val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client found for id $clientId") }
 
         refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
-        return UserAuthDetailsDto(
-                tokenId = null,
-                clientId = clientId,
-                clientName = client.name,
-                userId = userId,
-                userEmail = user.email,
-                lastAuthenticated = null
-        )
     }
 
 }
