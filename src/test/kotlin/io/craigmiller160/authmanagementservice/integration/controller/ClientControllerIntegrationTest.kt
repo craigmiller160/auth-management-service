@@ -118,7 +118,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
                                 hasProperty("clientId", equalTo(client.id)),
                                 hasProperty("clientName", equalTo(client.name)),
                                 hasProperty("userId", equalTo(user.id)),
-                                hasProperty("userEmail", nullValue()), // TODO not null
+                                hasProperty("userEmail", equalTo(user.email)),
                                 hasProperty("lastAuthenticated", notNullValue())
                         )
                 ))

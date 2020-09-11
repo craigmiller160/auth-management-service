@@ -7,6 +7,6 @@ data class UserAuthDetailsDto (
         val clientId: Long,
         val clientName: String,
         val userId: Long,
-        val userEmail: String?, // TODO not null
+        val userEmail: String,
         val lastAuthenticated: LocalDateTime
 )
