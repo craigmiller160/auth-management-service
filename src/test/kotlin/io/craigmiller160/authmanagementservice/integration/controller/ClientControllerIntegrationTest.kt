@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.integration.controller
 
 import io.craigmiller160.apitestprocessor.config.AuthType
+import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.dto.OldClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.ClientUser
@@ -106,7 +107,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
             request {
                 path = "/clients/auth/${client.id}"
             }
-        }.convert(OldClientAuthDetailsDto::class.java)
+        }.convert(ClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", equalTo(clientTokenId)),
@@ -133,56 +134,6 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         apiProcessor.call {
             request {
                 path = "/clients/auth/${client.id}"
-                overrideAuth {
-                    type = AuthType.NONE
-                }
-            }
-            response {
-                status = 401
-            }
-        }
-    }
-
-    @Test
-    fun test_revokeClientAuthAccess() {
-        val result = apiProcessor.call {
-            request {
-                method = HttpMethod.POST
-                path = "/clients/auth/${client.id}/revoke"
-            }
-        }.convert(OldClientAuthDetailsDto::class.java)
-
-        assertThat(result, allOf(
-                hasProperty("tokenId", nullValue()),
-                hasProperty("clientId", equalTo(client.id)),
-                hasProperty("clientName", equalTo(client.name)),
-                hasProperty("lastAuthenticated", nullValue())
-        ))
-
-        val tokens = refreshTokenRepo.findAll()
-        assertEquals(1, tokens.size)
-        assertEquals(userRefreshToken, tokens[0])
-    }
-
-    @Test
-    fun test_revokeClientAuthAccess_clientNotExist() {
-        apiProcessor.call {
-            request {
-                method = HttpMethod.POST
-                path = "/clients/auth/1000/revoke"
-            }
-            response {
-                status = 400
-            }
-        }
-    }
-
-    @Test
-    fun test_revokeClientAuthAccess_unauthorized() {
-        apiProcessor.call {
-            request {
-                method = HttpMethod.POST
-                path = "/clients/auth/${client.id}/revoke"
                 overrideAuth {
                     type = AuthType.NONE
                 }
