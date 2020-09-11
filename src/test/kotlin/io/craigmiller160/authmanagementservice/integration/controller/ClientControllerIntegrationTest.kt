@@ -1,7 +1,7 @@
 package io.craigmiller160.authmanagementservice.integration.controller
 
 import io.craigmiller160.apitestprocessor.config.AuthType
-import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.OldClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
@@ -106,7 +106,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
             request {
                 path = "/clients/auth/${client.id}"
             }
-        }.convert(ClientAuthDetailsDto::class.java)
+        }.convert(OldClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", equalTo(clientTokenId)),
@@ -150,7 +150,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 method = HttpMethod.POST
                 path = "/clients/auth/${client.id}/revoke"
             }
-        }.convert(ClientAuthDetailsDto::class.java)
+        }.convert(OldClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
                 hasProperty("tokenId", nullValue()),

@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
@@ -12,28 +13,22 @@ class ClientAuthService (
         private val refreshTokenRepo: RefreshTokenRepository
 ) {
 
-    fun getClientAuthDetails(clientId: Long): ClientAuthDetailsDto {
+    fun getAuthDetailsForClient(clientId: Long): ClientAuthDetailsDto {
         val client = clientRepo.findById(clientId)
-                .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
+                .orElseThrow { EntityNotFoundException("No client for ID $clientId") }
 
-        val refreshToken = refreshTokenRepo.findByClientIdAndUserIdIsNull(clientId)
-        return ClientAuthDetailsDto(
-                tokenId = refreshToken?.id,
+        val tokens = refreshTokenRepo.findByClientId(clientId)
+        val authDetails = tokens.map { UserAuthDetailsDto(
+                tokenId = it.id,
                 clientId = clientId,
                 clientName = client.name,
-                lastAuthenticated = refreshToken?.timestamp
-        )
-    }
-
-    fun revokeClientAuthAccess(clientId: Long): ClientAuthDetailsDto {
-        val client = clientRepo.findById(clientId)
-                .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
-        refreshTokenRepo.deleteByClientIdAndUserIdIsNull(clientId)
+                userId = it.userId ?: 0,
+                userEmail = null,
+                lastAuthenticated = it.timestamp
+        ) }
         return ClientAuthDetailsDto(
-                tokenId = null,
-                clientId = clientId,
                 clientName = client.name,
-                lastAuthenticated = null
+                userAuthDetails = authDetails
         )
     }
 
