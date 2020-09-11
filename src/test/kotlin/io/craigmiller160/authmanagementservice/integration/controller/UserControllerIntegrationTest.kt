@@ -83,67 +83,16 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
     }
 
     @Test
-    fun test_getAuthDetails() {
-        val result = apiProcessor.call {
-            request {
-                path = "/users/auth/${user.id}/${client1.id}"
-            }
-        }.convert(UserAuthDetailsDto::class.java)
-
-        assertThat(result, allOf(
-                hasProperty("tokenId", equalTo(userToken1Id)),
-                hasProperty("clientId", equalTo(client1.id)),
-                hasProperty("userId", equalTo(user.id)),
-                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp)),
-                hasProperty("clientName", equalTo(client1.name)),
-                hasProperty("userEmail", equalTo(user.email))
-        ))
-    }
-
-    @Test
-    fun test_getAuthDetails_userNotExists() {
-        apiProcessor.call {
-            request {
-                path = "/users/auth/${user.id}/1000"
-            }
-            response {
-                status = 400
-            }
-        }
-    }
-
-    @Test
-    fun test_getAuthDetails_unauthorized() {
-        apiProcessor.call {
-            request {
-                path = "/users/auth/${user.id}/${client1.id}"
-                overrideAuth {
-                    type = AuthType.NONE
-                }
-            }
-            response {
-                status = 401
-            }
-        }
-    }
-
-    @Test
     fun test_revokeUserAuthAccess() {
-        val result = apiProcessor.call {
+        apiProcessor.call {
             request {
                 method = HttpMethod.POST
                 path = "/users/auth/${user.id}/${client1.id}/revoke"
             }
-        }.convert(UserAuthDetailsDto::class.java)
-
-        assertThat(result, allOf(
-                hasProperty("tokenId", nullValue()),
-                hasProperty("clientId", equalTo(client1.id)),
-                hasProperty("userId", equalTo(user.id)),
-                hasProperty("lastAuthenticated", nullValue()),
-                hasProperty("clientName", equalTo(client1.name)),
-                hasProperty("userEmail", equalTo(user.email))
-        ))
+            response {
+                status = 204
+            }
+        }
 
         val tokens = refreshTokenRepo.findAll()
         assertEquals(2, tokens.size)

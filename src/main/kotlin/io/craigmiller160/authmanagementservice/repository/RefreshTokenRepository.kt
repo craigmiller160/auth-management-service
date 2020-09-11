@@ -9,6 +9,8 @@ import javax.transaction.Transactional
 @Repository
 interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
+    fun findAllByUserId(userId: Long): List<RefreshToken>
+
     fun findByClientIdAndUserId(clientId: Long, userId: Long): RefreshToken?
 
     fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
