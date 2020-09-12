@@ -18,7 +18,8 @@ class ClientService (
         private val clientRepo: ClientRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository,
         private val clientUserRepo: ClientUserRepository,
-        private val clientRedirectUriRepo: ClientRedirectUriRepository
+        private val clientRedirectUriRepo: ClientRedirectUriRepository,
+        private val refreshTokenRepo: RefreshTokenRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
@@ -102,6 +103,7 @@ class ClientService (
         roleRepo.deleteByClientId(clientId)
         clientRedirectUriRepo.deleteAllByClientId(clientId)
         clientRepo.deleteById(clientId)
+        refreshTokenRepo.deleteAllByClientId(clientId)
         return ClientDto.fromClient(existing, existingUris)
     }
 
@@ -109,6 +111,7 @@ class ClientService (
     fun removeUserFromClient(userId: Long, clientId: Long): List<ClientUserDto> {
         clientUserRoleRepo.deleteAllByUserIdAndClientId(userId, clientId)
         clientUserRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
         return userRepo.findAllByClientIdOrderByEmail(clientId)
                 .map { ClientUserDto.fromUser(it, clientId) }
     }

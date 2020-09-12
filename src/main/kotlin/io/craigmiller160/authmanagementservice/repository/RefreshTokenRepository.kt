@@ -21,6 +21,14 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    fun deleteByClientIdAndUserIdIsNull(clientId: Long): Int
+    fun deleteAllByClientIdAndUserIdIsNull(clientId: Long): Int
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    fun deleteAllByClientId(clientId: Long): Int
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    fun deleteAllByUserId(userId: Long): Int
 
 }
