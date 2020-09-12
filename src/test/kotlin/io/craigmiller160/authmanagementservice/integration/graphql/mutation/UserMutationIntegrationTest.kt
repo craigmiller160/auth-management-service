@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.LocalDateTime
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,12 +31,15 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
     private lateinit var clientUserRepo: ClientUserRepository
     @Autowired
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
+    @Autowired
+    private lateinit var refreshTokenRepo: RefreshTokenRepository
 
     private lateinit var user1: User
     private lateinit var client1: Client
     private lateinit var client2: Client
     private lateinit var role1: Role
     private lateinit var role2: Role
+    private lateinit var refreshToken: RefreshToken
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/user"
@@ -51,6 +55,8 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
 
         clientUserRepo.save(ClientUser(0, user1.id, client1.id))
         clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
+
+        refreshToken = refreshTokenRepo.save(RefreshToken("TokenId", "RefreshToken", client1.id, user1.id, LocalDateTime.now()))
     }
 
     @AfterEach
@@ -152,6 +158,7 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
         assertEquals(2, roleRepo.findAllByClientIdOrderByName(client1.id).size)
         assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
         assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
+        assertEquals(0, refreshTokenRepo.count())
     }
 
     @Test
@@ -166,6 +173,7 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
         assertEquals(2, roleRepo.findAllByClientIdOrderByName(client1.id).size)
         assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
         assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
+        assertEquals(0, refreshTokenRepo.count())
     }
 
     @Test

@@ -5,6 +5,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
+@Suppress("JpaDataSourceORMInspection")
 @Entity
 @Table(name = "refresh_tokens")
 data class RefreshToken (
