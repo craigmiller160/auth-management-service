@@ -9,9 +9,11 @@ import javax.transaction.Transactional
 @Repository
 interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
+    fun findAllByUserId(userId: Long): List<RefreshToken>
+
     fun findByClientIdAndUserId(clientId: Long, userId: Long): RefreshToken?
 
-    fun findByClientIdAndUserIdIsNull(clientId: Long): RefreshToken?
+    fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
@@ -19,6 +21,14 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    fun deleteByClientIdAndUserIdIsNull(clientId: Long): Int
+    fun deleteAllByClientIdAndUserIdIsNull(clientId: Long): Int
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    fun deleteAllByClientId(clientId: Long): Int
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    fun deleteAllByUserId(userId: Long): Int
 
 }

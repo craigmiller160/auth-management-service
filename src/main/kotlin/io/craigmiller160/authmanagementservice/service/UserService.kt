@@ -7,11 +7,7 @@ import io.craigmiller160.authmanagementservice.dto.UserInputDto
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.entity.ClientUserRole
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
-import io.craigmiller160.authmanagementservice.repository.ClientRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
-import io.craigmiller160.authmanagementservice.repository.RoleRepository
-import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.authmanagementservice.repository.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -22,7 +18,8 @@ class UserService (
         private val clientRepo: ClientRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository,
         private val clientUserRepo: ClientUserRepository,
-        private val roleRepo: RoleRepository
+        private val roleRepo: RoleRepository,
+        private val refreshTokenRepo: RefreshTokenRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
@@ -42,6 +39,7 @@ class UserService (
         return clients.map { UserClientDto.fromClient(it, userId) }
     }
 
+    @Transactional
     fun createUser(userInput: UserInputDto): UserDto {
         val encoded = encoder.encode(userInput.password)
         val user = userInput.toUser().copy(
@@ -77,6 +75,7 @@ class UserService (
         clientUserRoleRepo.deleteAllByUserId(userId)
         clientUserRepo.deleteAllByUserId(userId)
         userRepo.deleteById(userId)
+        refreshTokenRepo.deleteAllByUserId(userId)
         return UserDto.fromUser(existing)
     }
 
@@ -84,6 +83,7 @@ class UserService (
     fun removeClientFromUser(userId: Long, clientId: Long): List<UserClientDto> {
         clientUserRoleRepo.deleteAllByUserIdAndClientId(userId, clientId)
         clientUserRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
         return clientRepo.findAllByUserOrderByName(userId)
                 .map { UserClientDto.fromClient(it, userId) }
     }

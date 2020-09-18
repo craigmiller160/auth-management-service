@@ -5,7 +5,12 @@ mutation {
         clientSecret: "",
         enabled: true,
         accessTokenTimeoutSecs: 300,
-        refreshTokenTimeoutSecs: 400
+        refreshTokenTimeoutSecs: 400,
+        authCodeTimeoutSecs: 20,
+        redirectUris: [
+            "uri_2",
+            "uri_3"
+        ]
     }) {
         id
         name
@@ -13,5 +18,7 @@ mutation {
         enabled
         accessTokenTimeoutSecs
         refreshTokenTimeoutSecs
+        authCodeTimeoutSecs
+        redirectUris
     }
 }

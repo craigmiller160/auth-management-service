@@ -1,6 +1,7 @@
 package io.craigmiller160.authmanagementservice.controller
 
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.OldClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.service.ClientAuthService
 import io.craigmiller160.authmanagementservice.service.GuidService
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,13 +23,8 @@ class ClientController (
     }
 
     @GetMapping("/auth/{clientId}")
-    fun getClientAuthDetails(@PathVariable clientId: Long): ClientAuthDetailsDto {
-        return clientAuthService.getClientAuthDetails(clientId)
-    }
-
-    @PostMapping("/auth/{clientId}/revoke")
-    fun revokeClientAuthAccess(@PathVariable clientId: Long): ClientAuthDetailsDto {
-        return clientAuthService.revokeClientAuthAccess(clientId)
+    fun getAuthDetailsForClient(@PathVariable clientId: Long): ClientAuthDetailsDto {
+        return clientAuthService.getAuthDetailsForClient(clientId)
     }
 
 }

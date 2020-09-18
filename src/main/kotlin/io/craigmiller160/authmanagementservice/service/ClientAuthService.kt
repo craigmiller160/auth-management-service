@@ -1,39 +1,42 @@
 package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
+import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
+import io.craigmiller160.authmanagementservice.repository.UserRepository
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class ClientAuthService (
         private val clientRepo: ClientRepository,
+        private val userRepo: UserRepository,
         private val refreshTokenRepo: RefreshTokenRepository
 ) {
 
-    fun getClientAuthDetails(clientId: Long): ClientAuthDetailsDto {
+    @Transactional
+    fun getAuthDetailsForClient(clientId: Long): ClientAuthDetailsDto {
         val client = clientRepo.findById(clientId)
-                .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
+                .orElseThrow { EntityNotFoundException("No client for ID $clientId") }
 
-        val refreshToken = refreshTokenRepo.findByClientIdAndUserIdIsNull(clientId)
+        val tokens = refreshTokenRepo.findByClientIdAndUserIdIsNotNull(clientId)
+        val authDetails = tokens.map {
+            val user = userRepo.findById(it.userId!!)
+                    .orElseThrow { EntityNotFoundException("No user for ID: ${it.userId}") }
+            UserAuthDetailsDto(
+                    tokenId = it.id,
+                    clientId = clientId,
+                    clientName = client.name,
+                    userId = it.userId ?: 0,
+                    userEmail = user.email,
+                    lastAuthenticated = it.timestamp
+            )
+        }
         return ClientAuthDetailsDto(
-                tokenId = refreshToken?.id,
-                clientId = clientId,
                 clientName = client.name,
-                lastAuthenticated = refreshToken?.timestamp
-        )
-    }
-
-    fun revokeClientAuthAccess(clientId: Long): ClientAuthDetailsDto {
-        val client = clientRepo.findById(clientId)
-                .orElseThrow { EntityNotFoundException("No auth details found for client $clientId") }
-        refreshTokenRepo.deleteByClientIdAndUserIdIsNull(clientId)
-        return ClientAuthDetailsDto(
-                tokenId = null,
-                clientId = clientId,
-                clientName = client.name,
-                lastAuthenticated = null
+                userAuthDetails = authDetails
         )
     }
 

@@ -20,6 +20,8 @@ type Client {
     enabled: Boolean!
     accessTokenTimeoutSecs: Int!
     refreshTokenTimeoutSecs: Int!
+    authCodeTimeoutSecs: Int!
+    redirectUris: [String]!
     roles: [Role]!
     users: [ClientUser]!
 }
@@ -61,6 +63,8 @@ input ClientInput {
     enabled: Boolean!
     accessTokenTimeoutSecs: Int!
     refreshTokenTimeoutSecs: Int!
+    authCodeTimeoutSecs: Int!
+    redirectUris: [String]!
 }
 
 type Query {

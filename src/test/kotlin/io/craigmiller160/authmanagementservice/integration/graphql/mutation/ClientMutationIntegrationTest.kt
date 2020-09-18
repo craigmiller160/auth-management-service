@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.LocalDateTime
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,11 +32,17 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     private lateinit var clientUserRepo: ClientUserRepository
     @Autowired
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
+    @Autowired
+    private lateinit var clientRedirectUriRepo: ClientRedirectUriRepository
+    @Autowired
+    private lateinit var refreshTokenRepo: RefreshTokenRepository
 
     private lateinit var client1: Client
     private lateinit var role1: Role
     private lateinit var user1: User
     private lateinit var user2: User
+    private lateinit var clientRedirectUri: ClientRedirectUri
+    private lateinit var refreshToken: RefreshToken
 
     override fun getGraphqlBasePath(): String {
         return "graphql/mutation/client"
@@ -44,16 +51,20 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
+        clientRedirectUri = clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
         user1 = userRepo.save(TestData.createUser(1))
         user2 = userRepo.save(TestData.createUser(2))
 
         clientUserRepo.save(ClientUser(0, user1.id, client1.id))
         clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
+
+        refreshToken = refreshTokenRepo.save(RefreshToken("TokenId", "RefreshToken", client1.id, user1.id, LocalDateTime.now()))
     }
 
     @AfterEach
     fun clean() {
+        clientRedirectUriRepo.deleteAll()
         clientUserRoleRepo.deleteAll()
         clientUserRepo.deleteAll()
         userRepo.deleteAll()
@@ -70,7 +81,9 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 clientKey = "NewKey",
                 enabled = true,
                 accessTokenTimeoutSecs = 100,
-                refreshTokenTimeoutSecs = 200
+                refreshTokenTimeoutSecs = 200,
+                authCodeTimeoutSecs = 10,
+                redirectUris = listOf("uri_1")
         )
         assertEquals(expected, result.createClient)
 
@@ -81,10 +94,14 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 clientSecret = "",
                 enabled = true,
                 accessTokenTimeoutSecs = 100,
-                refreshTokenTimeoutSecs = 200
+                refreshTokenTimeoutSecs = 200,
+                authCodeTimeoutSecs = 10
         )
+        val expectedDbUris = listOf(ClientRedirectUri(2, 2, "uri_1"))
         val actualDb = clientRepo.findById(2).get()
+        val actualDbUris = clientRedirectUriRepo.findAllByClientId(2)
         assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
+        assertEquals(expectedDbUris, actualDbUris)
         validateHash("NewSecret", actualDb.clientSecret)
     }
 
@@ -98,7 +115,9 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 clientKey = "UpdateKey",
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
-                refreshTokenTimeoutSecs = 400
+                refreshTokenTimeoutSecs = 400,
+                authCodeTimeoutSecs = 20,
+                redirectUris = listOf("uri_2", "uri_3")
         )
         assertEquals(expected, result.updateClient)
 
@@ -109,9 +128,15 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 clientSecret = "Secret_1",
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
-                refreshTokenTimeoutSecs = 400
+                refreshTokenTimeoutSecs = 400,
+                authCodeTimeoutSecs = 20
+        )
+        val expectedDbUris = listOf(
+                ClientRedirectUri(2, client1.id, "uri_2"),
+                ClientRedirectUri(3, client1.id, "uri_3")
         )
         assertEquals(expectedDb, clientRepo.findById(1).get())
+        assertEquals(expectedDbUris, clientRedirectUriRepo.findAllByClientId(1))
     }
 
     @Test
@@ -124,7 +149,9 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 clientKey = "UpdateKey",
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
-                refreshTokenTimeoutSecs = 400
+                refreshTokenTimeoutSecs = 400,
+                authCodeTimeoutSecs = 20,
+                redirectUris = listOf("uri_2", "uri_3")
         )
         assertEquals(expected, result.updateClient)
 
@@ -135,10 +162,17 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
                 clientSecret = "",
                 enabled = true,
                 accessTokenTimeoutSecs = 300,
-                refreshTokenTimeoutSecs = 400
+                refreshTokenTimeoutSecs = 400,
+                authCodeTimeoutSecs = 20
+        )
+        val expectedDbUris = listOf(
+                ClientRedirectUri(2, client1.id, "uri_2"),
+                ClientRedirectUri(3, client1.id, "uri_3")
         )
         val actualDb = clientRepo.findById(1).get()
+        val actualDbUris = clientRedirectUriRepo.findAllByClientId(1)
         assertEquals(expectedDb, actualDb.copy(clientSecret = ""))
+        assertEquals(expectedDbUris, actualDbUris)
         validateHash("UpdateSecret", actualDb.clientSecret)
     }
 
@@ -146,13 +180,14 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
     fun `mutation - client - deleteClient`() {
         val result = execute("mutation_client_deleteClient", DeleteClientResponse::class.java)
 
-        val expected = ClientDto.fromClient(client1)
+        val expected = ClientDto.fromClient(client1, listOf(clientRedirectUri))
         assertEquals(expected, result.deleteClient)
 
         assertEquals(0, clientRepo.count())
         assertEquals(0, roleRepo.count())
         assertEquals(2, userRepo.count())
         assertEquals(0, userRepo.findAllByClientIdOrderByEmail(client1.id).size)
+        assertEquals(0, refreshTokenRepo.count())
     }
 
     @Test
@@ -167,6 +202,7 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
         assertEquals(0, userRepo.findAllByClientIdOrderByEmail(client1.id).size)
         assertEquals(0, clientRepo.findAllByUserOrderByName(user1.id).size)
         assertEquals(0, roleRepo.findAllByClientAndUserOrderByName(client1.id, user1.id).size)
+        assertEquals(0, refreshTokenRepo.count())
     }
 
     @Test

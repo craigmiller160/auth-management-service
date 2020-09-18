@@ -35,7 +35,8 @@ object TestData {
             clientSecret = "Secret_$id",
             enabled = true,
             accessTokenTimeoutSecs = 100,
-            refreshTokenTimeoutSecs = 200
+            refreshTokenTimeoutSecs = 200,
+            authCodeTimeoutSecs = 10
     )
 
 }

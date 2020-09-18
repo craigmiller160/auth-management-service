@@ -35,6 +35,9 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     @Autowired
     private lateinit var clientUserRoleRepo: ClientUserRoleRepository
 
+    @Autowired
+    private lateinit var clientRedirectUriRepo: ClientRedirectUriRepository
+
     private lateinit var client1: Client
     private lateinit var client2: Client
     private lateinit var baseClient1Dto: ClientDto
@@ -43,10 +46,12 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
     private lateinit var user1: User
     private lateinit var role1: Role
     private lateinit var role2: Role
+    private lateinit var clientRedirectUri: ClientRedirectUri
 
     @BeforeEach
     fun setup() {
         client1 = clientRepo.save(TestData.createClient(1))
+        clientRedirectUri = clientRedirectUriRepo.save(ClientRedirectUri(0, client1.id, "uri_1"))
         client2 = clientRepo.save(TestData.createClient(2))
         user1 = userRepo.save(TestData.createUser(1))
         role1 = roleRepo.save(TestData.createRole(1, client1.id))
@@ -58,7 +63,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
         val clientUserRole = ClientUserRole(0, client1.id, user1.id, role1.id)
         clientUserRoleRepo.save(clientUserRole)
 
-        baseClient1Dto = ClientDto.fromClient(client1)
+        baseClient1Dto = ClientDto.fromClient(client1, listOf(clientRedirectUri))
         baseClient2Dto = ClientDto.fromClient(client2)
 
         val clientUserDto = ClientUserDto.fromUser(user1, 0)
@@ -72,6 +77,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
 
     @AfterEach
     fun clean() {
+        clientRedirectUriRepo.deleteAll()
         clientUserRoleRepo.deleteAll()
         clientUserRepo.deleteAll()
         clientRepo.deleteAll()
@@ -112,6 +118,18 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
 
         assertEquals(baseClient1Dto, result.client)
     }
+
+    @Test
+    fun `query - rolesForClient`() {
+        val result = execute("query_rolesForClient", RolesForClientResponse::class.java)
+        assertEquals(2, result.rolesForClient.size)
+        assertEquals(RoleDto.fromRole(role1), result.rolesForClient[0])
+        assertEquals(RoleDto.fromRole(role2), result.rolesForClient[1])
+    }
+
+    class RolesForClientResponse (
+            val rolesForClient: List<RoleDto>
+    )
 
     class ClientsResponse (
             val clients: List<ClientDto>

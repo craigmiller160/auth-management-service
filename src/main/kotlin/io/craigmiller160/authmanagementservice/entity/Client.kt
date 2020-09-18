@@ -1,12 +1,9 @@
 package io.craigmiller160.authmanagementservice.entity
 
 import io.craigmiller160.authmanagementservice.dto.Sanitizer
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
+@Suppress("JpaDataSourceORMInspection")
 @Entity
 @Table(name = "clients")
 data class Client (
@@ -18,8 +15,10 @@ data class Client (
         val clientSecret: String,
         val enabled: Boolean,
         val accessTokenTimeoutSecs: Int,
-        val refreshTokenTimeoutSecs: Int
+        val refreshTokenTimeoutSecs: Int,
+        val authCodeTimeoutSecs: Int
 ) : Sanitizer<Client> {
+
         override fun sanitize(): Client {
                 return this.copy(clientSecret = "")
         }

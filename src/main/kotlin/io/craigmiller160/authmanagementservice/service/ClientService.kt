@@ -6,11 +6,7 @@ import io.craigmiller160.authmanagementservice.dto.ClientUserDto
 import io.craigmiller160.authmanagementservice.dto.RoleDto
 import io.craigmiller160.authmanagementservice.entity.ClientUser
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
-import io.craigmiller160.authmanagementservice.repository.ClientRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRepository
-import io.craigmiller160.authmanagementservice.repository.ClientUserRoleRepository
-import io.craigmiller160.authmanagementservice.repository.RoleRepository
-import io.craigmiller160.authmanagementservice.repository.UserRepository
+import io.craigmiller160.authmanagementservice.repository.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -21,7 +17,9 @@ class ClientService (
         private val userRepo: UserRepository,
         private val clientRepo: ClientRepository,
         private val clientUserRoleRepo: ClientUserRoleRepository,
-        private val clientUserRepo: ClientUserRepository
+        private val clientUserRepo: ClientUserRepository,
+        private val clientRedirectUriRepo: ClientRedirectUriRepository,
+        private val refreshTokenRepo: RefreshTokenRepository
 ) {
 
     private val encoder = BCryptPasswordEncoder()
@@ -43,21 +41,33 @@ class ClientService (
 
     fun getAllClients(): List<ClientDto> {
         val clients = clientRepo.findAllByOrderByName()
-        return clients.map { ClientDto.fromClient(it) }
+
+        return clients.map {
+            val redirectUris = clientRedirectUriRepo.findAllByClientId(it.id)
+            ClientDto.fromClient(it, redirectUris)
+        }
     }
 
     fun getClient(clientId: Long): ClientDto? {
         val client = clientRepo.findById(clientId).orElse(null)
-        return client?.let { ClientDto.fromClient(it) }
+        return client?.let {
+            val redirectUris = clientRedirectUriRepo.findAllByClientId(it.id)
+            ClientDto.fromClient(it, redirectUris)
+        }
     }
 
+    @Transactional
     fun createClient(clientInput: ClientInputDto): ClientDto {
         val encoded = encoder.encode(clientInput.clientSecret)
         val client = clientInput.toClient().copy(
                 clientSecret = "{bcrypt}$encoded"
         )
         val dbClient = clientRepo.save(client)
-        return ClientDto.fromClient(dbClient)
+        val redirectUris = clientInput.getClientRedirectUris(dbClient.id)
+        clientRedirectUriRepo.deleteAllByClientId(dbClient.id)
+        clientRedirectUriRepo.flush()
+        val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
+        return ClientDto.fromClient(dbClient, dbRedirectUris)
     }
 
     @Transactional
@@ -74,26 +84,34 @@ class ClientService (
                     existing.clientSecret
                 }
         )
+        val redirectUris = clientInput.getClientRedirectUris(clientId)
         val dbClient = clientRepo.save(client)
-        return ClientDto.fromClient(dbClient)
+        clientRedirectUriRepo.deleteAllByClientId(clientId)
+        clientRedirectUriRepo.flush()
+        val dbRedirectUris = clientRedirectUriRepo.saveAll(redirectUris)
+        return ClientDto.fromClient(dbClient, dbRedirectUris)
     }
 
     @Transactional
     fun deleteClient(clientId: Long): ClientDto {
         val existing = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client to delete for ID: $clientId") }
+        val existingUris = clientRedirectUriRepo.findAllByClientId(clientId)
 
         clientUserRoleRepo.deleteAllByClientId(clientId)
         clientUserRepo.deleteAllByClientId(clientId)
         roleRepo.deleteByClientId(clientId)
+        clientRedirectUriRepo.deleteAllByClientId(clientId)
         clientRepo.deleteById(clientId)
-        return ClientDto.fromClient(existing)
+        refreshTokenRepo.deleteAllByClientId(clientId)
+        return ClientDto.fromClient(existing, existingUris)
     }
 
     @Transactional
     fun removeUserFromClient(userId: Long, clientId: Long): List<ClientUserDto> {
         clientUserRoleRepo.deleteAllByUserIdAndClientId(userId, clientId)
         clientUserRepo.deleteAllByUserIdAndClientId(userId, clientId)
+        refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
         return userRepo.findAllByClientIdOrderByEmail(clientId)
                 .map { ClientUserDto.fromUser(it, clientId) }
     }
