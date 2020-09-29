@@ -22,4 +22,4 @@ oauth2:
 
 logging:
   level:
-    root: ERROR
+    root: INFO
