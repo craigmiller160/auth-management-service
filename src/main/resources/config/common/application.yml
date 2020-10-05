@@ -19,6 +19,7 @@ oauth2:
   client-name: auth-management-service
   cookie-name: auth-management-token
   cookie-max-age-secs: 86400
+  insecure-paths: "/actuator/health"
 
 logging:
   level:
