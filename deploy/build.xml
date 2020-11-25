@@ -1,5 +1,5 @@
-<project name="video-manager-server" default="copy" basedir="../">
-    <description>VideoManagerServer supplemental build script</description>
+<project name="auth-management-service" default="copy" basedir="../">
+    <description>auth-management-service supplemental build script</description>
 
     <target name="clean">
         <delete dir="deploy/build" />
