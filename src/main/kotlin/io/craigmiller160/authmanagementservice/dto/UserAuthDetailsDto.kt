@@ -18,7 +18,7 @@
 
 package io.craigmiller160.authmanagementservice.dto
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 data class UserAuthDetailsDto (
         val tokenId: String,
@@ -26,5 +26,5 @@ data class UserAuthDetailsDto (
         val clientName: String,
         val userId: Long,
         val userEmail: String,
-        val lastAuthenticated: LocalDateTime
+        val lastAuthenticated: ZonedDateTime
 )

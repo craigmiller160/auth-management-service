@@ -15,7 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -56,7 +57,7 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
         clientUserRepo.save(ClientUser(0, user1.id, client1.id))
         clientUserRoleRepo.save(ClientUserRole(0, client1.id, user1.id, role1.id))
 
-        refreshToken = refreshTokenRepo.save(RefreshToken("TokenId", "RefreshToken", client1.id, user1.id, LocalDateTime.now()))
+        refreshToken = refreshTokenRepo.save(RefreshToken("TokenId", "RefreshToken", client1.id, user1.id, ZonedDateTime.now(ZoneId.of("UTC"))))
     }
 
     @AfterEach

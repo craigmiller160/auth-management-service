@@ -26,6 +26,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -61,8 +63,8 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val clientUser = ClientUser(0, user.id, client.id)
         clientUserRepo.save(clientUser)
 
-        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, LocalDateTime.now()))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, LocalDateTime.now()))
+        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, ZonedDateTime.now(ZoneId.of("UTC"))))
+        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, ZonedDateTime.now(ZoneId.of("UTC"))))
     }
 
     @AfterEach
