@@ -96,9 +96,12 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }
 
         val tokens = refreshTokenRepo.findAll()
-        assertEquals(2, tokens.size)
-        assertTrue(tokens.contains(clientRefreshToken))
-        assertTrue(tokens.contains(userRefreshToken2))
+        val sortedTokens = tokens.sortedBy { it.id }
+        assertEquals(2, sortedTokens.size)
+        println(sortedTokens[0]) // TODO delete this
+        println(clientRefreshToken) // TODO delete this
+        assertTrue(sortedTokens.contains(clientRefreshToken))
+        assertTrue(sortedTokens.contains(userRefreshToken2))
     }
 
     @Test
