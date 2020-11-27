@@ -29,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -69,9 +70,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         clientUserRepo.save(ClientUser(0, user.id, client1.id))
         clientUserRepo.save(ClientUser(0, user.id, client2.id))
 
-        userRefreshToken1 = refreshTokenRepo.save(RefreshToken(userToken1Id, userToken1, client1.id, user.id, LocalDateTime.now()))
-        userRefreshToken2 = refreshTokenRepo.save(RefreshToken(userToken2Id, userToken2, client2.id, user.id, LocalDateTime.now()))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client1.id, null, LocalDateTime.now()))
+        userRefreshToken1 = refreshTokenRepo.save(RefreshToken(userToken1Id, userToken1, client1.id, user.id, ZonedDateTime.now(ZoneId.of("UTC"))))
+        userRefreshToken2 = refreshTokenRepo.save(RefreshToken(userToken2Id, userToken2, client2.id, user.id, ZonedDateTime.now(ZoneId.of("UTC"))))
+        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client1.id, null, ZonedDateTime.now(ZoneId.of("UTC"))))
     }
 
     @AfterEach
@@ -95,9 +96,12 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }
 
         val tokens = refreshTokenRepo.findAll()
-        assertEquals(2, tokens.size)
-        assertTrue(tokens.contains(clientRefreshToken))
-        assertTrue(tokens.contains(userRefreshToken2))
+        val sortedTokens = tokens.sortedBy { it.id }
+        assertEquals(2, sortedTokens.size)
+        println(sortedTokens[0]) // TODO delete this
+        println(clientRefreshToken) // TODO delete this
+        assertTrue(sortedTokens.contains(clientRefreshToken))
+        assertTrue(sortedTokens.contains(userRefreshToken2))
     }
 
     @Test

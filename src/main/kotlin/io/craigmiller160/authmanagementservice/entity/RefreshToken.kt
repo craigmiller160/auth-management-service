@@ -18,7 +18,7 @@
 
 package io.craigmiller160.authmanagementservice.entity
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
@@ -32,5 +32,5 @@ data class RefreshToken (
         val refreshToken: String,
         val clientId: Long,
         val userId: Long?,
-        val timestamp: LocalDateTime
+        val timestamp: ZonedDateTime
 )
