@@ -2,7 +2,6 @@ package io.craigmiller160.authmanagementservice.integration.controller
 
 import io.craigmiller160.apitestprocessor.config.AuthType
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
-import io.craigmiller160.authmanagementservice.dto.OldClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.entity.Client
 import io.craigmiller160.authmanagementservice.entity.ClientUser
@@ -16,16 +15,13 @@ import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
