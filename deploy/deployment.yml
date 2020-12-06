@@ -33,11 +33,10 @@ kind: Service
 metadata:
   name: auth-management-service-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: auth-management-service
   ports:
     - port: 8443
       targetPort: 8443
-      nodePort: 31003
       protocol: TCP
