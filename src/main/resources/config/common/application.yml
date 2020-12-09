@@ -15,8 +15,8 @@ spring:
     url: jdbc:postgresql://${spring.datasource.host}:${spring.datasource.port}/oauth2_server
 
 oauth2:
-  auth-login-base-uri: "/oauth2"
-  auth-code-redirect-uri: "/api/oauth/authcode/code"
+  auth-login-base-uri: "/auth-manage-ui/oauth2"
+  auth-code-redirect-uri: "/auth-manage-ui/api/oauth/authcode/code"
   post-auth-redirect: "/"
   client-name: auth-management-service
   cookie-name: auth-management-token
