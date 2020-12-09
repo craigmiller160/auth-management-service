@@ -17,7 +17,7 @@ spring:
 oauth2:
   auth-login-base-uri: "/auth-manage-ui/oauth2"
   auth-code-redirect-uri: "/auth-manage-ui/api/oauth/authcode/code"
-  post-auth-redirect: "/"
+  post-auth-redirect: "/auth-manage-ui"
   client-name: auth-management-service
   cookie-name: auth-management-token
   cookie-max-age-secs: 86400
