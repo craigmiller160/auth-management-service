@@ -18,6 +18,7 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasProperty
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -148,7 +149,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                                 hasProperty("tokenId", equalTo(userToken1Id)),
                                 hasProperty("clientId", equalTo(client1.id)),
                                 hasProperty("userId", equalTo(user.id)),
-                                hasProperty("lastAuthenticated", equalTo(userRefreshToken1.timestamp)),
+                                hasProperty("lastAuthenticated", notNullValue()),
                                 hasProperty("clientName", equalTo(client1.name)),
                                 hasProperty("userEmail", equalTo(user.email))
                         ),
@@ -156,7 +157,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                                 hasProperty("tokenId", equalTo(userToken2Id)),
                                 hasProperty("clientId", equalTo(client2.id)),
                                 hasProperty("userId", equalTo(user.id)),
-                                hasProperty("lastAuthenticated", equalTo(userRefreshToken2.timestamp)),
+                                hasProperty("lastAuthenticated", notNullValue()),
                                 hasProperty("clientName", equalTo(client2.name)),
                                 hasProperty("userEmail", equalTo(user.email))
                         )
