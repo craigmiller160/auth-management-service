@@ -22,6 +22,7 @@ import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -99,8 +100,8 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         val tokens = refreshTokenRepo.findAll()
         val sortedTokens = tokens.sortedBy { it.id }
         assertEquals(2, sortedTokens.size)
-        assertTrue(sortedTokens.contains(clientRefreshToken))
-        assertTrue(sortedTokens.contains(userRefreshToken2))
+        assertEquals(clientRefreshToken.id, sortedTokens[0].id)
+        assertEquals(userRefreshToken2.id, sortedTokens[1].id)
     }
 
     @Test
