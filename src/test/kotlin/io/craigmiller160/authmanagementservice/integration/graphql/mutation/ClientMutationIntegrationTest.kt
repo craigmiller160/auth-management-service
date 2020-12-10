@@ -69,8 +69,10 @@ class ClientMutationIntegrationTest : AbstractGraphqlTest() {
         clientRedirectUriRepo.deleteAll()
         clientUserRoleRepo.deleteAll()
         clientUserRepo.deleteAll()
+        roleRepo.deleteAll()
         userRepo.deleteAll()
         clientRepo.deleteAll()
+        refreshTokenRepo.deleteAll()
     }
 
     @Test

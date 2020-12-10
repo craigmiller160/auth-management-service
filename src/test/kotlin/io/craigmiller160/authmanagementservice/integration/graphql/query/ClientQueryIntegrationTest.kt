@@ -80,6 +80,7 @@ class ClientQueryIntegrationTest : AbstractGraphqlTest() {
         clientRedirectUriRepo.deleteAll()
         clientUserRoleRepo.deleteAll()
         clientUserRepo.deleteAll()
+        roleRepo.deleteAll()
         clientRepo.deleteAll()
         userRepo.deleteAll()
     }

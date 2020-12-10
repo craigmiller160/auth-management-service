@@ -67,6 +67,7 @@ class UserMutationIntegrationTest : AbstractGraphqlTest() {
         roleRepo.deleteAll()
         clientRepo.deleteAll()
         userRepo.deleteAll()
+        refreshTokenRepo.deleteAll()
     }
 
     @Test
