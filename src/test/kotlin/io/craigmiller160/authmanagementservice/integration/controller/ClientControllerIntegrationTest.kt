@@ -112,7 +112,6 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 hasProperty("clientName", equalTo(client.name)),
                 hasProperty("userAuthDetails", containsInAnyOrder<UserAuthDetailsDto>(
                         allOf(
-                                hasProperty("tokenId", equalTo(userRefreshToken.id)),
                                 hasProperty("clientId", equalTo(client.id)),
                                 hasProperty("clientName", equalTo(client.name)),
                                 hasProperty("userId", equalTo(user.id)),

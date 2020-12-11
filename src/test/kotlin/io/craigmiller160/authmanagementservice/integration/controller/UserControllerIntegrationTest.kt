@@ -147,7 +147,6 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                 hasSize(2),
                 containsInAnyOrder(
                         allOf(
-                                hasProperty("tokenId", equalTo(userToken1Id)),
                                 hasProperty("clientId", equalTo(client1.id)),
                                 hasProperty("userId", equalTo(user.id)),
                                 hasProperty("lastAuthenticated", notNullValue()),
@@ -155,7 +154,6 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                                 hasProperty("userEmail", equalTo(user.email))
                         ),
                         allOf(
-                                hasProperty("tokenId", equalTo(userToken2Id)),
                                 hasProperty("clientId", equalTo(client2.id)),
                                 hasProperty("userId", equalTo(user.id)),
                                 hasProperty("lastAuthenticated", notNullValue()),
