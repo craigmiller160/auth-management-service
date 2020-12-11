@@ -18,6 +18,7 @@
 
 package io.craigmiller160.authmanagementservice.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.ZonedDateTime
 
 data class UserAuthDetailsDto (
@@ -26,5 +27,6 @@ data class UserAuthDetailsDto (
         val clientName: String,
         val userId: Long,
         val userEmail: String,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z")
         val lastAuthenticated: ZonedDateTime
 )
