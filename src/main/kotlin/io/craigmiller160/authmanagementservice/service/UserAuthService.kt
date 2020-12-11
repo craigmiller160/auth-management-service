@@ -44,7 +44,6 @@ class UserAuthService (
                     val client = clientRepo.findById(it.clientId)
                             .orElseThrow { EntityNotFoundException("No client found for id ${it.clientId}") }
                     UserAuthDetailsDto(
-                            tokenId = it.id,
                             clientId = client.id,
                             clientName = client.name,
                             userId = userId,

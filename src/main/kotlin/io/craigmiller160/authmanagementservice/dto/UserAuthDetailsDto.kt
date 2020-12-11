@@ -21,7 +21,6 @@ package io.craigmiller160.authmanagementservice.dto
 import java.time.ZonedDateTime
 
 data class UserAuthDetailsDto (
-        val tokenId: String,
         val clientId: Long,
         val clientName: String,
         val userId: Long,
