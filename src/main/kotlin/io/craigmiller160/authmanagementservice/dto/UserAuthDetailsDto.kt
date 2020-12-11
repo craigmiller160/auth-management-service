@@ -27,6 +27,6 @@ data class UserAuthDetailsDto (
         val clientName: String,
         val userId: Long,
         val userEmail: String,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z") // TODO if this works, apply it to all other DTOs
         val lastAuthenticated: ZonedDateTime
 )
