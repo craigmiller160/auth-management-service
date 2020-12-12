@@ -40,7 +40,7 @@ class ClientController (
 
     @GetMapping("/auth/{clientId}")
     fun getAuthDetailsForClient(@PathVariable clientId: Long): ClientAuthDetailsDto {
-        return clientAuthService.getAuthDetailsForClient(clientId)
+        return clientAuthService.getAuthDetailsForClientUsers(clientId)
     }
 
 }
