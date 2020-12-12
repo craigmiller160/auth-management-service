@@ -20,6 +20,7 @@ package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsListDto
+import io.craigmiller160.authmanagementservice.entity.RefreshToken
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
@@ -40,6 +41,15 @@ class UserAuthService (
                 .orElseThrow { EntityNotFoundException("No user found for id $userId") }
 
         val authDetails = refreshTokenRepo.findAllByUserId(userId)
+                .fold(mapOf<Long,RefreshToken>()) { map, token ->
+                    val existingToken = map[token.clientId]
+                    if (existingToken != null && existingToken.timestamp < token.timestamp) {
+                        map + mapOf(token.clientId to token)
+                    } else {
+                        map + mapOf(token.clientId to token)
+                    }
+                }
+                .values
                 .map {
                     val client = clientRepo.findById(it.clientId)
                             .orElseThrow { EntityNotFoundException("No client found for id ${it.clientId}") }

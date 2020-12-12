@@ -36,6 +36,8 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
     fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
 
+    // TODO might need the new methods deleted
+
     // TODO filter the results
     @Query("""
         SELECT r
