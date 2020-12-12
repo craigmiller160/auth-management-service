@@ -25,7 +25,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasProperty
-import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -61,12 +60,16 @@ class RefreshTokenRepositoryTest {
     private lateinit var client1user1Expired: RefreshToken
     private lateinit var client1user1Valid: RefreshToken
     private lateinit var client2user1Valid: RefreshToken
+    private lateinit var client1user2Valid: RefreshToken
+    private lateinit var client1userNullValid: RefreshToken
 
     @BeforeEach
     fun beforeEach() {
         client1user1Expired = refreshTokenRepo.save(RefreshToken("Id1", "Token1", CLIENT_1_ID, USER_1_ID, EXPIRED_TIMESTAMP))
         client1user1Valid = refreshTokenRepo.save(RefreshToken("Id2", "Token2", CLIENT_1_ID, USER_1_ID, TIMESTAMP))
         client2user1Valid = refreshTokenRepo.save(RefreshToken("Id3", "Token3", CLIENT_2_ID, USER_1_ID, TIMESTAMP))
+        client1user2Valid = refreshTokenRepo.save(RefreshToken("Id4", "Token4", CLIENT_1_ID, USER_2_ID, TIMESTAMP))
+        client1userNullValid = refreshTokenRepo.save(RefreshToken("Id5", "Token5", CLIENT_1_ID, null, TIMESTAMP))
     }
 
     @AfterEach
@@ -92,7 +95,11 @@ class RefreshTokenRepositoryTest {
 
     @Test
     fun test_findAllClientUserAuthentications() {
-        TODO("Finish this")
+        val results = refreshTokenRepo.findAllClientUserAuthentications(CLIENT_1_ID, TIMESTAMP.minusMinutes(30))
+        results.sortedBy { it.id }
+        assertEquals(2, results.size)
+        validateToken(client1user1Valid, results[0])
+        validateToken(client1user2Valid, results[1])
     }
 
 }
