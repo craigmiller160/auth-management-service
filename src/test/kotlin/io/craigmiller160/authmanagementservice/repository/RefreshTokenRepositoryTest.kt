@@ -18,14 +18,30 @@
 
 package io.craigmiller160.authmanagementservice.repository
 
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 class RefreshTokenRepositoryTest {
+
+    @Autowired
+    private lateinit var refreshTokenRepo: RefreshTokenRepository
+
+    @BeforeEach
+    fun beforeEach() {
+
+    }
+
+    @AfterEach
+    fun afterEach() {
+        refreshTokenRepo.deleteAll()
+    }
 
     @Test
     fun test_findAllUserAuthentications() {
