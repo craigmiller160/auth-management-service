@@ -21,6 +21,8 @@ package io.craigmiller160.authmanagementservice.repository
 import io.craigmiller160.authmanagementservice.entity.RefreshToken
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.ZonedDateTime
 import javax.transaction.Transactional
@@ -34,11 +36,24 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
     fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
 
-    // TODO write query
-    fun findAllUserAuthentications(userId: Long, oldestNotExpired: ZonedDateTime): List<RefreshToken>
+    // TODO update tests
+    @Query("""
+        SELECT r
+        FROM RefreshToken r
+        WHERE r.userId = :userId
+        AND r.timestamp >= :oldestNotExpired
+    """)
+    fun findAllUserAuthentications(@Param("userId") userId: Long, @Param("oldestNotExpired") oldestNotExpired: ZonedDateTime): List<RefreshToken>
 
-    // TODO write query
-    fun findAllClientUserAuthentications(clientId: Long, oldestNotExpired: ZonedDateTime): List<RefreshToken>
+    // TODO update tests
+    @Query("""
+        SELECT r
+        FROM RefreshToken r
+        WHERE r.clientId = :clientId
+        AND r.userId IS NOT NULL
+        AND r.timestamp >= :oldestNotExpired
+    """)
+    fun findAllClientUserAuthentications(@Param("clientId") clientId: Long, @Param("oldestNotExpired") oldestNotExpired: ZonedDateTime): List<RefreshToken>
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
