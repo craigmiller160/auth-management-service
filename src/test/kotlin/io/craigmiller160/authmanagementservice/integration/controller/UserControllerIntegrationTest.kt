@@ -82,24 +82,31 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         clientRepo.deleteAll()
     }
 
+    private fun validateToken(expected: RefreshToken, actual: RefreshToken) {
+        assertThat(actual, allOf(
+                hasProperty("id", equalTo(expected.id)),
+                hasProperty("refreshToken", equalTo(expected.refreshToken))
+        ))
+    }
+
     @Test
     fun test_revokeUserAuthAccess() {
-//        apiProcessor.call {
-//            request {
-//                method = HttpMethod.POST
-//                path = "/users/auth/${user1.id}/${client1.id}/revoke"
-//            }
-//            response {
-//                status = 204
-//            }
-//        }
-//
-//        val tokens = refreshTokenRepo.findAll()
-//        val sortedTokens = tokens.sortedBy { it.id }
-//        assertEquals(2, sortedTokens.size)
-//        assertEquals(clientRefreshToken.id, sortedTokens[0].id)
-//        assertEquals(userRefreshToken2.id, sortedTokens[1].id)
-        TODO("Finish this")
+        apiProcessor.call {
+            request {
+                method = HttpMethod.POST
+                path = "/users/auth/${user1.id}/${client1.id}/revoke"
+            }
+            response {
+                status = 204
+            }
+        }
+
+        val tokens = refreshTokenRepo.findAll()
+        val sortedTokens = tokens.sortedBy { it.id }
+        assertEquals(3, sortedTokens.size)
+        validateToken(client2user1Valid, sortedTokens[0])
+        validateToken(client1user2Valid, sortedTokens[1])
+        validateToken(client1userNullValid, sortedTokens[2])
     }
 
     @Test

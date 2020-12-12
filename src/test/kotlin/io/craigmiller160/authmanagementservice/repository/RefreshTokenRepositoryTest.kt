@@ -87,19 +87,19 @@ class RefreshTokenRepositoryTest {
     @Test
     fun test_findAllUserAuthentications() {
         val results = refreshTokenRepo.findAllUserAuthentications(USER_1_ID, TIMESTAMP.minusMinutes(30))
-        results.sortedBy { it.id }
-        assertEquals(2, results.size)
-        validateToken(client1user1Valid, results[0])
-        validateToken(client2user1Valid, results[1])
+        val sortedResults = results.sortedBy { it.id }
+        assertEquals(2, sortedResults.size)
+        validateToken(client1user1Valid, sortedResults[0])
+        validateToken(client2user1Valid, sortedResults[1])
     }
 
     @Test
     fun test_findAllClientUserAuthentications() {
         val results = refreshTokenRepo.findAllClientUserAuthentications(CLIENT_1_ID, TIMESTAMP.minusMinutes(30))
-        results.sortedBy { it.id }
-        assertEquals(2, results.size)
-        validateToken(client1user1Valid, results[0])
-        validateToken(client1user2Valid, results[1])
+        val sortedResults = results.sortedBy { it.id }
+        assertEquals(2, sortedResults.size)
+        validateToken(client1user1Valid, sortedResults[0])
+        validateToken(client1user2Valid, sortedResults[1])
     }
 
 }
