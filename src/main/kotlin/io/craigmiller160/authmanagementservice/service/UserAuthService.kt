@@ -56,9 +56,9 @@ class UserAuthService (
 
     @Transactional
     fun revokeUserAuthAccess(clientId: Long, userId: Long) {
-        val user = userRepo.findByClientAndUser(clientId, userId)
+        userRepo.findByClientAndUser(clientId, userId)
                 ?: throw EntityNotFoundException("No auth details found for client $clientId and user $userId")
-        val client = clientRepo.findById(clientId)
+        clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client found for id $clientId") }
 
         refreshTokenRepo.deleteByClientIdAndUserId(clientId, userId)
