@@ -47,6 +47,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     private lateinit var client1user1Expired: RefreshToken
     private lateinit var client1user1Valid: RefreshToken
+    private lateinit var client1user1ValidB: RefreshToken
     private lateinit var client2user1Valid: RefreshToken
     private lateinit var client1user2Valid: RefreshToken
     private lateinit var client1userNullValid: RefreshToken
@@ -72,6 +73,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         client2user1Valid = refreshTokenRepo.save(RefreshToken("Id3", "Token3", client2.id, user1.id, TIMESTAMP))
         client1user2Valid = refreshTokenRepo.save(RefreshToken("Id4", "Token4", client1.id, user2.id, TIMESTAMP))
         client1userNullValid = refreshTokenRepo.save(RefreshToken("Id5", "Token5", client1.id, null, TIMESTAMP))
+        client1user1ValidB = refreshTokenRepo.save(RefreshToken("Id6", "Token6", client1.id, user1.id, TIMESTAMP.plusMinutes(5)))
     }
 
     @AfterEach
@@ -167,6 +169,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                         )
                 )
         ))
+        TODO("Add validation of the timestamps to this to make sure most recent one is showing")
     }
 
     @Test
