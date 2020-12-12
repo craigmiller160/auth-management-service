@@ -22,8 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,25 +42,39 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     @Autowired
     private lateinit var clientUserRepo: ClientUserRepository
 
-    private lateinit var userRefreshToken: RefreshToken
-    private lateinit var clientRefreshToken: RefreshToken
-    private lateinit var client: Client
-    private lateinit var user: User
+    private lateinit var client1user1Expired: RefreshToken
+    private lateinit var client1user1Valid: RefreshToken
+    private lateinit var client2user1Valid: RefreshToken
+    private lateinit var client1user2Valid: RefreshToken
+    private lateinit var client1userNullValid: RefreshToken
+    private lateinit var client1: Client
+    private lateinit var client2: Client
+    private lateinit var user1: User
+    private lateinit var user2: User
 
     private val userTokenId = "ABC"
     private val clientTokenId = "DEF"
     private val userToken = "GHI"
     private val clientToken = "JKL"
 
+    private val EXPIRED_TIMESTAMP: ZonedDateTime = ZonedDateTime.now().minusHours(1)
+    private val TIMESTAMP: ZonedDateTime = ZonedDateTime.now()
+    private val FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+
     @BeforeEach
     fun setup() {
-        client = clientRepo.save(TestData.createClient(1))
-        user = userRepo.save(TestData.createUser(1))
-        val clientUser = ClientUser(0, user.id, client.id)
-        clientUserRepo.save(clientUser)
+        client1 = clientRepo.save(TestData.createClient(1))
+        client2 = clientRepo.save(TestData.createClient(2))
+        user1 = userRepo.save(TestData.createUser(1))
+        user2 = userRepo.save(TestData.createUser(2))
+        clientUserRepo.save(ClientUser(0, user1.id, client1.id))
+        clientUserRepo.save(ClientUser(0, user1.id, client2.id))
 
-        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, ZonedDateTime.now(ZoneId.of("UTC"))))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, ZonedDateTime.now(ZoneId.of("UTC"))))
+        client1user1Expired = refreshTokenRepo.save(RefreshToken("Id1", "Token1", client1.id, user1.id, EXPIRED_TIMESTAMP))
+        client1user1Valid = refreshTokenRepo.save(RefreshToken("Id2", "Token2", client1.id, user1.id, TIMESTAMP))
+        client2user1Valid = refreshTokenRepo.save(RefreshToken("Id3", "Token3", client2.id, user1.id, TIMESTAMP))
+        client1user2Valid = refreshTokenRepo.save(RefreshToken("Id4", "Token4", client1.id, user2.id, TIMESTAMP))
+        client1userNullValid = refreshTokenRepo.save(RefreshToken("Id5", "Token5", client1.id, null, TIMESTAMP))
     }
 
     @AfterEach
@@ -101,7 +115,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClientAuthDetails() {
         val result = apiProcessor.call {
             request {
-                path = "/clients/auth/${client.id}"
+                path = "/clients/auth/${client1.id}"
             }
             response {
                 print = true
@@ -109,17 +123,19 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }.convert(ClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
-                hasProperty("clientName", equalTo(client.name)),
+                hasProperty("clientName", equalTo(client1.name)),
+                hasProperty("userAuthDetails", hasSize<List<UserAuthDetailsDto>>(1)),
                 hasProperty("userAuthDetails", containsInAnyOrder<UserAuthDetailsDto>(
                         allOf(
-                                hasProperty("clientId", equalTo(client.id)),
-                                hasProperty("clientName", equalTo(client.name)),
-                                hasProperty("userId", equalTo(user.id)),
-                                hasProperty("userEmail", equalTo(user.email)),
+                                hasProperty("clientId", equalTo(client1.id)),
+                                hasProperty("clientName", equalTo(client1.name)),
+                                hasProperty("userId", equalTo(user1.id)),
+                                hasProperty("userEmail", equalTo(user1.email)),
                                 hasProperty("lastAuthenticated", notNullValue())
                         )
                 ))
         ))
+        TODO("Update to validate timestamps")
     }
 
     @Test
@@ -138,7 +154,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClientAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/clients/auth/${client.id}"
+                path = "/clients/auth/${client1.id}"
                 overrideAuth {
                     type = AuthType.NONE
                 }
