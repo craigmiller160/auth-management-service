@@ -22,6 +22,7 @@ import io.craigmiller160.authmanagementservice.entity.RefreshToken
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.stereotype.Repository
+import java.time.ZonedDateTime
 import javax.transaction.Transactional
 
 @Repository
@@ -32,6 +33,12 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
     fun findByClientIdAndUserId(clientId: Long, userId: Long): RefreshToken?
 
     fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
+
+    // TODO write query
+    fun findAllUserAuthentications(userId: Long, oldestNotExpired: ZonedDateTime): List<RefreshToken>
+
+    // TODO write query
+    fun findAllClientUserAuthentications(clientId: Long, oldestNotExpired: ZonedDateTime): List<RefreshToken>
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
