@@ -18,17 +18,26 @@
 
 package io.craigmiller160.authmanagementservice.repository
 
+import graphql.kickstart.spring.web.boot.GraphQLWebsocketAutoConfiguration
+import io.craigmiller160.oauth2.config.OAuthConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 class RefreshTokenRepositoryTest {
+
+    @MockBean
+    private lateinit var graphqlAutoConfig: GraphQLWebsocketAutoConfiguration
+
+    @MockBean
+    private lateinit var oAuthConfig: OAuthConfig
 
     @Autowired
     private lateinit var refreshTokenRepo: RefreshTokenRepository
