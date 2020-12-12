@@ -36,7 +36,6 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
 
     fun findByClientIdAndUserIdIsNotNull(clientId: Long): List<RefreshToken>
 
-    // TODO update tests
     // TODO filter the results
     @Query("""
         SELECT r
@@ -46,7 +45,6 @@ interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
     """)
     fun findAllUserAuthentications(@Param("userId") userId: Long, @Param("oldestNotExpired") oldestNotExpired: ZonedDateTime): List<RefreshToken>
 
-    // TODO update tests
     // TODO filter the results
     @Query("""
         SELECT r
