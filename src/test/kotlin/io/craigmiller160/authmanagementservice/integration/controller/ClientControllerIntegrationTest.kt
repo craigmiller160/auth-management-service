@@ -15,6 +15,7 @@ import io.craigmiller160.authmanagementservice.testutils.TestData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,25 +44,39 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     @Autowired
     private lateinit var clientUserRepo: ClientUserRepository
 
-    private lateinit var userRefreshToken: RefreshToken
-    private lateinit var clientRefreshToken: RefreshToken
-    private lateinit var client: Client
-    private lateinit var user: User
+    private lateinit var client1user1Expired: RefreshToken
+    private lateinit var client1user1Valid: RefreshToken
+    private lateinit var client2user1Valid: RefreshToken
+    private lateinit var client1user2Valid: RefreshToken
+    private lateinit var client1userNullValid: RefreshToken
+    private lateinit var client1: Client
+    private lateinit var client2: Client
+    private lateinit var user1: User
+    private lateinit var user2: User
 
     private val userTokenId = "ABC"
     private val clientTokenId = "DEF"
     private val userToken = "GHI"
     private val clientToken = "JKL"
 
+    private val EXPIRED_TIMESTAMP: ZonedDateTime = ZonedDateTime.now().minusHours(1)
+    private val TIMESTAMP: ZonedDateTime = ZonedDateTime.now()
+    private val FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+
     @BeforeEach
     fun setup() {
-        client = clientRepo.save(TestData.createClient(1))
-        user = userRepo.save(TestData.createUser(1))
-        val clientUser = ClientUser(0, user.id, client.id)
-        clientUserRepo.save(clientUser)
+        client1 = clientRepo.save(TestData.createClient(1))
+        client2 = clientRepo.save(TestData.createClient(2))
+        user1 = userRepo.save(TestData.createUser(1))
+        user2 = userRepo.save(TestData.createUser(2))
+        clientUserRepo.save(ClientUser(0, user1.id, client1.id))
+        clientUserRepo.save(ClientUser(0, user1.id, client2.id))
 
-        userRefreshToken = refreshTokenRepo.save(RefreshToken(userTokenId, userToken, client.id, user.id, ZonedDateTime.now(ZoneId.of("UTC"))))
-        clientRefreshToken = refreshTokenRepo.save(RefreshToken(clientTokenId, clientToken, client.id, null, ZonedDateTime.now(ZoneId.of("UTC"))))
+        client1user1Expired = refreshTokenRepo.save(RefreshToken("Id1", "Token1", client1.id, user1.id, EXPIRED_TIMESTAMP))
+        client1user1Valid = refreshTokenRepo.save(RefreshToken("Id2", "Token2", client1.id, user1.id, TIMESTAMP))
+        client2user1Valid = refreshTokenRepo.save(RefreshToken("Id3", "Token3", client2.id, user1.id, TIMESTAMP))
+        client1user2Valid = refreshTokenRepo.save(RefreshToken("Id4", "Token4", client1.id, user2.id, TIMESTAMP))
+        client1userNullValid = refreshTokenRepo.save(RefreshToken("Id5", "Token5", client1.id, null, TIMESTAMP))
     }
 
     @AfterEach
@@ -70,6 +86,9 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         userRepo.deleteAll()
         refreshTokenRepo.deleteAll()
     }
+
+    private fun format(timestamp: ZonedDateTime): String =
+            FORMAT.format(timestamp.withZoneSameInstant(ZoneId.of("UTC")))
 
     @Test
     fun test_generateGuid() {
@@ -101,7 +120,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClientAuthDetails() {
         val result = apiProcessor.call {
             request {
-                path = "/clients/auth/${client.id}"
+                path = "/clients/auth/${client1.id}"
             }
             response {
                 print = true
@@ -109,18 +128,30 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }.convert(ClientAuthDetailsDto::class.java)
 
         assertThat(result, allOf(
-                hasProperty("clientName", equalTo(client.name)),
-                hasProperty("userAuthDetails", containsInAnyOrder<UserAuthDetailsDto>(
-                        allOf(
-                                hasProperty("tokenId", equalTo(userRefreshToken.id)),
-                                hasProperty("clientId", equalTo(client.id)),
-                                hasProperty("clientName", equalTo(client.name)),
-                                hasProperty("userId", equalTo(user.id)),
-                                hasProperty("userEmail", equalTo(user.email)),
-                                hasProperty("lastAuthenticated", notNullValue())
-                        )
-                ))
+                hasProperty("clientName", equalTo(client1.name)),
+                hasProperty("userAuthDetails", hasSize<List<UserAuthDetailsDto>>(2))
         ))
+
+        val sortedAuths: List<UserAuthDetailsDto> = result.userAuthDetails.sortedBy { it.userId }
+        assertThat(sortedAuths, contains(
+                allOf(
+                        hasProperty("clientId", equalTo(client1.id)),
+                        hasProperty("clientName", equalTo(client1.name)),
+                        hasProperty("userId", equalTo(user1.id)),
+                        hasProperty("userEmail", equalTo(user1.email)),
+                        hasProperty("lastAuthenticated", notNullValue())
+                ),
+                allOf(
+                        hasProperty("clientId", equalTo(client1.id)),
+                        hasProperty("clientName", equalTo(client1.name)),
+                        hasProperty("userId", equalTo(user2.id)),
+                        hasProperty("userEmail", equalTo(user2.email)),
+                        hasProperty("lastAuthenticated", notNullValue())
+                )
+        ))
+
+        assertEquals(format(client1user1Valid.timestamp), format(sortedAuths[0].lastAuthenticated))
+        assertEquals(format(client1user2Valid.timestamp), format(sortedAuths[1].lastAuthenticated))
     }
 
     @Test
@@ -139,7 +170,7 @@ class ClientControllerIntegrationTest : AbstractControllerIntegrationTest() {
     fun test_getClientAuthDetails_unauthorized() {
         apiProcessor.call {
             request {
-                path = "/clients/auth/${client.id}"
+                path = "/clients/auth/${client1.id}"
                 overrideAuth {
                     type = AuthType.NONE
                 }

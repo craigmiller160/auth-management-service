@@ -20,6 +20,7 @@ package io.craigmiller160.authmanagementservice.service
 
 import io.craigmiller160.authmanagementservice.dto.ClientAuthDetailsDto
 import io.craigmiller160.authmanagementservice.dto.UserAuthDetailsDto
+import io.craigmiller160.authmanagementservice.entity.RefreshToken
 import io.craigmiller160.authmanagementservice.exception.EntityNotFoundException
 import io.craigmiller160.authmanagementservice.repository.ClientRepository
 import io.craigmiller160.authmanagementservice.repository.RefreshTokenRepository
@@ -35,23 +36,31 @@ class ClientAuthService (
 ) {
 
     @Transactional
-    fun getAuthDetailsForClient(clientId: Long): ClientAuthDetailsDto {
+    fun getAuthDetailsForClientUsers(clientId: Long): ClientAuthDetailsDto {
         val client = clientRepo.findById(clientId)
                 .orElseThrow { EntityNotFoundException("No client for ID $clientId") }
 
-        val tokens = refreshTokenRepo.findByClientIdAndUserIdIsNotNull(clientId)
-        val authDetails = tokens.map {
-            val user = userRepo.findById(it.userId!!)
-                    .orElseThrow { EntityNotFoundException("No user for ID: ${it.userId}") }
-            UserAuthDetailsDto(
-                    tokenId = it.id,
-                    clientId = clientId,
-                    clientName = client.name,
-                    userId = it.userId ?: 0,
-                    userEmail = user.email,
-                    lastAuthenticated = it.timestamp
-            )
-        }
+        val authDetails = refreshTokenRepo.findByClientIdAndUserIdIsNotNull(clientId)
+                .fold(mapOf<Long,RefreshToken>()) { map, token ->
+                    val existingToken = map[token.userId]
+                    if (existingToken != null && existingToken.timestamp < token.timestamp) {
+                        map + mapOf(token.userId!! to token)
+                    } else {
+                        map + mapOf(token.userId!! to token)
+                    }
+                }
+                .values
+                .map {
+                    val user = userRepo.findById(it.userId!!)
+                            .orElseThrow { EntityNotFoundException("No user for ID: ${it.userId}") }
+                    UserAuthDetailsDto(
+                            clientId = clientId,
+                            clientName = client.name,
+                            userId = it.userId ?: 0,
+                            userEmail = user.email,
+                            lastAuthenticated = it.timestamp
+                    )
+                }
         return ClientAuthDetailsDto(
                 clientName = client.name,
                 userAuthDetails = authDetails
