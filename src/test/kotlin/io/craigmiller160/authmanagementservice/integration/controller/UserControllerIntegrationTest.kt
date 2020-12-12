@@ -27,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -58,6 +60,7 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
 
     private val EXPIRED_TIMESTAMP: ZonedDateTime = ZonedDateTime.now().minusHours(1)
     private val TIMESTAMP: ZonedDateTime = ZonedDateTime.now()
+    private val FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
     @BeforeEach
     fun setup() {
@@ -140,6 +143,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }
     }
 
+    private fun format(timestamp: ZonedDateTime): String =
+            FORMAT.format(timestamp.withZoneSameInstant(ZoneId.of("UTC")))
+
     @Test
     fun test_getAllUserAuthDetails() {
         val result = apiProcessor.call {
@@ -149,8 +155,9 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
         }.convert(UserAuthDetailsListDto::class.java)
 
         val authDetails = result.authDetails
+        val sortedAuthDetails = authDetails.sortedBy { it.clientId }
         assertEquals(2, authDetails.size)
-        assertThat(authDetails, allOf(
+        assertThat(sortedAuthDetails, allOf(
                 hasSize(2),
                 containsInAnyOrder(
                         allOf(
@@ -169,7 +176,8 @@ class UserControllerIntegrationTest : AbstractControllerIntegrationTest() {
                         )
                 )
         ))
-        TODO("Add validation of the timestamps to this to make sure most recent one is showing")
+        assertEquals(format(client1user1ValidB.timestamp), format(sortedAuthDetails[0].lastAuthenticated))
+        assertEquals(format(client2user1Valid.timestamp), format(sortedAuthDetails[1].lastAuthenticated))
     }
 
     @Test
