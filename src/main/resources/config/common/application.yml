@@ -4,6 +4,9 @@ server:
     key-store: classpath:keys/auth-manage.p12
     key-store-password: auth-manage-pass
     use-ssl: true
+    enabled: true
+    protocol: TLS
+    enabled-protocols: TLSv1.2,TLSv1.3
 
 spring:
   jpa:
