@@ -20,6 +20,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: auth-management-service-configmap
+          env:
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-root-password
+                  key: POSTGRES_ROOT_PASSWORD
           livenessProbe:
             httpGet:
               path: /actuator/health
