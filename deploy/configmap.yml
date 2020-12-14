@@ -7,8 +7,7 @@ data:
   spring.config.location: classpath:/config/common/,classpath:/config/prod/
   spring.datasource.host: postgres-service
   spring.datasource.port: "5432"
-  spring.datasource.username: user
-  spring.datasource.password: password
+  spring.datasource.username: postgres_root
   oauth2.auth-server-host: https://sso-oauth2-server-service:8443
   oauth2.client-key: 04248fc5-9ddb-4bc3-9e56-d77b98ac24fd
   oauth2.client-secret: 9877d5b5-8a56-4ade-8ee6-2838f8535c9a
