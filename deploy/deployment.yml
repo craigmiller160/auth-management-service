@@ -26,6 +26,11 @@ spec:
                 secretKeyRef:
                   name: postgres-root-password
                   key: POSTGRES_ROOT_PASSWORD
+            - name: oauth2.client-secret
+              valueFrom:
+                secretKeyRef:
+                  name: auth-management-service-client-secret
+                  key: client-secret
           livenessProbe:
             httpGet:
               path: /actuator/health

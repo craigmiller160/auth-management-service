@@ -21,6 +21,14 @@ INSERT INTO client_users (user_id, client_id)
 VALUES (?, ?);
 ```
 
+## Client Secret Setup
+
+The production Client Secret needs to be stored in a Kubernetes secret.
+
+```
+kubectl create secret generic auth-management-service-client-secret --from-literal=client-secret=######
+```
+
 ## Running Locally
 
 Use the run script, not the normal maven command:
