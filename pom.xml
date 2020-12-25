@@ -22,7 +22,7 @@
 	</repositories>
 
 	<properties>
-		<oauth2.utils.version>1.4.1</oauth2.utils.version>
+		<oauth2.utils.version>1.6.0-SNAPSHOT</oauth2.utils.version>
 		<api.test.processor.version>1.0.0</api.test.processor.version>
 		<web.utils.version>1.0.0</web.utils.version>
 		<java.version>11</java.version>
