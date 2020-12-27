@@ -1,8 +1,11 @@
 server:
+  session:
+    timeout: -1
   servlet:
     session:
       cookie:
-        name: CRAIGSESSIONID
+        name: AUTH-MANAGE-SESSIONID
+        path: /auth-manage-ui
   ssl:
     key-store-type: PKCS12
     key-store: classpath:keys/auth-manage.p12
@@ -35,6 +38,7 @@ oauth2:
   client-name: auth-management-service
   cookie-name: auth-management-token
   cookie-max-age-secs: 86400
+  cookie-path: "/auth-manage-ui"
   insecure-paths: "/actuator/health"
 
 logging:
