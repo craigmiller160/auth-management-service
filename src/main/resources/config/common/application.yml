@@ -1,6 +1,4 @@
 server:
-  session:
-    timeout: -1
   servlet:
     session:
       cookie:
