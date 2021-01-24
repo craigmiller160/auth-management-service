@@ -3,7 +3,7 @@ server:
     session:
       cookie:
         name: AUTH-MANAGE-SESSIONID
-        path: /auth-manage-ui
+        path: /auth-management
   ssl:
     key-store-type: PKCS12
     key-store: classpath:keys/auth-manage.p12
