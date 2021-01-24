@@ -30,13 +30,13 @@ spring:
     url: jdbc:postgresql://${spring.datasource.host}:${spring.datasource.port}/oauth2_server
 
 oauth2:
-  auth-login-base-uri: "/auth-manage-ui/oauth2"
-  auth-code-redirect-uri: "/auth-manage-ui/api/oauth/authcode/code"
-  post-auth-redirect: "/auth-manage-ui"
+  auth-login-base-uri: "/auth-management/oauth2"
+  auth-code-redirect-uri: "/auth-management/api/oauth/authcode/code"
+  post-auth-redirect: "/auth-management"
   client-name: auth-management-service
   cookie-name: auth-management-token
   cookie-max-age-secs: 86400
-  cookie-path: "/auth-manage-ui"
+  cookie-path: "/auth-management"
   insecure-paths: "/actuator/health"
 
 logging:
