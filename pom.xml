@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.craigmiller160</groupId>
 	<artifactId>auth-management-service</artifactId>
-	<version>1.6.0-SNAPSHOT</version>
+	<version>1.5.5</version>
 	<name>auth-management-service</name>
 	<description>Authorization Management Service</description>
 
