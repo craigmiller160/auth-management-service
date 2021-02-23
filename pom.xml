@@ -14,6 +14,19 @@
 	<name>auth-management-service</name>
 	<description>Authorization Management Service</description>
 
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <name>Releases</name>
+            <url>https://craigmiller160.ddns.net:30003/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>Snapshot</name>
+            <url>https://craigmiller160.ddns.net:30003/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 	<repositories>
 		<repository>
 			<id>jcenter</id>
@@ -180,36 +193,17 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>3.0.0</version>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>6.0.3</version>
 				<executions>
 					<execution>
-						<id>copy-artifact</id>
-						<phase>package</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>check</goal>
 						</goals>
-						<configuration>
-							<target>
-								<ant antfile="${basedir}/deploy/build.xml" />
-							</target>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.owasp</groupId>-->
-<!--				<artifactId>dependency-check-maven</artifactId>-->
-<!--				<version>6.0.3</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<goals>-->
-<!--							<goal>check</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
 		</plugins>
 	</build>
 
