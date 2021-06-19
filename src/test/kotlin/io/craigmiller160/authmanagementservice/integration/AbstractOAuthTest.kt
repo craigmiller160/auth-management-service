@@ -2,7 +2,7 @@ package io.craigmiller160.authmanagementservice.integration
 
 import com.nimbusds.jose.jwk.JWKSet
 import io.craigmiller160.authmanagementservice.testutils.JwtUtils
-import io.craigmiller160.oauth2.config.OAuthConfig
+import io.craigmiller160.oauth2.config.OAuth2Config
 import org.apache.catalina.filters.RestCsrfPreventionFilter
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +30,7 @@ abstract class AbstractOAuthTest {
     protected lateinit var token: String
 
     @MockBean
-    protected lateinit var oauthConfig: OAuthConfig
+    protected lateinit var oauthConfig: OAuth2Config
 
     @MockBean
     private lateinit var csrfFilter: FilterRegistrationBean<RestCsrfPreventionFilter>
