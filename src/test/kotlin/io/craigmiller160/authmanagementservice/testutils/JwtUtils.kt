@@ -8,7 +8,8 @@ import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.craigmiller160.spring.oauth2.security.AuthenticatedUser
+import io.craigmiller160.oauth2.security.AuthenticatedUser
+import io.craigmiller160.spring.oauth2.security.AuthenticatedUserDetails
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.security.KeyPair
 import java.security.KeyPairGenerator
@@ -44,9 +45,9 @@ object JwtUtils {
     }
 
     fun createAuthUser(): AuthenticatedUser {
-        return AuthenticatedUser(
+        return AuthenticatedUserDetails(
                 userName = USERNAME,
-                grantedAuthorities = listOf(SimpleGrantedAuthority(ROLE_1), SimpleGrantedAuthority(ROLE_2)),
+                roles = listOf(ROLE_1, ROLE_2),
                 firstName = FIRST_NAME,
                 lastName = LAST_NAME,
                 tokenId = TOKEN_ID
