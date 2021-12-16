@@ -14,6 +14,18 @@
 	<name>auth-management-service</name>
 	<description>Authorization Management Service</description>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>${log4j2.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
     <distributionManagement>
         <repository>
             <id>nexus</id>
@@ -35,7 +47,12 @@
 	</repositories>
 
 	<properties>
+<<<<<<< HEAD
 		<oauth2.utils.version>1.9.0-SNAPSHOT</oauth2.utils.version>
+=======
+		<log4j2.version>2.16.0</log4j2.version>
+		<oauth2.utils.version>1.7.3</oauth2.utils.version>
+>>>>>>> master
 		<api.test.processor.version>1.2.2</api.test.processor.version>
 		<web.utils.version>1.1.2</web.utils.version>
 		<java.version>11</java.version>
