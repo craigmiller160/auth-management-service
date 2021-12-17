@@ -24,7 +24,7 @@ abstract class AbstractGraphqlTest : AbstractOAuthTest() {
 
     @BeforeEach
     fun graphqlSetup() {
-        graphqlRestTemplate.addHeader("Authorization", "Bearer $token")
+        graphqlRestTemplate.withAdditionalHeader("Authorization", "Bearer $token")
     }
 
     protected abstract fun getGraphqlBasePath(): String
