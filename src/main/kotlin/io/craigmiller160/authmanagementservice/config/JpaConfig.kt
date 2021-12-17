@@ -25,10 +25,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @Configuration
 @EnableJpaRepositories(basePackages = [
     "io.craigmiller160.authmanagementservice.repository",
+    "io.craigmiller160.spring.oauth2.repository",
     "io.craigmiller160.oauth2.repository"
 ])
 @EntityScan(basePackages = [
     "io.craigmiller160.authmanagementservice.entity",
+    "io.craigmiller160.spring.oauth2.entity",
     "io.craigmiller160.oauth2.entity"
 ])
 class JpaConfig
