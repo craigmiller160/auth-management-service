@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth-management-service
-          image: craigmiller160.ddns.net:30004/auth-management-service:1.5.10
+          image: craigmiller160.ddns.net:30004/auth-management-service:${KUBE_IMG_VERSION}
           ports:
             - containerPort: 8443
           envFrom:
