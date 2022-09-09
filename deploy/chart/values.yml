@@ -1,28 +1,22 @@
 app-deployment:
-  appName: db-backup-service
+  appName: auth-management-service
   deployment:
-    image: nexus-docker-craigmiller160.ddns.net/db-backup-service:latest
+    image: nexus-docker-craigmiller160.ddns.net/auth-management-service:latest
     configMaps:
-      - db-backup-service-configmap
+      - auth-management-service-configmap
     secrets:
-      - envVariable: db.postgres.user
+      - envVariable: spring.datasource.username
         secretName: postgres-root-account
         secretKey: username
-      - envVariable: db.postgres.password
+      - envVariable: spring.datasource.password
         secretName: postgres-root-account
         secretKey: password
-      - envVariable: email.auth.client-key
-        secretName: email-service-oauth2-keys
+      - envVariable: oauth2.client-key
+        secretName: auth-management-service-oauth2-keys
         secretKey: clientKey
-      - envVariable: email.auth.client-secret
-        secretName: email-service-oauth2-keys
+      - envVariable: oauth2.client-secret
+        secretName: auth-management-service-oauth2-keys
         secretKey: clientSecret
-      - envVariable: db.mongo.user
-        secretName: mongodb-root-account
-        secretKey: username
-      - envVariable: db.mongo.password
-        secretName: mongodb-root-account
-        secretKey: password
     livenessProbe:
       exec:
         command:
