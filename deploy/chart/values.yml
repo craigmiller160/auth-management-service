@@ -4,6 +4,8 @@ app-deployment:
     image: nexus-docker-craigmiller160.ddns.net/auth-management-service:latest
     configMaps:
       - auth-management-service-configmap
+    ports:
+      - 8443
     secrets:
       - envVariable: spring.datasource.username
         secretName: postgres-root-account
@@ -18,11 +20,12 @@ app-deployment:
         secretName: auth-management-service-oauth2-keys
         secretKey: clientSecret
     livenessProbe:
-      exec:
-        command:
-          - sh
-          - /output/liveness.sh
-  volumes:
-    - name: db-backup-service-volume
-      type: PVC
-      deploymentMountPath: /output
+      httpGet:
+        path: /actuator/health
+        port: 8443
+        scheme: HTTPS
+  service:
+    enable: true
+    type: ClusterIP
+    ports:
+      - containerPort: 8443
