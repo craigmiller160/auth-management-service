@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.craigmiller160</groupId>
 	<artifactId>auth-management-service</artifactId>
-	<version>1.5.12</version>
+	<version>1.5.13</version>
 	<name>auth-management-service</name>
 	<description>Authorization Management Service</description>
 
@@ -55,9 +55,9 @@
 
 	<properties>
 		<log4j2.version>2.17.0</log4j2.version>
-		<oauth2.utils.version>1.9.0</oauth2.utils.version>
-		<api.test.processor.version>1.2.2</api.test.processor.version>
-		<web.utils.version>1.1.3</web.utils.version>
+		<oauth2.utils.version>1.9.1</oauth2.utils.version>
+		<api.test.processor.version>1.2.3</api.test.processor.version>
+		<web.utils.version>1.1.4</web.utils.version>
 		<java.version>17</java.version>
 		<kotlin.version>1.6.10</kotlin.version>
 		<postgres.version>42.3.1</postgres.version>
