@@ -1,16 +1,25 @@
-app-deployment:
+app_deployment:
   appName: auth-management-service
   image: nexus-docker-craigmiller160.ddns.net/auth-management-service:latest
-  configMaps:
-    - auth-management-service-configmap
+  configMap:
+    spring.profiles.active: prod
+    spring.config.location: classpath:/config/common/,classpath:/config/prod/
+    spring.datasource.host: postgres.infra-prod
+    spring.datasource.port: "5432"
+    oauth2.auth-server-host: https://sso-oauth2-server:8443
+  onepassworditems:
+    - name: auth-management-service-oauth2-keys
+      itemPath: vaults/Home Server (Prod)/items/Auth Management Service OAuth2 Keys
+    - name: auth-management-service-postgres
+      itemPath: vaults/Home Server (Prod)/items/Postgres Root Account
   ports:
     - containerPort: 8443
   secrets:
     - envVariable: spring.datasource.username
-      secretName: postgres-root-account
+      secretName: auth-management-service-postgres
       secretKey: username
     - envVariable: spring.datasource.password
-      secretName: postgres-root-account
+      secretName: auth-management-service-postgres
       secretKey: password
     - envVariable: oauth2.client-key
       secretName: auth-management-service-oauth2-keys
